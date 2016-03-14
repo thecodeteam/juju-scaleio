@@ -1,0 +1,9 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+juju-log "Removing ScaleIO SDS server"	
+
+server-cmd "class { 'scaleio::sds_server': ensure=>absent }"
+
+juju-log "Removed ScaleIO SDS server"

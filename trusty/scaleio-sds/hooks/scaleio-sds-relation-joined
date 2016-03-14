@@ -1,0 +1,9 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+juju-log "ScaleIO MDM joining to: $JUJU_REMOTE_UNIT"		
+relation-set protection-domain=$(config-get protection-domain)
+relation-set fault-set=$(config-get fault-set)
+relation-set storage-pools=$(config-get storage-pools)
+relation-set device_paths=$(config-get device-paths)

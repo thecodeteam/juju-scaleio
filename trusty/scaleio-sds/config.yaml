@@ -1,0 +1,17 @@
+options:
+  protection-domain:
+    type: string
+    default: "default_protection_domain"
+    description: "Protection domain name"
+  fault-set:
+    type: string
+    default: "default_fault_set"
+    description: "Fault set name"
+  storage-pools:
+    type: string
+    default: "default_storage_pool"
+    description: "Comma-separated list of storage pool names"
+  device-paths:
+    type: string
+    default: "/dev/sdb"
+    description: "Comma-separated list of device paths"

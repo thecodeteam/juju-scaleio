@@ -1,0 +1,24 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+set -eu
+
+if [ $# -eq 1 ] && [ $1 == "-d" ]
+then
+	. "$my_dir/debug"
+fi
+
+MY_IP=`unit-get public-address`
+MY_NAME=${JUJU_UNIT_NAME/\//-} 
+MY_PASSWORD=`config-get password`
+
+function convert-name {
+	${$1/\//-}
+}
+ 
+function server-cmd {
+	puppet apply --modulepath="/etc/puppet/modules:/home/alevine/shared" -e	"$1"
+}
+
+function cluster-cmd {
+	server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
+}

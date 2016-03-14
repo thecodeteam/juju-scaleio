@@ -1,0 +1,13 @@
+name: scaleio-mdm
+summary: ScaleIO MDM service
+maintainer: Alexandre Levine <alexandrelevine@gmail.com>
+description: |
+  ScaleIO MDM service
+tags:
+  - storage
+provides:
+  scaleio-mdm:
+    interface: scaleio
+requires:
+  scaleio-sds:
+    interface: scaleio

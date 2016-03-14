@@ -1,0 +1,20 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+remote_name=${JUJU_REMOTE_UNIT/\//-} 
+remote_ip=`relation-get private-address`
+protection_domain=`relation-get protection-domain`
+fault_set=`relation-get fault-set`
+storage_pools=`relation-get storage-pools`
+device_paths=`relation-get device-paths`
+juju-log "Relation with ScaleIO SDS changed: $remote_name, $protection_domain"
+
+if [ -z "$protection_domain" ]; then exit; fi
+
+cluster-cmd "class { 'scaleio::protection_domain': 
+	name=>'$protection_domain', fault_sets=>['$fault_set'], storage_pools=>['$storage_pools'] }"
+
+cluster-cmd "class { 'scaleio::sds':
+	name=>'$remote_name', ips=>'$remote_ip', protection_domain=>'$protection_domain', \
+	fault_set=>'$fault_set', storage_pools=>'$storage_pools', device_paths=>'$device_paths' }"

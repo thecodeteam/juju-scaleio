@@ -1,0 +1,10 @@
+name: scaleio-sds
+summary: ScaleIO SDS service
+maintainer: Alexandre Levine <alexandrelevine@gmail.com>
+description: |
+  ScaleIO SDS service
+tags:
+  - storage
+provides:
+  scaleio-sds:
+    interface: scaleio

@@ -1,0 +1,9 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+juju-log "Removing ScaleIO MDM server"	
+
+server-cmd "class { 'scaleio::mdm_server': ensure=>absent }"
+
+juju-log "Removed ScaleIO MDM server"
