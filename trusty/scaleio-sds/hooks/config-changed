@@ -4,3 +4,4 @@ my_dir="$(dirname "$0")"
 
 config=`config-get`
 juju-log "ScaleIO SDS config changed: $config"
+relation-set-all
