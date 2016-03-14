@@ -2,5 +2,4 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
-config=`config-get`
-juju-log "ScaleIO MDM config changed: $config"
+juju-log "ScaleIO MDM config changed"

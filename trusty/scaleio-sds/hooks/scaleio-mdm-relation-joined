@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -eu
-juju-log "MDM: ScaleIO MDM relation joined"
-config=`relation-get`
-juju-log "MDM config: $config"

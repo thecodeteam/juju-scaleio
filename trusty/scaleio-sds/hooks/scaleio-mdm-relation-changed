@@ -1,6 +1,0 @@
-#!/bin/bash
-my_dir="$(dirname "$0")"
-. "$my_dir/common"
-
-config=`relation-get`
-juju-log "Relation with ScaleIO MDM changed: $config"

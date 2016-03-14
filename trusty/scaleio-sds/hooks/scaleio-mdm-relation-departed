@@ -1,4 +1,0 @@
-#!/bin/bash
-
-set -eu
-juju-log "ScaleIO MDM config changed"

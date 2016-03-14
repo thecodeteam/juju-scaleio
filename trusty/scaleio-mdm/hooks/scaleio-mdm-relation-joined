@@ -1,6 +1,5 @@
 #!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
 
-set -eu
-juju-log "MDM: ScaleIO MDM relation joined"
-config=`relation-get`
-juju-log "MDM config: $config"
+log-relation "ScaleIO SDC joined"

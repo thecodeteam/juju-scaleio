@@ -2,10 +2,10 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
-juju-log "Installing ScaleIO SDS server"
+juju-log "ScaleIO SDS installing"
 
 apt-get install -y puppet
 
 server-cmd "class { 'scaleio::sds_server': }"	
 
-juju-log "Installed ScaleIO SDS server"
+juju-log "ScaleIO SDS installed"

@@ -11,14 +11,16 @@ MY_IP=`unit-get public-address`
 MY_NAME=${JUJU_UNIT_NAME/\//-} 
 MY_PASSWORD=`config-get password`
 
-function convert-name {
-	${$1/\//-}
-}
- 
 function server-cmd {
 	puppet apply --modulepath="/etc/puppet/modules:/home/alevine/shared" -e	"$1"
 }
 
 function cluster-cmd {
 	server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
+}
+
+function log-relation {
+	remote_name=${JUJU_REMOTE_UNIT/\//-} 
+	remote_ip=`relation-get private-address`
+	juju-log "$1: $remote_name, $remote_ip"
 }
