@@ -1,0 +1,39 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+set -eu
+
+if [ $# -eq 1 ] && [ $1 == "-d" ]
+then
+	. "$my_dir/debug"
+fi
+
+MY_IP=`unit-get public-address`
+MY_NAME=${JUJU_UNIT_NAME/\//-} 
+MY_PASSWORD=`config-get password`
+
+function convert-name {
+	${$1/\//-}
+}
+ 
+function server-cmd {
+	puppet apply --modulepath="/etc/puppet/modules:/home/alevine/shared" -e	"$1"
+}
+
+function cluster-cmd {
+	server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
+}
+
+function relation-set-all {
+	rid=`relation-ids scaleio-sds`
+	if [ -z "$rid" ]; then return; fi
+	relation-set -r $rid protection-domain=$(config-get protection-domain)
+	relation-set -r $rid fault-set=$(config-get fault-set)
+	relation-set -r $rid storage-pools=$(config-get storage-pools)
+	relation-set -r $rid device_paths=$(config-get device-paths)
+}
+
+function log-relation {
+	remote_name=${JUJU_REMOTE_UNIT/\//-} 
+	remote_ip=`relation-get private-address`
+	juju-log "$1: $remote_name, $remote_ip"
+}

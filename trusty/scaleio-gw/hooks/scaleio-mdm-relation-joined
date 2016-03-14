@@ -1,0 +1,14 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+log-relation "ScaleIO MDM joining"
+
+remote_name=${JUJU_REMOTE_UNIT/\//-} 
+remote_ip=`relation-get private-address`
+
+if [ -z "$remote_ip" ]; then exit; fi
+
+server-cmd "class { 'scaleio::gateway_server': mdm_ips=>['$remote_ip'] }"
+
+log-relation "ScaleIO MDM joined"

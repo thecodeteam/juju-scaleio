@@ -1,0 +1,5 @@
+options:
+  password:
+    type: string
+    default: "Default_password"
+    description: "MDM password"

@@ -1,0 +1,11 @@
+name: scaleio-gw
+summary: ScaleIO GW service
+maintainer: Alexandre Levine <alexandrelevine@gmail.com>
+description: |
+  ScaleIO GW service
+tags:
+  - storage
+requires:
+  scaleio-mdm:
+    interface: scaleio
+    

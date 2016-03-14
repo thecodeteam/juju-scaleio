@@ -2,4 +2,4 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
-log-relation "ScaleIO SDC joined"
+log-relation "ScaleIO SDC or GW joined"

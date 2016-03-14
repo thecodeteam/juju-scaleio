@@ -1,0 +1,11 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+juju-log "ScaleIO GUI installing"
+
+apt-get install -y puppet
+
+server-cmd "class { 'scaleio::gui_server': }"	
+
+juju-log "ScaleIO GUI installed"

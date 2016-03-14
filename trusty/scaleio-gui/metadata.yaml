@@ -1,0 +1,8 @@
+name: scaleio-gui
+summary: ScaleIO GUI service
+maintainer: Alexandre Levine <alexandrelevine@gmail.com>
+description: |
+  ScaleIO GUI
+tags:
+  - storage
+    
