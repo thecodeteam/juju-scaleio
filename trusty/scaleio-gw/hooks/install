@@ -5,6 +5,8 @@ my_dir="$(dirname "$0")"
 juju-log "ScaleIO GW installing"
 
 apt-get install -y puppet
+puppet module install puppetlabs-firewall
+puppet module install puppetlabs-stdlib
 
 password=`config-get password`
 server-cmd "class { 'scaleio::gateway_server': password=>'$password' }"	
