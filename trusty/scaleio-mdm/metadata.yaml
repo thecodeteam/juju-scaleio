@@ -11,3 +11,6 @@ provides:
 requires:
   scaleio-sds:
     interface: scaleio
+peers:
+  scaleio-cluster:
+    interface: scaleio
