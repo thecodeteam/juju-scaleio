@@ -10,4 +10,6 @@ puppet module install --force puppetlabs-stdlib
 
 server-cmd "class { 'scaleio::gui_server': }"	
 
+status-set active
+
 juju-log "ScaleIO GUI installed"

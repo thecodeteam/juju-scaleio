@@ -5,3 +5,5 @@ my_dir="$(dirname "$0")"
 log-relation "ScaleIO MDM relation joined"
 
 relation-set-all
+
+status-set active

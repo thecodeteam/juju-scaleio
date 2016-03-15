@@ -21,4 +21,3 @@ cluster-cmd "class { 'scaleio::sds':
 	fault_set=>'$fault_set', storage_pools=>'$storage_pools', device_paths=>'$device_paths' }"
 
 log-relation "ScaleIO SDS relation changed"
-	

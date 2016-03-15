@@ -1,0 +1,25 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+cluster_count=`leader-get cluster_count`
+if [ -z "$cluster_count" ]
+then 
+	leader-set cluster_count=1
+	leader-set mdm_ips=$MY_IP
+	
+	juju-log "ScaleIO MDM master node is set to $MY_NAME"
+
+	juju-log "ScaleIO single-node cluster creating (name: $MY_NAME, ip: $MY_IP)"
+	
+	server-cmd "class { 'scaleio::mdm_server': master_mdm_name=>'$MY_NAME', mdm_ips=>'$MY_IP' }"
+	
+	juju-log "ScaleIO single-node cluster created"
+	
+	server-cmd "scaleio::login { 'first login': password=>'admin' }"
+	server-cmd "class { 'scaleio::cluster': password=>'admin', new_password=>'$MY_PASSWORD' }"
+	
+	juju-log "ScaleIO cluster password changed"
+	
+	status-set active
+fi

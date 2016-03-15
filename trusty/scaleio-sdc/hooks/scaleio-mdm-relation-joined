@@ -11,4 +11,6 @@ if [ -z "$remote_ip" ]; then exit; fi
 
 server-cmd "class { 'scaleio::sdc_server': mdm_ip=>'$remote_ip' }"
 
+status-set active
+
 log-relation "ScaleIO MDM joined"

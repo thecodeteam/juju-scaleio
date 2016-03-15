@@ -4,6 +4,8 @@ my_dir="$(dirname "$0")"
 
 juju-log "ScaleIO GW installing"
 
+status-set maintenance
+
 apt-get install -y puppet
 puppet module install --force puppetlabs-firewall
 puppet module install --force puppetlabs-stdlib
