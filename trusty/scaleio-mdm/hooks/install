@@ -11,6 +11,8 @@ apt-get install -y puppet
 #puppet module install --force puppetlabs-stdlib
 
 cluster_count=`leader-get cluster_count`
+juju-log "ScaleIO cluster count: $cluster_count"
+
 is_manager=1
 if ! [ -z "$cluster_count" ]
 then

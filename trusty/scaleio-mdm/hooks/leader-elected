@@ -7,6 +7,8 @@ if [ -z "$cluster_count" ]
 then 
 	leader-set cluster_count=1
 	leader-set mdm_ips=$MY_IP
+	leader-set slave_names=""
+	leader-set tb_names=""
 	
 	juju-log "ScaleIO MDM master node is set to $MY_NAME"
 
