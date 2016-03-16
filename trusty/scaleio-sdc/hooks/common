@@ -7,7 +7,7 @@ then
 	. "$my_dir/debug"
 fi
 
-MY_IP=`unit-get public-address`
+MY_IP=`unit-get private-address`
 MY_NAME=${JUJU_UNIT_NAME/\//-} 
 MY_PASSWORD=`config-get password`
 
