@@ -16,7 +16,7 @@ function convert-name {
 }
  
 function server-cmd {
-	puppet apply --modulepath="/etc/puppet/modules:/home/alevine/shared" -e	"$1"
+	puppet apply --modulepath="/etc/puppet/modules" -e "$1"
 }
 
 function cluster-cmd {

@@ -1,24 +1,23 @@
 #!/bin/bash
 my_dir="$(dirname "$0")"
+
+# this will be removed in the future
+$my_dir/common-temp
+
 . "$my_dir/common"
 
 juju-log "ScaleIO MDM installing: $MY_NAME, $MY_IP"
 
 status-set maintenance
 
-apt-get install -y puppet
-#puppet module install --force puppetlabs-firewall
-#puppet module install --force puppetlabs-stdlib
-
 cluster_count=`leader-get cluster_count`
 juju-log "ScaleIO cluster count: $cluster_count"
 
 is_manager=1
-if ! [ -z "$cluster_count" ]
-then
-	is_manager=$((cluster_count % 2))
+if ! [ -z "$cluster_count" ] ; then
+    is_manager=$((cluster_count % 2))
 fi
 
-server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"	
+server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
 
 juju-log "ScaleIO MDM installed as $is_manager"

@@ -1,15 +1,15 @@
 #!/bin/bash
 my_dir="$(dirname "$0")"
+
+# this will be removed in the future
+$my_dir/common-temp
+
 . "$my_dir/common"
 
 juju-log "ScaleIO SDC installing"
 
 status-set maintenance
 
-apt-get install -y puppet
-puppet module install --force puppetlabs-firewall
-puppet module install --force puppetlabs-stdlib
-
-server-cmd "class { 'scaleio::sdc_server': }"	
+server-cmd "class { 'scaleio::sdc_server': }"
 
 juju-log "ScaleIO SDC installed"
