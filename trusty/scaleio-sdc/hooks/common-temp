@@ -3,18 +3,7 @@
 apt-get install -y puppet
 puppet module install puppetlabs-firewall
 puppet module install puppetlabs-stdlib
-
-# TODO: remove when puppet-scaleio will be moved to forge
-apt-get install -y git
-scaleio_path="/etc/puppet/modules/scaleio"
-if [ -d $scaleio_path ]; then
-    pushd $scaleio_path
-    git reset --hard
-    git pull
-    popd
-else
-    git clone https://github.com/cloudscaling/puppet-scaleio.git $scaleio_path
-fi
+puppet module install cloudscaling-scaleio
 
 # TODO: remove when packages will be in ubuntu repo
 curl -H GET http://ec2-52-37-140-129.us-west-2.compute.amazonaws.com/repo.key > /root/repo.key
