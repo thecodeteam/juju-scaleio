@@ -9,9 +9,11 @@ fi
 MY_IP=`unit-get private-address`
 MY_NAME=${JUJU_UNIT_NAME/\//-} 
 MY_PASSWORD=`config-get password`
+MY_MDMS=`leader-get mdm_ips`
+if [ -z "$MY_MDMS" ]; then MY_MDMS='127.0.0.1'; fi
 
 function server-cmd {
-	puppet apply --modulepath="/etc/puppet/modules" -e "$1"
+	FACTER_mdm_ips=$MY_MDMS puppet apply --modulepath="/home/alevine/shared:/etc/puppet/modules" -e "$1"
 }
 
 function cluster-cmd {

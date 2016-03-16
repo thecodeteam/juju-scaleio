@@ -8,8 +8,6 @@ $my_dir/common-temp
 
 juju-log "ScaleIO SDC installing"
 
-status-set maintenance
-
 server-cmd "class { 'scaleio::sdc_server': }"
 
 juju-log "ScaleIO SDC installed"

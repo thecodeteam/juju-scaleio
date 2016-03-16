@@ -2,4 +2,42 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
-log-relation "ScaleIO Standby MDM changed"
+log-relation "ScaleIO Standby MDM joining"
+
+remote_name=${JUJU_REMOTE_UNIT/\//-} 
+remote_ip=`relation-get private-address`
+leader=`is-leader`
+role_is_set=`relation-get role_is_set`
+role=`relation-get mdm_role`
+is_manager=`relation-get is_manager`
+mdm_ips=`leader-get mdm_ips`
+slave_names=`leader-get slave_names`
+tb_names=`leader-get tb_names`
+cluster_count=`leader-get cluster_count`
+
+if [ $leader == 'True' ] 
+then
+	juju-log "ScaleIO cluster-relation-changed leader, role is $role"
+	if ! [ -z "$role_is_set" ]
+	then
+		cluster-cmd "class { 'scaleio::mdm': name=>'$remote_name', ips=>'$remote_ip', role=>'$role' }"
+		status-set active
+		juju-log "ScaleIO Standby MDM $remote_name added as $role"
+		juju-log "ScaleIO Cluster stats - cluster_count: $cluster_count, ips: $mdm_ips, slaves: $slave_names, tbs: $tb_names"
+		if (( role == 'manager' ))
+		then
+			mdm_ips="$mdm_ips,$remote_ip"
+			leader-set mdm_ips=$mdm_ips
+		fi
+	fi
+else
+	juju-log "ScaleIO cluster-relation-changed slave"
+	if ! [ -z "$is_manager" ]
+	then
+		server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
+		relation-set role_is_set=1
+		relation-set mdm_role=$role
+		status-set active
+		juju-log "ScaleIO MDM $MY_NAME changed role to $role"
+	fi
+fi

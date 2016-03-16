@@ -7,4 +7,4 @@ tags:
   - storage
 provides:
   scaleio-sds:
-    interface: scaleio
+    interface: scaleio-sds

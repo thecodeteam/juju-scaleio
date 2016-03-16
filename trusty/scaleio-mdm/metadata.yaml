@@ -7,10 +7,10 @@ tags:
   - storage
 provides:
   scaleio-mdm:
-    interface: scaleio
+    interface: scaleio-mdm
 requires:
   scaleio-sds:
-    interface: scaleio
+    interface: scaleio-sds
 peers:
   scaleio-cluster:
-    interface: scaleio
+    interface: scaleio-cluster

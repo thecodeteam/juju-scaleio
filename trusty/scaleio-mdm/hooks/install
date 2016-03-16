@@ -8,16 +8,6 @@ $my_dir/common-temp
 
 juju-log "ScaleIO MDM installing: $MY_NAME, $MY_IP"
 
-status-set maintenance
+server-cmd "class { 'scaleio::mdm_server': }"
 
-cluster_count=`leader-get cluster_count`
-juju-log "ScaleIO cluster count: $cluster_count"
-
-is_manager=1
-if ! [ -z "$cluster_count" ] ; then
-    is_manager=$((cluster_count % 2))
-fi
-
-server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
-
-juju-log "ScaleIO MDM installed as $is_manager"
+juju-log "ScaleIO MDM installed"

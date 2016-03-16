@@ -5,46 +5,33 @@ my_dir="$(dirname "$0")"
 log-relation "ScaleIO Standby MDM joining"
 
 leader=`is-leader`
-if ! [ $leader == 'True' ]; then exit; fi
-
-cluster_count=`leader-get cluster_count`
 mdm_ips=`leader-get mdm_ips`
 slave_names=`leader-get slave_names`
 tb_names=`leader-get tb_names`
-
-if [ -z $cluster_count ]
-then
-	log-relation "ScaleIO Standby MDM can't join - cluster isn't ready"
-	exit
-fi
-
 remote_name=${JUJU_REMOTE_UNIT/\//-} 
 remote_ip=`relation-get private-address`
 
-juju-log "ScaleIO Standby MDM joined: $remote_name"
-juju-log "ScaleIO cluster count and ips: $cluster_count, $mdm_ips"
-
-is_manager=$((cluster_count % 2))
-
-# TODO: Add slave_names and tb_names, not rewrite
-if [ $is_manager -eq 1 ]
+if [ $leader == 'True' ] 
 then
-	role="manager"
-	slave_names="$remote_name"
-	leader-set slave_names=$slave_names	
-else
-	role="tb"
-	tb_names="$remote_name"
-	leader-set tb_names=$tb_names
+	cluster_count=`leader-get cluster_count`
+	juju-log "ScaleIO cluster count: $cluster_count"
+
+	is_manager=$((cluster_count % 2))
+	relation-set is_manager=$is_manager
+	if (( is_manager == 1 ))
+	then
+		role="manager"
+		slave_names="$remote_name"
+		leader-set slave_names=$slave_names
+	else
+		role="tb"
+		tb_names="$remote_name"
+		leader-set tb_names=$tb_names			
+	fi
+	((cluster_count++))
+	leader-set cluster_count=$cluster_count
+	relation-set mdm_role=$role
+	
+	juju-log "ScaleIO Standby MDM joining: $remote_name, $role"
+	juju-log "ScaleIO cluster count and ips: $cluster_count, $mdm_ips"
 fi
-cluster-cmd "class { 'scaleio::mdm': name=>'$remote_name', ips=>'$remote_ip', role=>'$role' }"
-
-((cluster_count++))
-mdm_ips="$mdm_ips,$remote_ip"
-leader-set mdm_ips=$mdm_ips
-leader-set cluster_count=$cluster_count
-
-juju-log "ScaleIO Standby MDM added as $role"
-juju-log "ScaleIO Cluster stats - cluster_count: $cluster_count, ips: $mdm_ips, slaves: $slave_names, tbs: $tb_names"
-
-status-set active

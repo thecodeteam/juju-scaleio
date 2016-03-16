@@ -7,5 +7,5 @@ tags:
   - storage
 requires:
   scaleio-mdm:
-    interface: scaleio
+    interface: scaleio-mdm
     
