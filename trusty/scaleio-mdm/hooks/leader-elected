@@ -15,7 +15,7 @@ if [ -z "$cluster_count" ] ; then
 
   juju-log "ScaleIO single-node cluster creating (name: $MY_NAME, ip: $MY_IP)"
 
-  server-cmd "class { 'scaleio::mdm_server': master_mdm_name=>'$MY_NAME', mdm_ips=>'$MY_IP' }"
+  server-cmd "class { 'scaleio::mdm_server': master_mdm_name=>'$MY_NAME', mdm_ips=>'$MY_IP', is_manager=>1 }"
 
   juju-log "ScaleIO single-node cluster created"
 
