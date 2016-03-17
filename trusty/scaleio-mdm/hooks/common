@@ -3,25 +3,43 @@ my_dir="$(dirname "$0")"
 set -eu
 
 if [ $# -eq 1 ] && [ $1 == "-d" ] ; then
-	. "$my_dir/debug"
+  . "$my_dir/debug"
 fi
 
 MY_IP=`unit-get private-address`
-MY_NAME=${JUJU_UNIT_NAME/\//-} 
+MY_NAME=${JUJU_UNIT_NAME/\//-}
 MY_PASSWORD=`config-get password`
 MY_MDMS=`leader-get mdm_ips`
 if [ -z "$MY_MDMS" ]; then MY_MDMS='127.0.0.1'; fi
 
 function server-cmd {
-	FACTER_mdm_ips=$MY_MDMS puppet apply --modulepath="/home/alevine/shared:/etc/puppet/modules" -e "$1"
+  juju-log "Running server-cmd with '$1'"
+  set +e
+  FACTER_mdm_ips=$MY_MDMS puppet apply --modulepath="/home/alevine/shared:/etc/puppet/modules" -e "$1" --detailed-exitcodes
+  local exit_code=$?
+  if [[ $exit_code == 0 ]]; then
+    juju-log "The run succeeded with no changes or failures; the system was already in the desired state."
+  elif [[ $exit_code == 1 ]]; then
+    juju-log "The run failed, or was not attempted due to another run already in progress."
+    exit 1
+  elif [[ $exit_code == 2 ]]; then
+    juju-log "The run succeeded, and some resources were changed."
+  elif [[ $exit_code == 4 ]]; then
+    juju-log "The run succeeded, and some resources failed."
+    exit 1
+  elif [[ $exit_code == 6 ]]; then
+    juju-log "The run succeeded, and included both changes and failures."
+    exit 1
+  fi
+  set -e
 }
 
 function cluster-cmd {
-	server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
+  server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
 }
 
 function log-relation {
-	remote_name=${JUJU_REMOTE_UNIT/\//-} 
-	remote_ip=`relation-get private-address`
-	juju-log "$1: $remote_name, $remote_ip"
+  remote_name=${JUJU_REMOTE_UNIT/\//-} 
+  remote_ip=`relation-get private-address`
+  juju-log "$1: $remote_name, $remote_ip"
 }

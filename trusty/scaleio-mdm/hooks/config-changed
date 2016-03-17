@@ -11,11 +11,8 @@ tb_names=`leader-get tb_names`
 
 cluster_mode=`config-get cluster-mode`
 
-if [ $cluster_mode -eq 3 ]
-then
-	cluster-cmd "class { 'scaleio::cluster': 
-	cluster_mode=>'$cluster_mode', slave_names=>'$slave_names', tb_names=>'$tb_names' }"
-	juju-log "ScaleIO 3-node cluster is created - ips: $mdm_ips"
+if [ $cluster_mode -eq 3 ] ; then
+  cluster-cmd "class { 'scaleio::cluster':
+  cluster_mode=>'$cluster_mode', slave_names=>'$slave_names', tb_names=>'$tb_names' }"
+  juju-log "ScaleIO 3-node cluster is created - ips: $mdm_ips"
 fi
-
-	
