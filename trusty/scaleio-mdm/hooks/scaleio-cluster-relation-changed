@@ -24,7 +24,7 @@ then
 		status-set active
 		juju-log "ScaleIO Standby MDM $remote_name added as $role"
 		juju-log "ScaleIO Cluster stats - cluster_count: $cluster_count, ips: $mdm_ips, slaves: $slave_names, tbs: $tb_names"
-		if (( role == 'manager' ))
+		if (( $role == 'manager' ))
 		then
 			mdm_ips="$mdm_ips,$remote_ip"
 			leader-set mdm_ips=$mdm_ips
