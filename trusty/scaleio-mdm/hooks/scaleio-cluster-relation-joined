@@ -6,32 +6,46 @@ log-relation "ScaleIO Standby MDM joining"
 
 leader=`is-leader`
 mdm_ips=`leader-get mdm_ips`
-slave_names=`leader-get slave_names`
-tb_names=`leader-get tb_names`
-remote_name=${JUJU_REMOTE_UNIT/\//-} 
+remote_name=$(convert-name $JUJU_REMOTE_UNIT)
 remote_ip=`relation-get private-address`
 
-if [ $leader == 'True' ] 
-then
+if [ $leader == 'True' ]; then
 	cluster_count=`leader-get cluster_count`
-	juju-log "ScaleIO cluster count: $cluster_count"
-
-	is_manager=$((cluster_count % 2))
-	relation-set is_manager=$is_manager
-	if (( is_manager == 1 ))
-	then
-		role="manager"
-		slave_names="$remote_name"
-		leader-set slave_names=$slave_names
-	else
-		role="tb"
-		tb_names="$remote_name"
-		leader-set tb_names=$tb_names			
-	fi
-	((cluster_count++))
-	leader-set cluster_count=$cluster_count
-	relation-set mdm_role=$role
+	juju-log "ScaleIO cluster count and standbies: $cluster_count"
+	juju-log "REMOTE NAME 0: $remote_name"
 	
-	juju-log "ScaleIO Standby MDM joining: $remote_name, $role"
+	manager_count=`leader-get manager_count`
+	tb_count=`leader-get tb_count`
+	managers=`leader-get managers`
+	tbs=`leader-get tbs`
+	if (( manager_count > tb_count )); then
+		juju-log "ROLE: role_$remote_name"
+		leader-set role_$remote_name=tb
+		juju-log "STATE: state_$remote_name"
+		tb_count=$((tb_count+1))
+		leader-set tb_count=$tb_count
+		tbs="$remote_name,$tbs"
+		leader-set tbs=$tbs
+		log-relation "ScaleIO Standby MDM is ordered to join as tb"
+	else
+		juju-log "ROLE2: role_$remote_name"
+		leader-set role_$remote_name=manager
+		juju-log "STATE2: state_$remote_name"
+		juju-log "MANAGER COUNT: $manager_count"
+		manager_count=$((manager_count+1))
+		juju-log "MANAGER COUNT2: $manager_count"
+		leader-set manager_count=$manager_count
+		managers="$remote_name,$managers"
+		leader-set managers=$managers
+		juju-log "MANAGER COUNT SET: $manager_count"
+		log-relation "ScaleIO Standby MDM is ordered to join as manager"
+	fi
+	juju-log "REMOTE NAME: $remote_name"
+	relation-set state_$remote_name=ordered
+	juju-log "REMOTE NAME SET"
+		
+	cluster_count=$((cluster_count+1))
+	leader-set cluster_count=$cluster_count
+	
 	juju-log "ScaleIO cluster count and ips: $cluster_count, $mdm_ips"
 fi

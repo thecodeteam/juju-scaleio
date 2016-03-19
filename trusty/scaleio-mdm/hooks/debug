@@ -1,0 +1,48 @@
+#!/bin/bash
+
+JUJU_UNIT_NAME='scaleio-mdm-0'
+JUJU_REMOTE_UNIT='scaleio-mdm-1'
+password='Default_password'
+mdm_ips='10.10.21.13'
+leader='True'
+manager_count=1
+tb_count=1
+cluster_count=2
+role_scale_mdm_1=tb
+state_scale_mdm_1=ordered
+
+private_address='10.10.21.13'
+function relation-get {
+  eval r=\$$1
+  echo rrr $r
+}
+
+function juju-log {
+  echo $1
+}
+
+function leader-set {
+  $1
+}
+
+function relation-set {
+  $1
+}
+
+function is-leader {
+  echo $leader
+}
+
+function config-get {
+  echo $1
+}
+
+function leader-get {
+  echo $1
+}
+
+function unit-get {
+  echo $1
+}
+
+

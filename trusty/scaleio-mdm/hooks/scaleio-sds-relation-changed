@@ -4,7 +4,7 @@ my_dir="$(dirname "$0")"
 
 log-relation "ScaleIO SDS relation changing"
 
-remote_name=${JUJU_REMOTE_UNIT/\//-} 
+remote_name=$(convert-name $JUJU_REMOTE_UNIT)
 remote_ip=`relation-get private-address`
 protection_domain=`relation-get protection-domain`
 fault_set=`relation-get fault-set`

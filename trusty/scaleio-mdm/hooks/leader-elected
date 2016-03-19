@@ -6,8 +6,9 @@ cluster_count=`leader-get cluster_count`
 if [ -z "$cluster_count" ] ; then
   leader-set cluster_count=1
   leader-set mdm_ips=$MY_IP
-  leader-set slave_names=""
-  leader-set tb_names=""
+  leader-set manager_count=0
+  leader-set tb_count=0
+  leader-set current_cluster_mode=1
 
   MY_MDMS=$MY_IP
 

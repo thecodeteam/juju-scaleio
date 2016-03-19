@@ -4,35 +4,47 @@ my_dir="$(dirname "$0")"
 
 log-relation "ScaleIO Standby MDM joining"
 
-remote_name=${JUJU_REMOTE_UNIT/\//-}
+remote_name=$(convert-name $JUJU_REMOTE_UNIT)
 remote_ip=`relation-get private-address`
 leader=`is-leader`
-role_is_set=`relation-get role_is_set`
-role=`relation-get mdm_role`
-is_manager=`relation-get is_manager`
 mdm_ips=`leader-get mdm_ips`
-slave_names=`leader-get slave_names`
-tb_names=`leader-get tb_names`
 cluster_count=`leader-get cluster_count`
 
+if [ $leader == 'True' ]; then
+	role=`leader-get role_$remote_name`
+	state=`relation-get state_$remote_name`
+else
+	role=`leader-get role_$MY_NAME`
+	state=`relation-get state_$MY_NAME`
+fi
+if [ -z "$state" ]; then
+  state='unknown'
+fi
+
+juju-log "STATE AND ROLE in $MY_NAME: $role, $state"
+
 if [ $leader == 'True' ] ; then
-  juju-log "ScaleIO cluster-relation-changed leader, role is $role"
-  if [ -n "$role_is_set" ] ; then
+  log-relation "ScaleIO cluster-relation-changed, leader-side"
+  if [ $state == 'installed' ] ; then
     cluster-cmd "class { 'scaleio::mdm': name=>'$remote_name', ips=>'$remote_ip', role=>'$role' }"
     status-set active
     juju-log "ScaleIO Standby MDM $remote_name added as $role"
-    juju-log "ScaleIO Cluster stats - cluster_count: $cluster_count, ips: $mdm_ips, slaves: $slave_names, tbs: $tb_names"
+    juju-log "ScaleIO Cluster stats - cluster_count: $cluster_count, ips: $mdm_ips"
     if [ $role == 'manager' ] ; then
       mdm_ips="$mdm_ips,$remote_ip"
       leader-set mdm_ips=$mdm_ips
     fi
   fi
 else
-  juju-log "ScaleIO cluster-relation-changed slave"
-  if [ -n "$is_manager" ] ; then
+  log-relation "ScaleIO cluster-relation-changed, slave-side" 
+  if [ $state == 'ordered' ]; then
+  	if [ $role == 'tb' ]; then
+  		is_manager=0
+  	else
+  		is_manager=1
+  	fi
     server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
-    relation-set role_is_set=1
-    relation-set mdm_role=$role
+	relation-set state_$MY_NAME=installed
     status-set active
     juju-log "ScaleIO MDM $MY_NAME changed role to $role"
   fi

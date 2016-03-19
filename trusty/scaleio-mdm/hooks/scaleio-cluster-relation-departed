@@ -1,0 +1,40 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+log-relation "ScaleIO Standby MDM joining"
+
+leader=`is-leader`
+remote_name=$(convert-name $JUJU_REMOTE_UNIT)
+tb_count=`leader-get tb_count`
+manager_count=`leader-get manager_count`
+tbs=`leader-get tbs`
+managers=`leader-get managers`
+
+if [ $leader == 'True' ]; then
+	juju-log "ScaleIO Standby MDM departing"
+	role=`leader-get role_$remote_name`
+	state=`leader-get state_$remote_name`
+	
+	if [ -z "$state" ]; then
+		exit 0
+	fi
+	to_replace="$remote_name,"
+	if [ $role == 'tb' ]; then
+		tb_count=$((tb_count-1))
+		leader-set tb_count=$tb_count
+		tbs=${tbs/$to_replace}
+		leader-set tbs=$tbs
+	else
+		manager_count=$((manager_count-1))
+		leader-set manager_count=$manager_count
+		managers=${managers/$to_replaces}
+		leader-set managers=$managers
+	fi	
+	leader-set role_$remote_name=
+	leader-set state_$remote_name=
+	
+    cluster-cmd "class { 'scaleio::mdm': name=>'$remote_name', ensure=>'absent' }" ignore_error
+	
+	juju-log "ScaleIO Standby MDM removed: $remote_name"
+fi
