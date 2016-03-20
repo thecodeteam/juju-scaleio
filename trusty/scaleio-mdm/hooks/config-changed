@@ -5,19 +5,9 @@ my_dir="$(dirname "$0")"
 juju-log "ScaleIO MDM config changed"
 
 leader=`is-leader`
-cluster_mode=`config-get cluster-mode`
 
-if [ -n "$leader" ] && [ $leader == 'True' ] ; then
-	mdm_ips=`leader-get mdm_ips`
-	manager_count=`leader-get manager_count`
-	tb_count=`leader-get tb_count`
-	slaves=`leader-get managers`
-	slaves=${slaves%,}
-	tbs=`leader-get tbs`
-	tbs=${tbs%,}
-	if [ $cluster_mode -eq 3 ] ; then
-		cluster-cmd "class { 'scaleio::cluster':
-			cluster_mode=>'$cluster_mode', slave_names=>'$slaves', tb_names=>'$tbs' }"
-		juju-log "ScaleIO 3-node cluster is created - ips: $mdm_ips, slaves: $slaves, tbs: $tbs"
-	fi
+# Check if cluster should be resized
+if [ -n "$leader" ] && [[ $leader == 'True' ]]; then
+	juju-log "Request to check and resize cluster because of config changed"
+	resize-cluster
 fi

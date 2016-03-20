@@ -3,12 +3,8 @@ my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
 log-relation "ScaleIO Standby MDM joining"
-
-remote_name=$(convert-name $JUJU_REMOTE_UNIT)
-remote_ip=`relation-get private-address`
 leader=`is-leader`
-mdm_ips=`leader-get mdm_ips`
-cluster_count=`leader-get cluster_count`
+remote_name=$(convert-name $JUJU_REMOTE_UNIT)
 
 if [ $leader == 'True' ]; then
 	role=`leader-get role_$remote_name`
@@ -18,34 +14,45 @@ else
 	state=`relation-get state_$MY_NAME`
 fi
 if [ -z "$state" ]; then
-  state='unknown'
+	state='unknown'
 fi
 
 juju-log "STATE AND ROLE in $MY_NAME: $role, $state"
 
 if [ $leader == 'True' ] ; then
-  log-relation "ScaleIO cluster-relation-changed, leader-side"
-  if [ $state == 'installed' ] ; then
-    cluster-cmd "class { 'scaleio::mdm': name=>'$remote_name', ips=>'$remote_ip', role=>'$role' }"
-    status-set active
-    juju-log "ScaleIO Standby MDM $remote_name added as $role"
-    juju-log "ScaleIO Cluster stats - cluster_count: $cluster_count, ips: $mdm_ips"
-    if [ $role == 'manager' ] ; then
-      mdm_ips="$mdm_ips,$remote_ip"
-      leader-set mdm_ips=$mdm_ips
-    fi
-  fi
+	log-relation "ScaleIO cluster-relation-changed, leader-side"
+  
+	remote_ip=`relation-get private-address`
+	mdm_ips=`leader-get mdm_ips`
+	ready_standbies=`leader-get ready_standbies`
+
+	# Finish adding ready standby
+	if [ $state == 'installed' ] ; then
+		cluster-cmd "class { 'scaleio::mdm': name=>'$remote_name', ips=>'$remote_ip', role=>'$role' }"
+		status-set active
+		if [ $role == 'manager' ] ; then
+			mdm_ips="$mdm_ips,$remote_ip"
+			leader-set mdm_ips=$mdm_ips
+		fi
+		juju-log "ScaleIO Standby MDM $remote_name added as $role, mdm IPs are $mdm_ips"
+		ready_standbies="$remote_name,$ready_standbies"
+		leader-set ready_standbies=$ready_standbies
+		# Check if cluster should be resized
+		resize-cluster
+	fi
 else
-  log-relation "ScaleIO cluster-relation-changed, slave-side" 
-  if [ $state == 'ordered' ]; then
-  	if [ $role == 'tb' ]; then
-  		is_manager=0
-  	else
-  		is_manager=1
-  	fi
-    server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
-	relation-set state_$MY_NAME=installed
-    status-set active
-    juju-log "ScaleIO MDM $MY_NAME changed role to $role"
-  fi
+	log-relation "ScaleIO cluster-relation-changed, slave-side" 
+
+	# Provision a new standby with the required role and notify leader
+	if [ $state == 'ordered' ]; then
+		if [ $role == 'tb' ]; then
+			is_manager=0
+		else
+			is_manager=1
+		fi
+		server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
+		relation-set state_$MY_NAME=installed
+		status-set active
+		juju-log "ScaleIO MDM $MY_NAME changed role to $role"
+	fi
 fi

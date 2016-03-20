@@ -3,11 +3,11 @@ my_dir="$(dirname "$0")"
 set -eu
 
 if [ $# -eq 1 ] && [ $1 == "-d" ] ; then
-  . "$my_dir/debug"
+	. "$my_dir/debug"
 fi
 
 function convert-name {
-  echo ${1//[-\/]/_}
+	echo ${1//[-\/]/_}
 }
 
 MY_IP=`unit-get private-address`
@@ -18,23 +18,52 @@ MY_MDMS=`leader-get mdm_ips`
 if [ -z "$MY_MDMS" ]; then MY_MDMS='127.0.0.1'; fi
 
 function server-cmd {
-  juju-log "Running server-cmd with '$1'"
-  set +e
-  FACTER_mdm_ips=$MY_MDMS puppet apply --modulepath="/home/alevine/shared:/etc/puppet/modules" -e "$1" --detailed-exitcodes
-  local exit_code=$?
-  if [[ $exit_code != 0 && $exit_code != 2 ]]; then
-    juju-log "The run $1 failed. Exit code is $exit_code."
-    if [ -n "$2" ] && [ "$2" != "ignore_error" ]; then exit 1; fi
-  fi
-  set -e
+	juju-log "Running server-cmd with '$1'"
+	set +e
+	FACTER_mdm_ips=$MY_MDMS puppet apply --modulepath="/home/alevine/shared:/etc/puppet/modules" -e "$1" --detailed-exitcodes
+	local exit_code=$?
+	if [[ $exit_code != 0 && $exit_code != 2 ]]; then
+		juju-log "The run $1 failed. Exit code is $exit_code."
+		if ! [ -z "$2" ]; then exit 1; fi
+	fi
+	set -e
 }
 
 function cluster-cmd {
-  server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
+	server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
 }
 
 function log-relation {
-  rel_name=${convert-name $JUJU_REMOTE_UNIT}
-  rel_ip=`relation-get private-address`
-  juju-log "$1: my name is $MY_NAME, relation is $rel_name, $rel_ip"
+	rel_name=${convert-name $JUJU_REMOTE_UNIT}
+	rel_ip=`relation-get private-address`
+	juju-log "$1: my name is $MY_NAME, relation is $rel_name, $rel_ip"
+}
+
+function resize-cluster {
+	# Check and adjust cluster size - should be called from leader only
+	# TODO: Currently only growth + 2 is supported and there should be only one slave and one tb in standbies
+	cluster_mode=`config-get cluster-mode`
+	current_mode=`leader-get cluster_mode`
+	ready_standbies=`leader-get ready_standbies`
+	commas=${ready_standbies//[^,]}
+	standbies_count=${#commas}
+	if [[ $current_mode != $cluster_mode ]] && (( standbies_count == 2 )); then
+		tb_count=`leader-get tb_count`
+		manager_count=`leader-get manager_count`
+		mdm_ips=`leader-get mdm_ips`
+		slaves=`leader-get managers`
+		slaves=${slaves%,}
+		tbs=`leader-get tbs`
+		tbs=${tbs%,}
+		if (( cluster_mode == (current_mode+2) )); then
+			juju-log "ScaleIO cluster is being resized to $cluster_mode - ips: $mdm_ips, slaves: $slaves, tbs: $tbs"
+			cluster-cmd "class { 'scaleio::cluster': \
+				cluster_mode=>'$cluster_mode', slave_names=>'$slaves', tb_names=>'$tbs' }"
+			juju-log "ScaleIO cluster $cluster_mode is created - ips: $mdm_ips, slaves: $slaves, tbs: $tbs"
+			tb_count=$((tb_count-1))
+			manager_count=$((manager_count-1))
+			leader-set resize_cluster=False tbs='' managers='' ready_standbies=' ' tb_count=$tb_count \
+				manager_count=$manager_count cluster_mode=$cluster_mode
+		fi
+	fi
 }
