@@ -5,7 +5,7 @@ options:
     description: "Protection domain name"
   fault-set:
     type: string
-    default: "default_fault_set"
+    default: ""
     description: "Fault set name"
   storage-pools:
     type: string
