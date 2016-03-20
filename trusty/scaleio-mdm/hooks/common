@@ -41,13 +41,13 @@ function log-relation {
 
 function resize-cluster {
 	# Check and adjust cluster size - should be called from leader only
-	# TODO: Currently only growth + 2 is supported and there should be only one slave and one tb in standbies
+	# TODO: Currently only 3-node cluster is checked and only growth is supported
 	cluster_mode=`config-get cluster-mode`
 	current_mode=`leader-get cluster_mode`
 	ready_standbies=`leader-get ready_standbies`
 	commas=${ready_standbies//[^,]}
 	standbies_count=${#commas}
-	if [[ $current_mode != $cluster_mode ]] && (( standbies_count == 2 )); then
+	if [[ $current_mode != $cluster_mode ]] && (( (cluster_mode-current_mode) == standbies_count )); then
 		tb_count=`leader-get tb_count`
 		manager_count=`leader-get manager_count`
 		mdm_ips=`leader-get mdm_ips`
@@ -55,15 +55,13 @@ function resize-cluster {
 		slaves=${slaves%,}
 		tbs=`leader-get tbs`
 		tbs=${tbs%,}
-		if (( cluster_mode == (current_mode+2) )); then
-			juju-log "ScaleIO cluster is being resized to $cluster_mode - ips: $mdm_ips, slaves: $slaves, tbs: $tbs"
-			cluster-cmd "class { 'scaleio::cluster': \
-				cluster_mode=>'$cluster_mode', slave_names=>'$slaves', tb_names=>'$tbs' }"
-			juju-log "ScaleIO cluster $cluster_mode is created - ips: $mdm_ips, slaves: $slaves, tbs: $tbs"
-			tb_count=$((tb_count-1))
-			manager_count=$((manager_count-1))
-			leader-set resize_cluster=False tbs='' managers='' ready_standbies=' ' tb_count=$tb_count \
-				manager_count=$manager_count cluster_mode=$cluster_mode
-		fi
+		juju-log "ScaleIO cluster is being resized to $cluster_mode - ips: $mdm_ips, slaves: $slaves, tbs: $tbs"
+		cluster-cmd "class { 'scaleio::cluster': \
+			cluster_mode=>'$cluster_mode', slave_names=>'$slaves', tb_names=>'$tbs' }"
+		juju-log "ScaleIO cluster $cluster_mode is created - ips: $mdm_ips, slaves: $slaves, tbs: $tbs"
+		tb_count=$((tb_count-standbies_count/2))
+		manager_count=$((manager_count-standbies_count/2))
+		leader-set resize_cluster=False tbs='' managers='' ready_standbies=' ' tb_count=$tb_count \
+			manager_count=$manager_count cluster_mode=$cluster_mode
 	fi
 }
