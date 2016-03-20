@@ -34,7 +34,7 @@ if [ $leader == 'True' ]; then
 	ready_standbies=${ready_standbies/$to_replace}
 	leader-set ready_standbies=$ready_standbies role_$remote_name=
 	
-    cluster-cmd "class { 'scaleio::mdm': name=>'$remote_name', ensure=>'absent' }" ignore_error
+    cluster-cmd "scaleio::mdm { 'mdm $remote_name': name=>'$remote_name', ensure=>'absent' }"
 	
 	juju-log "ScaleIO Standby MDM removed: $remote_name"
 fi

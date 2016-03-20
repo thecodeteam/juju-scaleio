@@ -24,7 +24,6 @@ function server-cmd {
 	local exit_code=$?
 	if [[ $exit_code != 0 && $exit_code != 2 ]]; then
 		juju-log "The run $1 failed. Exit code is $exit_code."
-		if ! [ -z "$2" ]; then exit 1; fi
 	fi
 	set -e
 }
@@ -56,7 +55,7 @@ function resize-cluster {
 		tbs=`leader-get tbs`
 		tbs=${tbs%,}
 		juju-log "ScaleIO cluster is being resized to $cluster_mode - ips: $mdm_ips, slaves: $slaves, tbs: $tbs"
-		cluster-cmd "class { 'scaleio::cluster': \
+		cluster-cmd "scaleio::cluster {'cluster': \
 			cluster_mode=>'$cluster_mode', slave_names=>'$slaves', tb_names=>'$tbs' }"
 		juju-log "ScaleIO cluster $cluster_mode is created - ips: $mdm_ips, slaves: $slaves, tbs: $tbs"
 		tb_count=$((tb_count-standbies_count/2))

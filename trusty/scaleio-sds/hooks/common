@@ -15,10 +15,6 @@ MY_IP=`unit-get private-address`
 MY_NAME=$(convert-name $JUJU_UNIT_NAME)
 MY_PASSWORD=`config-get password`
 
-function convert-name {
-  ${$1/\//-}
-}
-
 function server-cmd {
   juju-log "Running server-cmd with '$1'"
   set +e

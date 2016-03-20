@@ -28,7 +28,7 @@ if [ $leader == 'True' ] ; then
 
 	# Finish adding ready standby
 	if [ $state == 'installed' ] ; then
-		cluster-cmd "class { 'scaleio::mdm': name=>'$remote_name', ips=>'$remote_ip', role=>'$role' }"
+		cluster-cmd "scaleio::mdm { 'mdm $remote_name': name=>'$remote_name', ips=>'$remote_ip', role=>'$role' }"
 		status-set active
 		if [ $role == 'manager' ] ; then
 			mdm_ips="$mdm_ips,$remote_ip"

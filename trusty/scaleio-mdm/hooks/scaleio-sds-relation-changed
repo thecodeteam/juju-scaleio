@@ -13,10 +13,10 @@ device_paths=`relation-get device-paths`
 
 if [ -z "$protection_domain" ]; then exit; fi
 
-cluster-cmd "class { 'scaleio::protection_domain': 
+cluster-cmd "scaleio::protection_domain { 'protection domain $protection_domain': 
 	name=>'$protection_domain', fault_sets=>['$fault_set'], storage_pools=>['$storage_pools'] }"
 
-cluster-cmd "class { 'scaleio::sds':
+cluster-cmd "scaleio::sds { 'sds $remote_name':
 	name=>'$remote_name', ips=>'$remote_ip', protection_domain=>'$protection_domain', \
 	fault_set=>'$fault_set', storage_pools=>'$storage_pools', device_paths=>'$device_paths' }"
 

@@ -2,6 +2,8 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
+juju-log "ScaleIO leader elected"
+
 # Init cluster configuration
 cluster_mode=`leader-get cluster_mode`
 if [ -z "$cluster_mode" ]; then
@@ -10,6 +12,6 @@ if [ -z "$cluster_mode" ]; then
 	server-cmd "class { 'scaleio::mdm_server': master_mdm_name=>'$MY_NAME', mdm_ips=>'$MY_IP', is_manager=>1 }"
 	juju-log "ScaleIO single-node cluster created"
 	server-cmd "scaleio::login { 'first login': password=>'admin' }"
-	server-cmd "class { 'scaleio::cluster': password=>'admin', new_password=>'$MY_PASSWORD' }"
+	server-cmd "scaleio::cluster { 'cluster': password=>'admin', new_password=>'$MY_PASSWORD' }"
 	juju-log "ScaleIO cluster password changed"
 fi
