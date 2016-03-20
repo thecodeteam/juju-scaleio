@@ -1,0 +1,15 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+log-relation "ScaleIO MDM joining"
+
+mdm_ips=`relation-get mdm_ips`
+
+if [ -z "$mdm_ips" ]; then exit; fi
+
+server-cmd "class { 'scaleio::gateway_server': mdm_ips=>'$mdm_ips' }"
+
+status-set active
+
+log-relation "ScaleIO MDM joined"

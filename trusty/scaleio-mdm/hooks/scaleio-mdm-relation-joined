@@ -3,3 +3,6 @@ my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
 log-relation "ScaleIO SDC or GW joined"
+
+mdm_ips=`leader-get mdm_ips`
+relation-set mdm_ips=$mdm_ips
