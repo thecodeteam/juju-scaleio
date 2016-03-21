@@ -1,4 +1,10 @@
 #!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
 
-set -eu
-juju-log "ScaleIO MDM config changed"
+remote_name=$(convert-name $JUJU_REMOTE_UNIT)
+log-relation "ScaleIO SDS $remote_name departing"
+
+cluster-cmd "scaleio::sds { 'sds $remote_name': name=>'$remote_name', ensure=>'absent' }"
+
+log-relation "ScaleIO SDS $remote_name departed"

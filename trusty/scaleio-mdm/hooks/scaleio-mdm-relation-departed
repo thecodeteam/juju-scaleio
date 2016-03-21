@@ -1,4 +1,17 @@
 #!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
 
-set -eu
-juju-log "ScaleIO MDM config changed"
+remote_name=$(convert-name $JUJU_REMOTE_UNIT)
+remote_ip=`relation-get private-address`
+
+if [[ $remote_name == "scaleio_sdc"* ]]; then
+	log-relation "ScaleIO SDC $remote_name departing"
+	
+	cluster-cmd "scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip', ensure=>'absent' }"
+
+	log-relation "ScaleIO SDS $remote_name departed"
+else
+	log-relation "ScaleIO GW departed"
+fi
+	
