@@ -2,6 +2,9 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
+leader=`is-leader`
+if [ $leader != 'True' ]; then exit; fi
+
 log-relation "ScaleIO SDC or GW joined"
 
 mdm_ips=`leader-get mdm_ips`

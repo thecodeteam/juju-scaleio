@@ -10,8 +10,9 @@ protection_domain=`relation-get protection_domain`
 fault_set=`relation-get fault_set`
 storage_pools=`relation-get storage_pools`
 device_paths=`relation-get device_paths`
+leader=`is-leader`
 
-if [ -z "$protection_domain" ]; then exit; fi
+if [ -z "$protection_domain" ] || [ $leader != 'True' ]; then exit; fi
 
 cluster-cmd "scaleio::protection_domain { 'protection domain $protection_domain': 
 	name=>'$protection_domain', fault_sets=>['$fault_set'], storage_pools=>['$storage_pools'] }"
