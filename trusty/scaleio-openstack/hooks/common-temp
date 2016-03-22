@@ -1,0 +1,5 @@
+#!/bin/bash
+
+apt-get install -y puppet
+puppet module install puppetlabs-stdlib
+puppet module install puppetlabs-inifile

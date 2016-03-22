@@ -1,0 +1,8 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+log-relation "ScaleIO client joining"
+
+password=`config-get password`
+relation-set password=$password

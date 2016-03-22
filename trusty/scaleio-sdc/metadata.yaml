@@ -5,6 +5,9 @@ description: |
   ScaleIO SDC service
 tags:
   - storage
+provides:
+  scaleio-sdc:
+    interface: scaleio-sdc
 requires:
   scaleio-mdm:
     interface: scaleio-mdm

@@ -1,0 +1,9 @@
+options:
+  protection-domains:
+    type: string
+    default: "default_protection_domain"
+    description: "Comma-separated list of protection domain names"
+  storage-pools:
+    type: string
+    default: "default_storage_pool"
+    description: "Comma-separated list of storage pool names"

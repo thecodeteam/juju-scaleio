@@ -5,6 +5,9 @@ description: |
   ScaleIO GW service
 tags:
   - storage
+provides:
+  scaleio-gw:
+    interface: scaleio-gw
 requires:
   scaleio-mdm:
     interface: scaleio-mdm

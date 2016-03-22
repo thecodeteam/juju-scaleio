@@ -1,0 +1,13 @@
+name: scaleio-openstack
+summary: ScaleIO OpenStack integration charm
+maintainer: Alexandre Levine <alexandrelevine@gmail.com>
+description: |
+  ScaleIO OpenStack integration charm
+tags:
+  - storage
+  - openstack
+requires:
+  scaleio-sdc:
+    interface: scaleio-sdc
+  scaleio-gw:
+    interface: scaleio-gw    

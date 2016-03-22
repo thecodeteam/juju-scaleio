@@ -1,0 +1,36 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+set -eu
+
+if [ $# -eq 1 ] && [ $1 == "-d" ]
+then
+  . "$my_dir/debug"
+fi
+
+function convert-name {
+  echo ${1//[-\/]/_}
+}
+
+MY_IP=`unit-get private-address`
+MY_NAME=$(convert-name $JUJU_UNIT_NAME)
+MY_PASSWORD=`config-get password`
+
+function server-cmd {
+  juju-log "Running server-cmd with '$1'"
+  set +e
+  puppet apply --modulepath="/home/alevine/shared:/etc/puppet/modules" -e "$1" --detailed-exitcodes
+  local exit_code=$?
+  if [[ $exit_code == 0 || $exit_code == 2 ]]; then
+    juju-log "The run succeeded. Exit code is $exit_code."
+  else
+    juju-log "The run failed. Exit code is $exit_code."
+    exit 1
+  fi
+  set -e
+}
+
+function log-relation {
+  remote_name=$(convert-name $JUJU_REMOTE_UNIT)
+  remote_ip=`relation-get private-address`
+  juju-log "$1: $remote_name, $remote_ip"
+}
