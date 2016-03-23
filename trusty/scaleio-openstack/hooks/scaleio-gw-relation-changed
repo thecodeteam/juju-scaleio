@@ -5,14 +5,14 @@ my_dir="$(dirname "$0")"
 log-relation "ScaleIO GW joining"
 password=`relation-get password`
 remote_ip=`relation-get private-address`
-protection_domains=`config-get protection_domains`
-storage_pools=`config-get storage_pools`
+protection_domains=`config-get protection-domains`
+storage_pools=`config-get storage-pools`
 
 if [ -z "$password" ]; then exit; fi
 
 server-cmd "class { 'scaleio_openstack::nova': }"
 server-cmd "class { 'scaleio_openstack::cinder': 
-	gateway_password => \"$password\", gateway_ip => \"$remote_ip\",
-	protection_domains => \"$protection_domains\", storage_pools => \"$storage_pools\" }"
+	gateway_password => '$password', gateway_ip => '$remote_ip',
+	protection_domains => '$protection_domains', storage_pools => '$storage_pools' }"
 
 log-relation "ScaleIO GW joined"

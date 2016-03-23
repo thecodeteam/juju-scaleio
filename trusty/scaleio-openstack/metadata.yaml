@@ -7,7 +7,5 @@ tags:
   - storage
   - openstack
 requires:
-  scaleio-sdc:
-    interface: scaleio-sdc
   scaleio-gw:
     interface: scaleio-gw
