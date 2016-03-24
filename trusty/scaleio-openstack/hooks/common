@@ -17,6 +17,7 @@ MY_PASSWORD=`config-get password`
 
 function server-cmd {
   juju-log "Running server-cmd with '$1'"
+  local ignore_errors=${2:-0}
   set +e
   puppet apply --modulepath="/home/alevine/shared:/etc/puppet/modules" -e "$1" --detailed-exitcodes
   local exit_code=$?
@@ -24,7 +25,7 @@ function server-cmd {
     juju-log "The run succeeded. Exit code is $exit_code."
   else
     juju-log "The run failed. Exit code is $exit_code."
-    exit 1
+    [[ $ignore_errors != 0 ]] || exit 1
   fi
   set -e
 }
