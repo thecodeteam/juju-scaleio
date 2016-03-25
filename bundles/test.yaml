@@ -1,0 +1,51 @@
+# Deployment of OpenStack and ScaleIO in manual environment.
+# Tested in 5 VirtualBox machines. 1 nova compute node is allocated.
+# nova-cloud-controller, glance, keystone, cinder and mysql should be placed
+# separately because they rewrite haproxy configuration
+# If openstack-dashboard is added it also should be placed separately from these.
+
+# Start with adding machines manually by "juju add-machine ssh:root@<ip>"
+# Use reported machine ids to replace corresponding numbers in machines and services 
+# below.
+
+machines: 
+  "0": 
+    series: trusty
+    constraints: "arch=amd64 cpu-cores=1 mem=3200"
+  "1": 
+    series: trusty
+    constraints: "arch=amd64 cpu-cores=1 mem=1597"
+  "2": 
+    series: trusty
+    constraints: "arch=amd64 cpu-cores=1 mem=1597"
+  "3": 
+    series: trusty
+    constraints: "arch=amd64 cpu-cores=1 mem=1597"
+  "4": 
+    series: trusty
+    constraints: "arch=amd64 cpu-cores=1 mem=1597"
+series: trusty
+services: 
+  keystone: 
+    charm: "cs:trusty/keystone-175"
+    num_units: 1
+    options: 
+      "admin-password": "1"
+      "openstack-origin": "cloud:trusty-juno"
+    expose: true
+    annotations: 
+      "gui-x": "775.0000610551562"
+      "gui-y": "202.99996948242188"
+    to: 
+      - "1"
+  mysql: 
+    charm: "cs:trusty/mysql-36"
+    num_units: 1
+    annotations: 
+      "gui-x": "880.7244262695312"
+      "gui-y": "539.2979583740252"
+    to: 
+      - "2"
+relations:
+  - - "keystone:shared-db"
+    - "mysql:shared-db"
