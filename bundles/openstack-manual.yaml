@@ -1,10 +1,8 @@
-# Deployment of OpenStack and ScaleIO in manual environment.
+# Deployment of OpenStack in manual environment.
 # Tested in 5 VirtualBox machines. 1 nova compute node is allocated.
 # nova-cloud-controller, glance, keystone, cinder and mysql should be placed
 # separately because they rewrite haproxy configuration
 # If openstack-dashboard is added it also should be placed separately from these.
-
-# Kernel for SDC package should correspond to the one in Ubuntu
 
 # Start with adding machines manually by "juju add-machine ssh:root@<ip>"
 # Use reported machine ids to replace corresponding numbers in machines and services 
@@ -97,53 +95,8 @@ services:
       "gui-y": "694"
     to: 
       - "0"
-
-  "scaleio-mdm": 
-    charm: "local:trusty/scaleio-mdm"
-    num_units: 3
-    options: 
-      "cluster-mode": 3
-    annotations: 
-      "gui-x": "774.180908203125"
-      "gui-y": "-391.9740905761719"
-    to: 
-      - "0"
-      - "1"
-      - "2"
-  "scaleio-sds": 
-    charm: "local:trusty/scaleio-sds"
-    num_units: 3
-    annotations: 
-      "gui-x": "1169.180908203125"
-      "gui-y": "-296.9740905761719"
-    to: 
-      - "0"
-      - "1"
-      - "2"
-  "scaleio-sdc": 
-    charm: "local:trusty/scaleio-sdc"
-    num_units: 1
-    annotations: 
-      "gui-x": "768.180908203125"
-      "gui-y": "552.0259094238281"
-    to: 
-      - "0"
-  "scaleio-gw": 
-    charm: "local:trusty/scaleio-gw"
-    num_units: 1
-    annotations: 
-      "gui-x": "1055.180908203125"
-      "gui-y": "237.02590942382812"
-    to: 
-      - "0"
  
 relations:
-  - - "scaleio-mdm:scaleio-sds"
-    - "scaleio-sds:scaleio-sds"
-  - - "scaleio-mdm:scaleio-mdm"
-    - "scaleio-sdc:scaleio-mdm"
-  - - "scaleio-mdm:scaleio-mdm"
-    - "scaleio-gw:scaleio-mdm" 
   - - "nova-cloud-controller:cloud-compute"
     - "nova-compute:cloud-compute"
   - - "nova-cloud-controller:shared-db"

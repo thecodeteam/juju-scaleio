@@ -1,27 +1,11 @@
-# Deployment of OpenStack and ScaleIO in manual environment.
-# Tested in 5 VirtualBox machines. 1 nova compute node is allocated.
-# nova-cloud-controller, glance, keystone, cinder and mysql should be placed
-# separately because they rewrite haproxy configuration
-# If openstack-dashboard is added it also should be placed separately from these.
-
-# Start with adding machines manually by "juju add-machine ssh:root@<ip>"
-# Use reported machine ids to replace corresponding numbers in machines and services 
-# below.
+# Deployment of keystone and mysql manual environment.
+# Tests sanity of juju and environments. Works if keystone catalog succeeds from cli.
 
 machines: 
-  "0": 
-    series: trusty
-    constraints: "arch=amd64 cpu-cores=1 mem=3200"
   "1": 
     series: trusty
     constraints: "arch=amd64 cpu-cores=1 mem=1597"
   "2": 
-    series: trusty
-    constraints: "arch=amd64 cpu-cores=1 mem=1597"
-  "3": 
-    series: trusty
-    constraints: "arch=amd64 cpu-cores=1 mem=1597"
-  "4": 
     series: trusty
     constraints: "arch=amd64 cpu-cores=1 mem=1597"
 series: trusty
