@@ -20,7 +20,7 @@ if [ -z "$MY_MDMS" ]; then MY_MDMS='127.0.0.1'; fi
 function server-cmd {
 	juju-log "Running server-cmd with '$1'"
 	set +e
-	FACTER_mdm_ips=$MY_MDMS puppet apply --modulepath=\"/home/alevine/shared:/etc/puppet/modules\" -e "$1" --detailed-exitcodes
+	FACTER_mdm_ips=$MY_MDMS puppet apply -e "$1" --detailed-exitcodes
 	local exit_code=$?
   if [[ $exit_code == 0 || $exit_code == 2 ]]; then
     juju-log "The run succeeded. Exit code is $exit_code."

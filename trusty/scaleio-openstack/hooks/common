@@ -19,7 +19,7 @@ function server-cmd {
   juju-log "Running server-cmd with '$1'"
   local ignore_errors=${2:-0}
   set +e
-  puppet apply --modulepath="/home/alevine/shared:/etc/puppet/modules" -e "$1" --detailed-exitcodes
+  puppet apply -e "$1" --detailed-exitcodes
   local exit_code=$?
   if [[ $exit_code == 0 || $exit_code == 2 ]]; then
     juju-log "The run succeeded. Exit code is $exit_code."
