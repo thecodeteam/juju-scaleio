@@ -59,7 +59,7 @@ services:
       "gui-x": "775.0000610551562"
       "gui-y": "202.99996948242188"
     to: 
-      - "1"
+      - "0"
   mysql: 
     charm: "cs:trusty/mysql-36"
     num_units: 1
@@ -83,7 +83,7 @@ services:
       "gui-x": "996.0001220703125"
       "gui-y": "-104"
     to: 
-      - "2"
+      - "1"
   cinder: 
     charm: "cs:trusty/cinder-173"
     num_units: 1
@@ -93,10 +93,10 @@ services:
       "gui-x": "1503"
       "gui-y": "-125"
     to: 
-      - "0"
+      - "1"
   "nova-compute": 
     charm: "cs:trusty/nova-compute-176"
-    num_units: 1
+    num_units: 2
     options:
       "virt-type": qemu
       "openstack-origin": "cloud:trusty-juno"
@@ -104,7 +104,8 @@ services:
       "gui-x": "1562.0001220703125"
       "gui-y": "694"
     to: 
-      - "0"
+      - "1"
+      - "2"
 
   "scaleio-mdm": 
     charm: "local:trusty/scaleio-mdm"
@@ -130,12 +131,13 @@ services:
       - "2"
   "scaleio-sdc": 
     charm: "local:trusty/scaleio-sdc"
-    num_units: 1
+    num_units: 2
     annotations: 
       "gui-x": "768.180908203125"
       "gui-y": "552.0259094238281"
     to: 
-      - "0"
+      - "1"
+      - "2"
   "scaleio-gw": 
     charm: "local:trusty/scaleio-gw"
     num_units: 1
@@ -154,12 +156,13 @@ services:
       - "0"
   "scaleio-openstack":
     charm: "local:trusty/scaleio-openstack"
-    num_units: 1
+    num_units: 2
     annotations: 
       "gui-x": "1055.180908203125"
       "gui-y": "337.02590942382812"
     to: 
-      - "0"  
+      - "1"
+      - "2"
  
 relations:
   - - "scaleio-mdm:scaleio-sds"
