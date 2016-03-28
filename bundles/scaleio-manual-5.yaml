@@ -1,0 +1,106 @@
+
+machines: 
+  "0": 
+    series: trusty
+    constraints: "arch=amd64 cpu-cores=1 mem=3200"
+  "1": 
+    series: trusty
+    constraints: "arch=amd64 cpu-cores=1 mem=1597"
+  "2": 
+    series: trusty
+    constraints: "arch=amd64 cpu-cores=1 mem=1597"
+  "3": 
+    series: trusty
+    constraints: "arch=amd64 cpu-cores=1 mem=1597"
+  "4": 
+    series: trusty
+    constraints: "arch=amd64 cpu-cores=1 mem=1597"
+series: trusty
+services: 
+  "scaleio-mdm": 
+    charm: "local:trusty/scaleio-mdm"
+    num_units: 5
+    options: 
+      "cluster-mode": 5
+    annotations: 
+      "gui-x": "774.180908203125"
+      "gui-y": "-391.9740905761719"
+    to: 
+      - "0"
+      - "1"
+      - "2"
+      - "3"
+      - "4"
+  "scaleio-sds": 
+    charm: "local:trusty/scaleio-sds"
+    num_units: 3
+    options:
+      "protection-domain": "pd1"
+    annotations: 
+      "gui-x": "1169.180908203125"
+      "gui-y": "-296.9740905761719"
+    to: 
+      - "0"
+      - "1"
+      - "2"
+  "scaleio-sds-pd2": 
+    charm: "local:trusty/scaleio-sds"
+    num_units: 2
+    options:
+      "protection-domain": "pd2"
+      "fault-set": "fs1"
+    annotations: 
+      "gui-x": "669.180908203125"
+      "gui-y": "-296.9740905761719"
+    to: 
+      - "3"
+      - "4"
+  "scaleio-sdc": 
+    charm: "local:trusty/scaleio-sdc"
+    num_units: 2
+    annotations: 
+      "gui-x": "768.180908203125"
+      "gui-y": "552.0259094238281"
+    to: 
+      - "1"
+      - "2"
+  "scaleio-gw": 
+    charm: "local:trusty/scaleio-gw"
+    num_units: 1
+    annotations: 
+      "gui-x": "1055.180908203125"
+      "gui-y": "237.02590942382812"
+    to: 
+      - "0"
+  "scaleio-gui": 
+    charm: "local:trusty/scaleio-gui"
+    num_units: 1
+    annotations: 
+      "gui-x": "855.180908203125"
+      "gui-y": "437.02590942382812"
+    to: 
+      - "0"
+  "scaleio-openstack":
+    charm: "local:trusty/scaleio-openstack"
+    num_units: 2
+    options:
+      "protection-domains": "pd1"
+    annotations: 
+      "gui-x": "1055.180908203125"
+      "gui-y": "337.02590942382812"
+    to: 
+      - "1"
+      - "2"
+ 
+relations:
+  - - "scaleio-mdm:scaleio-sds"
+    - "scaleio-sds:scaleio-sds"
+  - - "scaleio-mdm:scaleio-sds"
+    - "scaleio-sds-pd2:scaleio-sds"
+  - - "scaleio-mdm:scaleio-mdm"
+    - "scaleio-sdc:scaleio-mdm"
+  - - "scaleio-mdm:scaleio-mdm"
+    - "scaleio-gw:scaleio-mdm" 
+  - - "scaleio-openstack:scaleio-gw"
+    - "scaleio-gw:scaleio-gw" 
+

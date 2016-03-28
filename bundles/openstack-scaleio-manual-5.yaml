@@ -109,7 +109,7 @@ services:
 
   "scaleio-mdm": 
     charm: "local:trusty/scaleio-mdm"
-    num_units: 3
+    num_units: 5
     options: 
       "cluster-mode": 5
     annotations: 
@@ -133,9 +133,9 @@ services:
       - "0"
       - "1"
       - "2"
-  "scaleio-sds": 
+  "scaleio-sds-pd2": 
     charm: "local:trusty/scaleio-sds"
-    num_units: 3
+    num_units: 2
     options:
       "protection-domain": "pd2"
       "fault-set": "fs1"
@@ -174,7 +174,7 @@ services:
     charm: "local:trusty/scaleio-openstack"
     num_units: 2
     options:
-      "protection-domain": "pd1"
+      "protection-domains": "pd1"
     annotations: 
       "gui-x": "1055.180908203125"
       "gui-y": "337.02590942382812"
@@ -185,6 +185,8 @@ services:
 relations:
   - - "scaleio-mdm:scaleio-sds"
     - "scaleio-sds:scaleio-sds"
+  - - "scaleio-mdm:scaleio-sds"
+    - "scaleio-sds-pd2:scaleio-sds"
   - - "scaleio-mdm:scaleio-mdm"
     - "scaleio-sdc:scaleio-mdm"
   - - "scaleio-mdm:scaleio-mdm"

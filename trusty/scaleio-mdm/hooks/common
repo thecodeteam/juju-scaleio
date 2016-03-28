@@ -43,7 +43,7 @@ function log-relation {
 
 function resize-cluster {
 	# Check and adjust cluster size - should be called from leader only
-	# TODO: Currently only 3-node cluster is checked and only growth is supported
+	# TODO: 3 and 5-node clusters are checked (no extra standbies during cluster change) and only growth is supported
 	cluster_mode=`config-get cluster-mode`
 	current_mode=`leader-get cluster_mode`
 	ready_standbies=`leader-get ready_standbies`
