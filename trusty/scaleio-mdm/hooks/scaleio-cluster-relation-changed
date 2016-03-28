@@ -53,6 +53,6 @@ else
 		server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
 		relation-set state_$MY_NAME=installed
 		status-set active
-		juju-log "ScaleIO MDM $MY_NAME changed role to $role"
+		juju-log "ScaleIO MDM $MY_NAME changed role to $role"		
 	fi
 fi

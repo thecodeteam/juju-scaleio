@@ -19,6 +19,7 @@ if [ $leader == 'True' ]; then
 		tb_count=$((tb_count+1))
 		tbs="$remote_name,$tbs"
 		leader-set role_$remote_name=tb tb_count=$tb_count tbs=$tbs
+		leader-set ip_$remote_name=$remote_ip
 		log-relation "ScaleIO Standby MDM is ordered to join as tb"
 	else
 		manager_count=$((manager_count+1))
@@ -27,4 +28,6 @@ if [ $leader == 'True' ]; then
 		log-relation "ScaleIO Standby MDM is ordered to join as manager"
 	fi
 	relation-set state_$remote_name=ordered
+else
+	status-set blocked "ScaleIO MDM is waiting to join cluster"
 fi

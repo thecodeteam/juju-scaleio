@@ -11,3 +11,5 @@ juju-log "ScaleIO MDM installing: $MY_NAME, $MY_IP"
 server-cmd "class { 'scaleio::mdm_server': }"
 
 juju-log "ScaleIO MDM installed"
+
+status-set waiting "Awaiting ScaleIO cluster creation"

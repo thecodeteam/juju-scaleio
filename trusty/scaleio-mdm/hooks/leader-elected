@@ -14,4 +14,16 @@ if [ -z "$cluster_mode" ]; then
 	server-cmd "scaleio::login { 'first login': password=>'admin' }"
 	server-cmd "scaleio::cluster { 'cluster': password=>'admin', new_password=>'$MY_PASSWORD' }"
 	juju-log "ScaleIO cluster password changed"
+	
+	status-set active
+	
+	# Notify MDMs which joined before leader's got elected
+	rids=`relation-ids scaleio-mdm`
+	juju-log "ScaleIO MDM elected leader rids of MDMs: $rids"
+	if [ -n "$rids" ]; then
+		juju-log "ScaleIO MDM elected leader notifies MDMs: $rids"
+		for rid in $( rids ); do
+			relation-set -r $rid notify=true
+	    done
+	fi
 fi
