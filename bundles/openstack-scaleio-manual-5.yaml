@@ -100,7 +100,8 @@ services:
     options:
       "virt-type": qemu
       "openstack-origin": "cloud:trusty-kilo"
-      "enable-live-migration": true
+      "enable-resize": True
+      "enable-live-migration": True
       "migration-auth-type": ssh
     annotations: 
       "gui-x": "1562.0001220703125"
