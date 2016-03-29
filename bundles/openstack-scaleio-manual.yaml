@@ -100,6 +100,7 @@ services:
     options:
       "virt-type": qemu
       "openstack-origin": "cloud:trusty-juno"
+      "enable-live-migration": true
     annotations: 
       "gui-x": "1562.0001220703125"
       "gui-y": "694"
