@@ -5,26 +5,23 @@ my_dir="$(dirname "$0")"
 log-relation "ScaleIO Standby MDM joining"
 
 leader=`is-leader`
-mdm_ips=`leader-get mdm_ips`
 remote_name=$(convert-name $JUJU_REMOTE_UNIT)
 remote_ip=`relation-get private-address`
 
 # Determine required role and order a new standby to provision with it
 if [ $leader == 'True' ]; then
-	manager_count=`leader-get manager_count`
-	tb_count=`leader-get tb_count`
-	managers=`leader-get managers`
-	tbs=`leader-get tbs`
+	managers=`leader-get managers_standby`
+	tbs=`leader-get tbs_standby`
+	manager_count=`size-of $managers`
+	tb_count=`size-of $tbs`
+	juju-log  "Determining future MDM role: $managers, $tbs, $manager_count, $tb_count"
 	if (( manager_count > tb_count )); then
-		tb_count=$((tb_count+1))
 		tbs="$remote_name,$tbs"
-		leader-set role_$remote_name=tb tb_count=$tb_count tbs=$tbs
-		leader-set ip_$remote_name=$remote_ip
+		leader-set role_$remote_name=tb tbs_standby=$tbs
 		log-relation "ScaleIO Standby MDM is ordered to join as tb"
 	else
-		manager_count=$((manager_count+1))
 		managers="$remote_name,$managers"
-		leader-set role_$remote_name=manager manager_count=$manager_count managers=$managers
+		leader-set role_$remote_name=manager managers_standby=$managers
 		log-relation "ScaleIO Standby MDM is ordered to join as manager"
 	fi
 	relation-set state_$remote_name=ordered

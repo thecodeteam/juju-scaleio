@@ -5,36 +5,65 @@ my_dir="$(dirname "$0")"
 log-relation "ScaleIO Standby MDM joining"
 leader=`is-leader`
 
-# Let go a departing standby and adjust counters
+# Let go a departing MDMs and adjust counters
 if [ $leader == 'True' ]; then
-	juju-log "ScaleIO Standby MDM departing"
+	juju-log "ScaleIO MDM departing"
 	
 	remote_name=$(convert-name $JUJU_REMOTE_UNIT)
-	tb_count=`leader-get tb_count`
-	manager_count=`leader-get manager_count`
-	tbs=`leader-get tbs`
-	managers=`leader-get managers`
+	remote_ip=`relation-get private-address`
 	role=`leader-get role_$remote_name`
 	state=`leader-get state_$remote_name`
-	ready_standbies=`leader-get ready_standbies`
-	
-	if [ -z "$state" ]; then
-		exit 0
+	ip_to_remove="$remote_ip,"
+
+	# Remove from existing standbies
+	tbs_standby=`leader-get tbs_standby`
+	managers_standby=`leader-get managers_standby`
+		
+	if [ -n "$state" ] && ( [[ tbs_standby == *$remote_name* ]] || [[ managers_standby == *$remote_name* ]] ); then
+		standby_ips=`leader-get standby_ips`
+		tbs=`leader-get tbs_standby`
+		managers=`leader-get managers_standby`
+		tbs_ready=`leader-get tbs_ready`
+		managers_ready=`leader-get managers_ready`
+		to_remove="$remote_name,"
+		if [ $role == 'tb' ]; then
+			tbs=${tbs/$to_remove}
+			tbs_ready=${tbs_ready/$to_remove}
+			leader-set tbs_standby=$tbs tbs_ready=$tbs_ready
+		else
+			managers=${managers/$to_remove}
+			managers_ready=${managers_ready/$to_remove}
+			standby_ips=${standby_ips/$ip_to_remove}
+			leader-set managers_standby=$managers managers_ready=$managers_ready standby_ips=$standby_ips
+		fi	
+		leader-set role_$remote_name=
+		
+	    cluster-cmd "scaleio::mdm { 'mdm $remote_name': name=>'$remote_name', ensure=>'absent' }"
+		
+		juju-log "ScaleIO Standby MDM removed: $remote_name"
 	fi
-	to_replace="$remote_name,"
-	if [ $role == 'tb' ]; then
-		tb_count=$((tb_count-1))
-		tbs=${tbs/$to_replace}
-		leader-set tbs=$tbs tb_count=$tb_count
-	else
-		manager_count=$((manager_count-1))
-		managers=${managers/$to_replace}
-		leader-set managers=$managers manager_count=$manager_count
-	fi	
-	ready_standbies=${ready_standbies/$to_replace}
-	leader-set ready_standbies=$ready_standbies role_$remote_name=
+
+	# Schedule for removal for cluster MDM
+	tbs=`leader-get tbs`
+	managers=`leader-get managers`
+	mdm_ips=`leader-get mdm_ips`
 	
-    cluster-cmd "scaleio::mdm { 'mdm $remote_name': name=>'$remote_name', ensure=>'absent' }"
+	if [[ $tbs == *$remote_name* ]] || [[ $managers == *$remote_name* ]]; then
+		tbs_leaving=`leader-get tbs_leaving`
+		managers_leaving=`leader-get managers_leaving`
+		ips_leaving=`leader-get ips_leaving`
 	
-	juju-log "ScaleIO Standby MDM removed: $remote_name"
+		if [[ $tbs == *$remote_name* ]]; then
+			tbs_leaving="$remote_name,$tbs_leaving"
+		elif [[ $managers == *$remote_name* ]]; then
+			managers_leaving="$remote_name,$managers_leaving"
+			ips_leaving="$remote_ip,$ips_leaving"
+		fi
+		
+		juju-log "The following MDMs are scheduled for leaving: $tbs_leaving $managers_leaving $ips_leaving"
+		leader-set tbs_leaving=$tbs_leaving managers_leaving=$managers_leaving ips_leaving=$ips_leaving
+		
+		# Check if cluster should be resized
+		resize-cluster
+	fi
 fi

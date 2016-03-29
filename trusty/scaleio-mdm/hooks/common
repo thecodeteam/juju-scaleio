@@ -41,29 +41,111 @@ function log-relation {
 	juju-log "$1: my name is $MY_NAME, relation is $rel_name, $rel_ip"
 }
 
+function size-of {
+	if [ -z "${1-}" ]; then
+		echo 0;
+	else
+		commas=${1//[^,]}
+		count=${#commas}
+		echo $count
+	fi
+}
+
+function cluster-change-list {
+	if (( cluster_mode > current_mode )); then
+		(( mode_dif = ($cluster_mode-$current_mode)/2 ))
+	else
+		(( mode_dif = ($current_mode-$cluster_mode)/2 ))
+	fi
+	nodes=(${1//,/ })
+	result=${nodes[0]}
+	if (( mode_dif == 2 )); then
+		result=$result","${nodes[1]}
+	fi
+	echo $result
+}
+
 function resize-cluster {
 	# Check and adjust cluster size - should be called from leader only
-	# TODO: 3 and 5-node clusters are checked (no extra standbies during cluster change) and only growth is supported
+	# Checking that cluster mode is 1,3 or 5 should be done outside
+	# Reducing cluster can be done only from 5 to 3.
+	# In order to reduce cluster one Manager and one Tiebreaker units should be removed and the cluster mode changed
+	# TODO: When cluster is reduced ScaleIO doesn't support having only 1 manager MDM left when tiebreaker and slave are removed,
+	# so the algorythm here wouldn't work. I believe this should be fixed in ScaleIO, not here.
+	# Also the algorythm for removing works for steps -2 only.
+	
 	cluster_mode=`config-get cluster-mode`
 	current_mode=`leader-get cluster_mode`
-	ready_standbies=`leader-get ready_standbies`
-	commas=${ready_standbies//[^,]}
-	standbies_count=${#commas}
-	if [[ $current_mode != $cluster_mode ]] && (( (cluster_mode-current_mode) == standbies_count )); then
-		tb_count=`leader-get tb_count`
-		manager_count=`leader-get manager_count`
-		mdm_ips=`leader-get mdm_ips`
-		slaves=`leader-get managers`
-		slaves=${slaves%,}
-		tbs=`leader-get tbs`
-		tbs=${tbs%,}
-		juju-log "ScaleIO cluster is being resized to $cluster_mode - ips: $mdm_ips, slaves: $slaves, tbs: $tbs"
+	
+	standby_ips=`leader-get standby_ips`
+	mdm_ips=`leader-get mdm_ips`
+	tbs_ready=`leader-get tbs_ready`
+	managers_ready=`leader-get managers_ready`
+	tbs=`leader-get tbs`
+	managers=`leader-get managers`
+	
+	# Check and grow the Cluster
+	tbs_ready_count=`size-of $tbs_ready`
+	managers_ready_count=`size-of $managers_ready`
+	
+	juju-log "Checking if increase is needed: $tbs_ready, $managers_ready, $tbs_ready_count, $managers_ready_count, $cluster_mode, $current_mode"
+	
+	if [[ $cluster_mode > $current_mode ]] && 
+			(( tbs_ready_count >= (cluster_mode-current_mode)/2 )) && \
+			(( managers_ready_count >= (cluster_mode-current_mode)/2 )); then
+		
+		# Prepare changes lists
+		managers_change=`cluster-change-list $managers_ready`
+		tbs_change=`cluster-change-list $tbs_ready`
+		ips_change=`cluster-change-list $standby_ips`
+		
+		# Issue the cluster command for growing
+		juju-log "ScaleIO cluster is being increased to $cluster_mode - slaves: $managers_change tbs: $tbs_change new ips: $ips_change"
 		cluster-cmd "scaleio::cluster {'cluster': \
-			cluster_mode=>'$cluster_mode', slave_names=>'$slaves', tb_names=>'$tbs' }"
-		juju-log "ScaleIO cluster $cluster_mode is created - ips: $mdm_ips, slaves: $slaves, tbs: $tbs"
-		tb_count=$((tb_count-standbies_count/2))
-		manager_count=$((manager_count-standbies_count/2))
-		leader-set resize_cluster=False tbs='' managers='' ready_standbies=' ' tb_count=$tb_count \
-			manager_count=$manager_count cluster_mode=$cluster_mode
+			cluster_mode=>'$cluster_mode', slave_names=>'$managers_change', tb_names=>'$tbs_change' }"
+
+		# Update lists
+		tbs="$tbs_change,$tbs"
+		managers="$managers_change,$managers"
+		mdm_ips="$ips_change,$mdm_ips"
+		tbs_ready=${tbs_ready/$tbs_change","}
+		managers_ready=${managers_ready/$managers_change","}
+		standby_ips=${standby_ips/$ips_change","}
+		juju-log "ScaleIO cluster $cluster_mode is set - managers: $managers tiebreakers: $tbs IPs: $mdm_ips \
+			remaining ready standby - managers: $managers_ready tiebreakers: $tbs_ready ips: $standby_ips"
+
+		leader-set resize_cluster=False cluster_mode=$cluster_mode mdm_ips=$mdm_ips tbs=$tbs managers=$managers\
+			tbs_ready=$tbs_ready managers_ready=$managers_ready standby_ips=$standby_ips
+	fi
+
+	# Check and reduce the Cluster
+	tbs_leaving=`leader-get tbs_leaving`
+	managers_leaving=`leader-get managers_leaving`
+	ips_leaving=`leader-get ips_leaving`
+	
+	juju-log "Checking if decrease is needed: $tbs_leaving, $managers_leaving, $cluster_mode, $current_mode"
+	if (( (current_mode-cluster_mode) == 2 )) && [ -n "$tbs_leaving" ] && [ -n "$managers_leaving" ]; then
+
+		# Prepare changes lists
+		managers_change=`cluster-change-list $managers_leaving`
+		tbs_change=`cluster-change-list $tbs_leaving`
+		ips_change=`cluster-change-list $ips_leaving`
+
+		# Issue the cluster command for reducing
+		juju-log "ScaleIO cluster is being reduced to $cluster_mode - slaves: $managers_change, tbs: $tbs_change, removing ips: $ips_change"
+		cluster-cmd "scaleio::cluster {'cluster': \
+			cluster_mode=>'$cluster_mode', slave_names=>'$managers_change', tb_names=>'$tbs_change', ensure=>'absent' }"
+		cluster-cmd "scaleio::mdm { 'mdm $tbs_change': name=>'$tbs_change', ensure=>'absent' }"
+		cluster-cmd "scaleio::mdm { 'mdm $managers_change': name=>'$managers_change', ensure=>'absent' }"
+		
+		# Update lists
+		tbs=${tbs/$tbs_change","}
+		managers=${managers/$managers_change","}
+		mdm_ips=${mdm_ips/$ips_change","}
+		juju-log "ScaleIO cluster $cluster_mode is set - managers: $managers, tiebreakers: $tbs, IPs: $mdm_ips; \
+			remaining ready standby - managers: $managers_ready, tiebreakers: $tbs_ready, ips: $standby_ips"
+
+		leader-set resize_cluster=False cluster_mode=$cluster_mode mdm_ips=$mdm_ips tbs=$tbs managers=$managers\
+			tbs_ready=$tbs_ready managers_ready=$managers_ready standby_ips=$standby_ips
 	fi
 }

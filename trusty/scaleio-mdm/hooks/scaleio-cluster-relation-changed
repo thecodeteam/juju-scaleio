@@ -23,20 +23,23 @@ if [ $leader == 'True' ] ; then
 	log-relation "ScaleIO cluster-relation-changed, leader-side"
   
 	remote_ip=`relation-get private-address`
-	mdm_ips=`leader-get mdm_ips`
-	ready_standbies=`leader-get ready_standbies`
+	standby_ips=`leader-get standby_ips`
+	tbs_ready=`leader-get tbs_ready`
+	managers_ready=`leader-get managers_ready`
 
 	# Finish adding ready standby
 	if [ $state == 'installed' ] ; then
 		cluster-cmd "scaleio::mdm { 'mdm $remote_name': name=>'$remote_name', ips=>'$remote_ip', role=>'$role' }"
 		status-set active
 		if [ $role == 'manager' ] ; then
-			mdm_ips="$mdm_ips,$remote_ip"
-			leader-set mdm_ips=$mdm_ips
+			managers_ready="$remote_name,$managers_ready"
+			standby_ips="$remote_ip,$standby_ips"
+			leader-set managers_ready=$managers_ready standby_ips=$standby_ips
+		else
+			tbs_ready="$remote_name,$tbs_ready"
+			leader-set tbs_ready=$tbs_ready
 		fi
-		juju-log "ScaleIO Standby MDM $remote_name added as $role, mdm IPs are $mdm_ips"
-		ready_standbies="$remote_name,$ready_standbies"
-		leader-set ready_standbies=$ready_standbies
+		juju-log "ScaleIO Standby MDM $remote_name added as $role, standby IPs are $standby_ips"
 		# Check if cluster should be resized
 		resize-cluster
 	fi
