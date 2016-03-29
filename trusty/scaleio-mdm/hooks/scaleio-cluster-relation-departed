@@ -2,7 +2,9 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
-log-relation "ScaleIO Standby MDM joining"
+status=`status-get`
+if [ $status == 'terminated']; then exit; fi
+
 leader=`is-leader`
 
 # Let go a departing MDMs and adjust counters

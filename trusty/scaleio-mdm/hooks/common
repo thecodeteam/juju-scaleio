@@ -22,12 +22,12 @@ function server-cmd {
 	set +e
 	FACTER_mdm_ips=$MY_MDMS puppet apply -e "$1" --detailed-exitcodes
 	local exit_code=$?
-  if [[ $exit_code == 0 || $exit_code == 2 ]]; then
-    juju-log "The run succeeded. Exit code is $exit_code."
-  else
-    juju-log "The run failed. Exit code is $exit_code."
-    exit 1
-  fi
+	if [[ $exit_code == 0 || $exit_code == 2 ]]; then
+		juju-log "The run succeeded. Exit code is $exit_code."
+	else
+		juju-log "The run failed. Exit code is $exit_code."
+		exit 1
+	fi
 	set -e
 }
 
@@ -39,6 +39,22 @@ function log-relation {
 	rel_name=${convert-name $JUJU_REMOTE_UNIT}
 	rel_ip=`relation-get private-address`
 	juju-log "$1: my name is $MY_NAME, relation is $rel_name, $rel_ip"
+}
+
+function relation-set-all {
+	leader=`is-leader`
+	if [ $leader != 'True' ]; then exit; fi
+
+	mdm_ips=`leader-get mdm_ips`
+	mdm_ips=${mdm_ips%,}
+
+	rids=`relation-ids scaleio-mdm`
+	if [ -n "$rids" ]; then
+		juju-log "ScaleIO MDM notifies SDCs and Gateways about changes: $rids"
+		for rid in $( echo $rids ); do
+			relation-set -r $rid mdm_ips=$mdm_ips
+	    done
+	fi
 }
 
 function size-of {
@@ -116,6 +132,8 @@ function resize-cluster {
 
 		leader-set resize_cluster=False cluster_mode=$cluster_mode mdm_ips=$mdm_ips tbs=$tbs managers=$managers\
 			tbs_ready=$tbs_ready managers_ready=$managers_ready standby_ips=$standby_ips
+		
+		relation-set-all
 	fi
 
 	# Check and reduce the Cluster
@@ -147,5 +165,7 @@ function resize-cluster {
 
 		leader-set resize_cluster=False cluster_mode=$cluster_mode mdm_ips=$mdm_ips tbs=$tbs managers=$managers\
 			tbs_ready=$tbs_ready managers_ready=$managers_ready standby_ips=$standby_ips
+		
+		relation-set-all
 	fi
 }

@@ -2,6 +2,8 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
+status=`status-get`
+if [ $status == 'terminated']; then exit; fi
 leader=`is-leader`
 if [ $leader != 'True' ]; then exit; fi
 
@@ -10,4 +12,4 @@ log-relation "ScaleIO SDS $remote_name departing"
 
 cluster-cmd "scaleio::sds { 'sds $remote_name': name=>'$remote_name', ensure=>'absent' }"
 
-log-relation "ScaleIO SDS $remote_name departed"
+log-relation "ScaleIO SDS $remote_name departed, $status"

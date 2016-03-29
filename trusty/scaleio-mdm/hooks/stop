@@ -6,4 +6,5 @@ juju-log "ScaleIO MDM removing"
 
 server-cmd "class { 'scaleio::mdm_server': ensure=>absent }"
 
-juju-log "ScaleIO MDM removed"
+status=`status-get`
+juju-log "ScaleIO MDM removed, $status"

@@ -2,6 +2,8 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
+status=`status-get`
+if [ $status == 'terminated']; then exit; fi
 leader=`is-leader`
 if [ $leader != 'True' ]; then exit; fi
 
@@ -11,10 +13,17 @@ remote_ip=`relation-get private-address`
 if [[ $remote_name == "scaleio_sdc"* ]]; then
 	log-relation "ScaleIO SDC $remote_name departing"
 	
-	cluster-cmd "scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip', ensure=>'absent' }"
+	# TODO When scli --remove_sdc command is issued even with --i_am_sure, if SDC is still connected,
+	# the command fails and unit will go to error state. Most probably a bug in ScaleIO.
+	# That's why the following command cannot be employed
+	# cluster-cmd "scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip', ensure=>'absent' }"
+	# Workaround is used:
+	set +e
+	FACTER_mdm_ips=$MY_MDMS puppet apply -e "scaleio::login {'login': password=>$MY_PASSWORD} -> \
+		scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip', ensure=>'absent'}"
+	set -e
 
 	log-relation "ScaleIO SDS $remote_name departed"
 else
 	log-relation "ScaleIO GW departed"
 fi
-	
