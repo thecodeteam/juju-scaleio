@@ -90,6 +90,8 @@ services:
     options:
       "virt-type": qemu
       "openstack-origin": "cloud:trusty-juno"
+      "enable-live-migration": true
+      "migration-auth-type": ssh
     annotations: 
       "gui-x": "1562.0001220703125"
       "gui-y": "694"
