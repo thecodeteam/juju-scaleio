@@ -11,4 +11,3 @@ provides:
 requires:
   scaleio-mdm:
     interface: scaleio-mdm
-    

@@ -7,3 +7,9 @@ options:
     type: string
     default: "default_storage_pool"
     description: "Comma-separated list of storage pool names"
+  manage-keys:
+    type: boolean
+    default: True
+    description: |
+      Create and place ssh-keys for nova-compute to ability of
+      resize-to-another-host and live-migration functionality.
