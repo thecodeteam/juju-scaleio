@@ -26,5 +26,8 @@ if [ $leader == 'True' ]; then
 	fi
 	relation-set state_$remote_name=ordered
 else
-	status-set blocked "ScaleIO MDM is waiting to join cluster"
+	state=`relation-get state_$MY_NAME`
+	if [ -n "$state" ] && [ $state != "installed" ]; then
+		status-set blocked "ScaleIO MDM is waiting to join cluster"
+	fi
 fi
