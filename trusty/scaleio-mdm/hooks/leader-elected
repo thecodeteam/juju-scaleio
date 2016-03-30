@@ -30,6 +30,7 @@ if [ -z "$cluster_mode" ]; then
 	server-cmd "scaleio::login { 'first login': password=>'admin' }"
 	server-cmd "scaleio::cluster { 'cluster': password=>'admin', new_password=>'$MY_PASSWORD' }"
 	juju-log "ScaleIO cluster password changed"
+	leader-set password=$MY_PASSWORD
 	
 	status-set active
 	
