@@ -7,3 +7,5 @@ $my_dir/common-temp
 . "$my_dir/common"
 
 juju-log "ScaleIO for OpenStack module installed"
+
+status-set waiting "Awaiting relation to scaleio-gw"

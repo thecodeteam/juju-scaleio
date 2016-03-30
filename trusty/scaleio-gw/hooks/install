@@ -12,3 +12,5 @@ password=`config-get password`
 server-cmd "class { 'scaleio::gateway_server': password=>'$password' }"
 
 juju-log "ScaleIO GW installed"
+
+status-set waiting "Awaiting relation with scaleio-mdm"

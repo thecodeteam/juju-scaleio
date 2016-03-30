@@ -73,7 +73,7 @@ services:
       "gui-x": "996.0001220703125"
       "gui-y": "-104"
     to: 
-      - "0"
+      - "1"
   cinder: 
     charm: "cs:trusty/cinder-173"
     num_units: 1

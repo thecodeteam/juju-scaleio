@@ -11,3 +11,5 @@ juju-log "ScaleIO SDS installing"
 server-cmd "class { 'scaleio::sds_server': }"
 
 juju-log "ScaleIO SDS installed"
+
+status-set waiting "Awaiting relation to scaleio-mdm"

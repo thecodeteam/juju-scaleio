@@ -11,3 +11,5 @@ juju-log "ScaleIO SDC installing"
 server-cmd "class { 'scaleio::sdc_server': }"
 
 juju-log "ScaleIO SDC installed"
+
+status-set waiting "Awaiting relation to scaleio-mdm"
