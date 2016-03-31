@@ -1,5 +1,5 @@
-# Deployment of ScaleIO in manual environment.
-# Tested in 3 VirtualBox machines. Kernel for SDC package should correspond to the one in Ubuntu
+# Deployment of ScaleIO 3-node cluster in manual environment.
+# Tested in 3 VirtualBox machines.
 
 # Start with adding machines manually by "juju add-machine ssh:root@<ip>"
 # Use reported machine ids to replace corresponding numbers in machines and services 

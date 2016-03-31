@@ -1,10 +1,10 @@
 # Overview
 
-This charm provides deployment ScaleIO MDMs cluster.
+This charm provides deployment of ScaleIO MDMs cluster.
 
 # Usage
 
-Until the charm is in the Charm Store it can be in the following manner:
+Until the charm is in the Charm Store it can be used in the following manner:
 
 1. cd to directory where trusty/scaleio-mdm resides
 2. use command ```juju deploy local:trusty/scaleio-mdm```

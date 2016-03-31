@@ -1,3 +1,9 @@
+# Deployment of ScaleIO 5-node cluster in manual environment.
+# Tested in 5 VirtualBox machines.
+
+# Start with adding machines manually by "juju add-machine ssh:root@<ip>"
+# Use reported machine ids to replace corresponding numbers in machines and services 
+# below.
 
 machines: 
   "0": 

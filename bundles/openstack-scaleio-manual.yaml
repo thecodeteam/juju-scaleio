@@ -1,10 +1,8 @@
-# Deployment of OpenStack and ScaleIO in manual environment.
-# Tested in 5 VirtualBox machines. 1 nova compute node is allocated.
+# Deployment of OpenStack and ScaleIO 3-node cluster in manual environment.
+# Tested in 5 VirtualBox machines. 2 nova compute nodes is allocated.
 # nova-cloud-controller, glance, keystone, cinder and mysql should be placed
 # separately because they rewrite haproxy configuration
 # If openstack-dashboard is added it also should be placed separately from these.
-
-# Kernel for SDC package should correspond to the one in Ubuntu
 
 # Start with adding machines manually by "juju add-machine ssh:root@<ip>"
 # Use reported machine ids to replace corresponding numbers in machines and services 

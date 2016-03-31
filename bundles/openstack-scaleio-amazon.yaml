@@ -1,4 +1,9 @@
-series: trusty
+# Deployment of OpenStack and ScaleIO 3-node cluster in Amazon environment.
+# 2 nova compute nodes is allocated.
+# nova-cloud-controller, glance, keystone, cinder and mysql should be placed
+# separately because they rewrite haproxy configuration
+# If openstack-dashboard is added it also should be placed separately from these.
+
 services:
   cinder:
     charm: "cs:trusty/cinder"
