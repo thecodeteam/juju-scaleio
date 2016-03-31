@@ -1,0 +1,29 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+leader=`is-leader`
+if [ $leader != 'True' ]; then exit; fi
+
+log-relation "ScaleIO MDM relation changing for ScaleIO Gateway"
+
+# Notify ScaleIO OpenStack that SDC is ready
+ready=`relation-get ready`
+sdcs_ready=`leader-get sdcs_ready`
+rids=`relation-ids scaleio-mdm`
+remote_ip=`relation-get private-address`
+if [ $ready == 'true' ]; then
+	sdcs_ready="$remote_ip,$sdcs_ready"
+	leader-set sdcs_ready=$sdcs_ready
+fi
+if [ -n "$rids" ]; then
+	juju-log "Updating ready SDCs list for scaleio-openstack: relation - $rids, sdcs - $sdcs_ready" 
+	for rid in $( echo $rids ); do
+		if [ $rid != $JUJU_RELATION_ID ]; then
+			juju-log "Notifying ScaleIO Gateway: relation - $rid, sdcs - $sdcs_ready" 
+			relation-set -r $rid sdcs_ready=$sdcs_ready
+		fi
+    done
+fi
+
+log-relation "ScaleIO MDM changed for ScaleIO Gateway"

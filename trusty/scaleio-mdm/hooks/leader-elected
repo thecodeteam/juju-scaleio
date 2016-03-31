@@ -15,6 +15,7 @@ my_dir="$(dirname "$0")"
 # tbs_leaving - departed tiebreakers (to be removed during cluster resizing)
 # managers_leaving - departed managers (to be removed during cluster resizing)
 # ips_leaving - IPs of departed members
+# sdcs_ready - IPs of ready SDCs
 
 juju-log "ScaleIO leader elected"
 

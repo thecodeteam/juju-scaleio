@@ -12,4 +12,7 @@ server-cmd "class { 'scaleio::sdc_server': mdm_ip=>'$mdm_ips' }"
 
 status-set active
 
+relation-set ready='true'
+juju-log "ScaleIO SDC reporting it's ready"
+
 log-relation "ScaleIO MDM joined, mdm IPs are $mdm_ips"

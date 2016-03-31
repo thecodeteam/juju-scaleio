@@ -32,7 +32,7 @@ services:
     charm: "cs:trusty/nova-cloud-controller-206"
     num_units: 1
     options: 
-      "openstack-origin": "cloud:trusty-juno"
+      "openstack-origin": "cloud:trusty-liberty"
     annotations: 
       "gui-x": "1141"
       "gui-y": "773"
@@ -42,7 +42,7 @@ services:
     charm: "cs:trusty/glance-170"
     num_units: 1
     options: 
-      "openstack-origin": "cloud:trusty-juno"
+      "openstack-origin": "cloud:trusty-liberty"
     annotations: 
       "gui-x": "1696.0001220703125"
       "gui-y": "239.99996948242188"
@@ -53,13 +53,13 @@ services:
     num_units: 1
     options: 
       "admin-password": "1"
-      "openstack-origin": "cloud:trusty-juno"
+      "openstack-origin": "cloud:trusty-liberty"
     expose: true
     annotations: 
       "gui-x": "775.0000610551562"
       "gui-y": "202.99996948242188"
     to: 
-      - "0"
+      - "1"
   mysql: 
     charm: "cs:trusty/mysql-36"
     num_units: 1
@@ -88,7 +88,7 @@ services:
     charm: "cs:trusty/cinder-173"
     num_units: 1
     options: 
-      "openstack-origin": "cloud:trusty-juno"
+      "openstack-origin": "cloud:trusty-liberty"
     annotations: 
       "gui-x": "1503"
       "gui-y": "-125"
@@ -99,7 +99,7 @@ services:
     num_units: 2
     options:
       "virt-type": qemu
-      "openstack-origin": "cloud:trusty-juno"
+      "openstack-origin": "cloud:trusty-liberty"
       "enable-resize": True
       "enable-live-migration": True
       "migration-auth-type": ssh
