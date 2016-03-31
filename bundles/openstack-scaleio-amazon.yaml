@@ -4,6 +4,7 @@
 # separately because they rewrite haproxy configuration
 # If openstack-dashboard is added it also should be placed separately from these.
 
+series: trusty
 services:
   cinder:
     charm: "cs:trusty/cinder"
