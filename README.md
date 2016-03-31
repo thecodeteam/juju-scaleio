@@ -11,4 +11,4 @@ It includes:
 * scaleio-gui - ScaleIO GUI
 * scaleio-openstack - Connector to OpenStack
 
-Read particular charm's READMEs for details about relations and configuration.
+Read particular charms' READMEs for details about relations and configuration.
