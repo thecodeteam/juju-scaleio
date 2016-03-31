@@ -6,3 +6,12 @@ log-relation "ScaleIO client joining"
 
 password=`config-get password`
 relation-set password=$password
+
+rid=`relation-ids scaleio-mdm`
+if [ -n "$rid" ]; then
+	sdcs_ready=`relation-get -r $rid sdcs_ready`
+	juju-log "Updating ready SDCs list for scaleio-openstack: sdcs - $sdcs_ready" 
+	if [ -n "$sdcs_ready" ]; then
+		relation-set sdcs_ready=$sdcs_ready
+	fi
+fi
