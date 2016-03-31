@@ -10,6 +10,9 @@ It prepares (configures and patches if required) nova-compute and cinder to use 
 
 It supports both block storage volumes operations and nova ephemeral storage for instances including live migration.
 
+Important: ScaleIO supports only 8gb increases for storage allocation so special flavors for storage in multiples of 8
+should be created in OpenStack.
+
 # Usage
 
 Until the charm is in the Charm Store it can be used in the following manner:
