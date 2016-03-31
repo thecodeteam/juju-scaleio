@@ -83,7 +83,7 @@ services:
       "gui-x": "996.0001220703125"
       "gui-y": "-104"
     to: 
-      - "1"
+      - "2"
   cinder: 
     charm: "cs:trusty/cinder-173"
     num_units: 1
@@ -93,7 +93,7 @@ services:
       "gui-x": "1503"
       "gui-y": "-125"
     to: 
-      - "1"
+      - "0"
   "nova-compute": 
     charm: "cs:trusty/nova-compute-176"
     num_units: 2
@@ -107,7 +107,7 @@ services:
       "gui-x": "1562.0001220703125"
       "gui-y": "694"
     to: 
-      - "1"
+      - "0"
       - "2"
 
   "scaleio-mdm": 
@@ -121,7 +121,7 @@ services:
     to: 
       - "0"
       - "1"
-      - "2"
+      - "4"
   "scaleio-sds": 
     charm: "local:trusty/scaleio-sds"
     num_units: 3
@@ -131,7 +131,7 @@ services:
     to: 
       - "0"
       - "1"
-      - "2"
+      - "4"
   "scaleio-sdc": 
     charm: "local:trusty/scaleio-sdc"
     num_units: 2
@@ -139,7 +139,7 @@ services:
       "gui-x": "768.180908203125"
       "gui-y": "552.0259094238281"
     to: 
-      - "1"
+      - "0"
       - "2"
   "scaleio-gw": 
     charm: "local:trusty/scaleio-gw"
@@ -164,7 +164,7 @@ services:
       "gui-x": "1055.180908203125"
       "gui-y": "337.02590942382812"
     to: 
-      - "1"
+      - "0"
       - "2"
  
 relations:
