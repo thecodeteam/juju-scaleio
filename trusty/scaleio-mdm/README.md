@@ -5,35 +5,52 @@ This charm provides deployment ScaleIO MDMs cluster.
 # Usage
 
 Until the charm is in the Charm Store it can be in the following manner:
+
 1. cd to directory where trusty/scaleio-mdm resides
 2. use command ```juju deploy local:trusty/scaleio-mdm```
 
 Example:
 
   Deploy single node cluster
+  ```
 	juju deploy scaleio-mdm
+  ```
   
   Add two more MDMs
+  ```
     juju add-unit scaleio-mdm -n 2
+  ```
   
   Set up 3 node cluster
+  ```
 	juju set scaleio-mdm cluster-mode=3
+  ```
   
   Add another couple of MDMs
+  ```
     juju add-unit scaleio-mdm -n 2
+  ```
   
   Set up 5 node cluster
+  ```
 	juju set scaleio-mdm cluster-mode=5
+  ```
   
   Remove two MDMs (change to particular units)
+  ```
 	juju remove-unit scaleio-mdm/1
 	juju remove-unit scaleio-mdm/2
+  ```
 
   Set up 3 node cluster
+  ```
 	juju set scaleio-mdm cluster-mode=3
+  ```
 
   Change password
+  ```
     juju set scaleio-mdm password="Non_default_password"  
+  ```
 
 # Configuration
 
