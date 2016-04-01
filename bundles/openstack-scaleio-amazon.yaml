@@ -90,12 +90,6 @@ services:
     num_units: 1
     to:
       - "io-1"
-  "scaleio-gui":
-    charm: "local:trusty/scaleio-gui"
-    num_units: 1
-    expose: true
-    to:
-      - "io-1"
   "scaleio-mdm":
     charm: "local:trusty/scaleio-mdm"
     num_units: 3
