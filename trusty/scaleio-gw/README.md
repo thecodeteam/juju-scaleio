@@ -4,6 +4,8 @@ This charm provides deployment of ScaleIO Gateway.
 
 It can be related to client side charms, such as scaleio-openstack.
 
+At least 3gb RAM is required to be set in the machine for ScaleIO Gateway.
+
 # Usage
 
 Until the charm is in the Charm Store it can be used in the following manner:
