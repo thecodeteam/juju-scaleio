@@ -8,8 +8,8 @@ It cannot be placed into containers because it installs kernel driver and does o
 
 Until the charm is in the Charm Store it can be used in the following manner:
 
-1. cd to directory where trusty/scaleio-mdm resides
-2. use command ```juju deploy local:trusty/scaleio-mdm```
+1. cd to directory where trusty/scaleio-sdc resides
+2. use command ```juju deploy local:trusty/scaleio-sdc```
 
 Example:
 

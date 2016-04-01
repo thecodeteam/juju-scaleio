@@ -8,8 +8,8 @@ It's not connected anywhere by means of relations.
 
 Until the charm is in the Charm Store it can be used in the following manner:
 
-1. cd to directory where trusty/scaleio-mdm resides
-2. use command ```juju deploy local:trusty/scaleio-mdm```
+1. cd to directory where trusty/scaleio-gui resides
+2. use command ```juju deploy local:trusty/scaleio-gui```
 
 Example:
 

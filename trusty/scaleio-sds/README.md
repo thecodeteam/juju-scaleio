@@ -10,8 +10,8 @@ Please read ScaleIO guides for requirements on hardware suitable for installatio
 
 Until the charm is in the Charm Store it can be used in the following manner:
 
-1. cd to directory where trusty/scaleio-mdm resides
-2. use command ```juju deploy local:trusty/scaleio-mdm```
+1. cd to directory where trusty/scaleio-sds resides
+2. use command ```juju deploy local:trusty/scaleio-sds```
 
 Example:
 

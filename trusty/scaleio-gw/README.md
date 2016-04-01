@@ -8,8 +8,8 @@ It can be related to client side charms, such as scaleio-openstack.
 
 Until the charm is in the Charm Store it can be used in the following manner:
 
-1. cd to directory where trusty/scaleio-mdm resides
-2. use command ```juju deploy local:trusty/scaleio-mdm```
+1. cd to directory where trusty/scaleio-gw resides
+2. use command ```juju deploy local:trusty/scaleio-gw```
 
 Example:
 
