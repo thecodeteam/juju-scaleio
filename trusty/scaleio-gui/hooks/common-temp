@@ -6,10 +6,10 @@ puppet module install puppetlabs-stdlib
 puppet module install --version "<0.2.0" cloudscaling-scaleio
 
 # TODO: remove when packages will be in ubuntu repo
-curl -H GET http://ec2-52-37-140-129.us-west-2.compute.amazonaws.com/repo.key > /root/repo.key
+curl -H GET http://ec2-52-37-140-129.us-west-2.compute.amazonaws.com/repo.key 2>/dev/null >/root/repo.key
 apt-key add /root/repo.key
 
-cat <<EOF > /etc/apt/sources.list.d/repo.list
+cat 2>/dev/null <<EOF > /etc/apt/sources.list.d/repo.list
 deb http://ec2-52-37-140-129.us-west-2.compute.amazonaws.com/ubuntu trusty main
 deb-src http://ec2-52-37-140-129.us-west-2.compute.amazonaws.com/ubuntu trusty main
 EOF

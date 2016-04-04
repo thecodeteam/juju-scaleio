@@ -4,6 +4,8 @@ This charm provides deployment of ScaleIO SDC.
 
 It cannot be placed into containers because it installs kernel driver and does other low-level operations.
 
+Before deployment you might want to make sure that kernel you have on the nodes for ScaleIO SDC installation (compute and cinder nodes in case of OpenStack deployment) is suitable for the drivers present here: ```ftp://QNzgdxXix:Aw3wFAwAq3@ftp.emc.com/ ```. Look for something like ``` Ubuntu/2.0.5014.0/4.2.0-30-generic ```. Local kernel version can be found with ``` uname -a ``` command.
+
 # Usage
 
 Until the charm is in the Charm Store it can be used in the following manner:

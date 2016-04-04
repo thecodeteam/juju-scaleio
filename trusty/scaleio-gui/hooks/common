@@ -2,11 +2,6 @@
 my_dir="$(dirname "$0")"
 set -eu
 
-if [ $# -eq 1 ] && [ $1 == "-d" ]
-then
-  . "$my_dir/debug"
-fi
-
 function convert-name {
   echo ${1//[-\/]/_}
 }
