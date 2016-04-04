@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# fakes
+function dirname() {
+  echo '.'
+}
+export -f dirname
+
+function unit-get() {
+  sleep 0
+}
+export -f unit-get
+
+function config-get() {
+  sleep 0
+}
+export -f config-get
+
+function juju-log() {
+  sleep 0
+}
+export -f juju-log
