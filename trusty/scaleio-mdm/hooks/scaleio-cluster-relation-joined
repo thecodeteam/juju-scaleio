@@ -6,8 +6,12 @@ log-relation "ScaleIO Standby MDM joining"
 
 leader=`is-leader`
 remote_name=$(convert-name $JUJU_REMOTE_UNIT)
-remote_ip=`relation-get private-address`
-
+remote_ip=$(relation-get mgmt_ip_$remote_name)
+my_mgmt_ip=$MY_IP
+# Set our management IP because MaaS-based Juju returns a DNS name
+if [ -z "$(mgmt_ip_$MY_NAME)" ]; then
+	relation-set mgmt_ip_$MY_NAME=$MY_IP
+fi
 # Determine required role and order a new standby to provision with it
 if [ $leader == 'True' ]; then
 	managers=`leader-get managers_standby`

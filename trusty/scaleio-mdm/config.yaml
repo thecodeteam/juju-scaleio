@@ -7,3 +7,7 @@ options:
     type: int
     default: 1
     description: "Cluster mode. Valid values: 1,3,5"
+  mgmt-iface:
+    type: string
+    default: eth0
+    description: "Interface to use when determining MDM IP Address"

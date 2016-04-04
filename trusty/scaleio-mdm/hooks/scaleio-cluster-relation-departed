@@ -12,7 +12,7 @@ if [ $leader == 'True' ]; then
 	juju-log "ScaleIO MDM departing"
 	
 	remote_name=$(convert-name $JUJU_REMOTE_UNIT)
-	remote_ip=`relation-get private-address`
+	remote_ip=$(relation-get mgmt_ip_$remote_name)
 	role=`leader-get role_$remote_name`
 	state=`leader-get state_$remote_name`
 	ip_to_remove="$remote_ip,"

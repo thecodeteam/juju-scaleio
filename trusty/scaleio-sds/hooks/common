@@ -10,8 +10,8 @@ fi
 function convert-name {
   echo ${1//[-\/]/_}
 }
-
-MY_IP=`unit-get private-address`
+STORAGE_IFACE=`config-get storage-iface`
+MY_IP=$(ifconfig $STORAGE_IFACE | awk '/inet addr/{print substr($2,6)}')
 MY_NAME=$(convert-name $JUJU_UNIT_NAME)
 MY_PASSWORD=`config-get password`
 
@@ -36,6 +36,7 @@ function cluster-cmd {
 function relation-set-all {
   rid=`relation-ids scaleio-sds`
   if [ -z "$rid" ]; then return; fi
+  relation-set -r $rid private-address=$MY_IP
   relation-set -r $rid protection_domain=$(config-get protection-domain)
   relation-set -r $rid fault_set=$(config-get fault-set)
   relation-set -r $rid storage_pools=$(config-get storage-pools)

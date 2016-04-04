@@ -22,7 +22,7 @@ juju-log "STATE AND ROLE in $MY_NAME: $role, $state"
 if [ $leader == 'True' ] ; then
 	log-relation "ScaleIO cluster-relation-changed, leader-side"
   
-	remote_ip=`relation-get private-address`
+	remote_ip=$(relation-get mgmt_ip_$remote_name)
 	standby_ips=`leader-get standby_ips`
 	tbs_ready=`leader-get tbs_ready`
 	managers_ready=`leader-get managers_ready`
