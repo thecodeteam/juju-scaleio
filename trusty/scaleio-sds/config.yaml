@@ -15,3 +15,7 @@ options:
     type: string
     default: "/dev/sdb"
     description: "Comma-separated list of device paths"
+  storage-iface:
+    type: string
+    default: "eth0"
+    description: "Interface to use for SDS communicaton."

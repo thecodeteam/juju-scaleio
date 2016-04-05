@@ -9,8 +9,8 @@ fi
 function convert-name {
 	echo ${1//[-\/]/_}
 }
-
-MY_IP=`unit-get private-address`
+MGMT_IFACE=`config-get mgmt-iface`
+MY_IP=$(ifconfig $MGMT_IFACE | awk '/inet addr/{print substr($2,6)}')
 MY_NAME=$(convert-name $JUJU_UNIT_NAME)
 echo $MY_NAME
 MY_PASSWORD=`config-get password`
@@ -37,7 +37,7 @@ function cluster-cmd {
 
 function log-relation {
 	rel_name=${convert-name $JUJU_REMOTE_UNIT}
-	rel_ip=`relation-get private-address`
+	rel_ip=$(relation-get mgmt_ip_$rel_name)
 	juju-log "$1: my name is $MY_NAME, relation is $rel_name, $rel_ip"
 }
 
