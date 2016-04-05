@@ -7,5 +7,8 @@ log-relation "ScaleIO SDC or GW joined"
 leader=`is-leader`
 if [ $leader != 'True' ]; then exit; fi
 
-mdm_ips=`leader-get mdm_ips`
-relation-set mdm_ips=$mdm_ips
+ips=`leader-get mdm_internal_ips`
+relation-set mdm_internal_ips=$ips
+
+ips=`leader-get mdm_management_ips`
+relation-set mdm_management_ips=$ips

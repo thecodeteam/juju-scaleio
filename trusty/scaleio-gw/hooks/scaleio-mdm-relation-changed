@@ -4,12 +4,12 @@ my_dir="$(dirname "$0")"
 
 log-relation "ScaleIO MDM relation changing for ScaleIO Gateway"
 
-mdm_ips=`relation-get mdm_ips`
+mdm_management_ips=`relation-get mdm_management_ips`
 
-if [ -z "$mdm_ips" ]; then exit; fi
+if [ -z "$mdm_management_ips" ]; then exit; fi
 
-log-relation "ScaleIO Gateway setting up mdm_ips to $mdm_ips"
-server-cmd "class { 'scaleio::gateway_server': mdm_ips=>'$mdm_ips' }"
+log-relation "ScaleIO Gateway setting up mdm_ips to $mdm_management_ips"
+server-cmd "class { 'scaleio::gateway_server': mdm_ips=>'$mdm_management_ips' }"
 
 status-set active
 

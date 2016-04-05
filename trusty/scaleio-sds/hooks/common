@@ -10,10 +10,21 @@ fi
 function convert-name {
   echo ${1//[-\/]/_}
 }
-STORAGE_IFACE=`config-get storage-iface`
-MY_IP=$(ifconfig $STORAGE_IFACE | awk '/inet addr/{print substr($2,6)}')
+INTERNAL_IFACE=`config-get internal-iface`
+if [ -z "$INTERNAL_IFACE" ]; then
+  INTERNAL_IP=`unit-get private-address`
+else
+  INTERNAL_IP=`ifconfig $INTERNAL_IFACE | awk '/inet addr/{print substr($2,6)}'`
+fi
 MY_NAME=$(convert-name $JUJU_UNIT_NAME)
 MY_PASSWORD=`config-get password`
+
+STORAGE_IFACE=`config-get storage-iface`
+if [ -n "$STORAGE_IFACE" ]; then
+  STORAGE_IP=`ifconfig $STORAGE_IFACE | awk '/inet addr/{print substr($2,6)}'`
+else
+  STORAGE_IP=''
+fi
 
 function server-cmd {
   juju-log "Running server-cmd with '$1'"
@@ -35,8 +46,9 @@ function cluster-cmd {
 
 function relation-set-all {
   rid=`relation-ids scaleio-sds`
-  if [ -z "$rid" ]; then return; fi
-  relation-set -r $rid private-address=$MY_IP
+  if [ -z "$rid" ]; then return ; fi
+  relation-set -r $rid sds_internal_ip_$MY_NAME=$INTERNAL_IP
+  relation-set -r $rid sds_storage_ip_$MY_NAME=$STORAGE_IP
   relation-set -r $rid protection_domain=$(config-get protection-domain)
   relation-set -r $rid fault_set=$(config-get fault-set)
   relation-set -r $rid storage_pools=$(config-get storage-pools)

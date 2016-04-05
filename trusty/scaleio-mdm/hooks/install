@@ -6,7 +6,7 @@ $my_dir/common-temp
 
 . "$my_dir/common"
 
-juju-log "ScaleIO MDM installing: $MY_NAME, $MY_IP"
+juju-log "ScaleIO MDM installing: $MY_NAME, $MY_INTERNAL_IP"
 
 server-cmd "class { 'scaleio::mdm_server': }"
 

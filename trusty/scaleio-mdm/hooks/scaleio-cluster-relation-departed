@@ -12,17 +12,20 @@ if [ $leader == 'True' ]; then
 	juju-log "ScaleIO MDM departing"
 	
 	remote_name=$(convert-name $JUJU_REMOTE_UNIT)
-	remote_ip=$(relation-get mgmt_ip_$remote_name)
+	remote_internal_ip=$(relation-get internal_ip_$remote_name)
+	remote_management_ip=$(relation-get management_ip_$remote_name)
 	role=`leader-get role_$remote_name`
 	state=`leader-get state_$remote_name`
-	ip_to_remove="$remote_ip,"
+	remote_ip_to_remove="$remote_internal_ip,"
+	management_ip_to_remove="$remote_management_ip,"
 
 	# Remove from existing standbies
 	tbs_standby=`leader-get tbs_standby`
 	managers_standby=`leader-get managers_standby`
-		
+
 	if [ -n "$state" ] && ( [[ tbs_standby == *$remote_name* ]] || [[ managers_standby == *$remote_name* ]] ); then
-		standby_ips=`leader-get standby_ips`
+		standby_internal_ips=`leader-get standby_internal_ips`
+		standby_management_ips=`leader-get standby_management_ips`
 		tbs=`leader-get tbs_standby`
 		managers=`leader-get managers_standby`
 		tbs_ready=`leader-get tbs_ready`
@@ -35,36 +38,38 @@ if [ $leader == 'True' ]; then
 		else
 			managers=${managers/$to_remove}
 			managers_ready=${managers_ready/$to_remove}
-			standby_ips=${standby_ips/$ip_to_remove}
-			leader-set managers_standby=$managers managers_ready=$managers_ready standby_ips=$standby_ips
-		fi	
+			standby_internal_ips=${standby_internal_ips/$remote_ip_to_remove}
+			standby_management_ips=${standby_management_ips/$management_ip_to_remove}
+			leader-set managers_standby=$managers managers_ready=$managers_ready standby_internal_ips=$standby_internal_ips standby_management_ips=$standby_management_ips
+		fi
 		leader-set role_$remote_name=
-		
-	    cluster-cmd "scaleio::mdm { 'mdm $remote_name': name=>'$remote_name', ensure=>'absent' }"
-		
+
+		cluster-cmd "scaleio::mdm { 'mdm $remote_name': name=>'$remote_name', ensure=>'absent' }"
+
 		juju-log "ScaleIO Standby MDM removed: $remote_name"
 	fi
 
 	# Schedule for removal for cluster MDM
 	tbs=`leader-get tbs`
 	managers=`leader-get managers`
-	mdm_ips=`leader-get mdm_ips`
-	
+
 	if [[ $tbs == *$remote_name* ]] || [[ $managers == *$remote_name* ]]; then
 		tbs_leaving=`leader-get tbs_leaving`
 		managers_leaving=`leader-get managers_leaving`
-		ips_leaving=`leader-get ips_leaving`
-	
+		internal_ips_leaving=`leader-get internal_ips_leaving`
+		management_ips_leaving=`leader-get management_ips_leaving`
+
 		if [[ $tbs == *$remote_name* ]]; then
 			tbs_leaving="$remote_name,$tbs_leaving"
 		elif [[ $managers == *$remote_name* ]]; then
 			managers_leaving="$remote_name,$managers_leaving"
-			ips_leaving="$remote_ip,$ips_leaving"
+			internal_ips_leaving="$remote_internal_ip,$internal_ips_leaving"
+			management_ips_leaving="$remote_management_ip,$management_ips_leaving"
 		fi
-		
-		juju-log "The following MDMs are scheduled for leaving: $tbs_leaving $managers_leaving $ips_leaving"
-		leader-set tbs_leaving=$tbs_leaving managers_leaving=$managers_leaving ips_leaving=$ips_leaving
-		
+
+		juju-log "The following MDMs are scheduled for leaving: $tbs_leaving $managers_leaving $internal_ips_leaving ($management_ips_leaving)"
+		leader-set tbs_leaving=$tbs_leaving managers_leaving=$managers_leaving internal_ips_leaving=$internal_ips_leaving management_ips_leaving=$management_ips_leaving
+
 		# Check if cluster should be resized
 		resize-cluster
 	fi

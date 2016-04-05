@@ -15,7 +15,14 @@ options:
     type: string
     default: "/dev/sdb"
     description: "Comma-separated list of device paths"
+  internal-iface:
+    type: string
+    default:
+    description: |
+      Interface to use for SDS-MDM and SDS-SDS communicaton.
+      By default Juju will automatically determine internal IPs.
   storage-iface:
     type: string
-    default: "eth0"
-    description: "Interface to use for SDS communicaton."
+    default:
+    description: |
+      Interface to use for SDS-SDC communicaton.

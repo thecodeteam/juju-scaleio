@@ -13,13 +13,13 @@ sdcs_ready=`leader-get sdcs_ready`
 
 if [[ $remote_name == "scaleio_sdc"* ]]; then
 	log-relation "ScaleIO SDC $remote_name departing"
-	
+
 	if ! [ -z "${sdcs_ready-}" ]; then
 		to_remove="$remote_ip,"
 		sdcs_ready=${sdcs_ready/$to_remove}
 		leader-set sdcs_ready=$sdcs_ready
 	fi
-		
+
 	# TODO When scli --remove_sdc command is issued even with --i_am_sure, if SDC is still connected,
 	# the command fails and unit will go to error state. Most probably a bug in ScaleIO.
 	# That's why the following command cannot be employed

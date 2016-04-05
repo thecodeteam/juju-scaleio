@@ -7,7 +7,20 @@ options:
     type: int
     default: 1
     description: "Cluster mode. Valid values: 1,3,5"
-  mgmt-iface:
+  internal-iface:
     type: string
-    default: eth0
-    description: "Interface to use when determining MDM IP Address"
+    default:
+    description: |
+      Interface used for MDM control communications with SDSs and
+      SDCs, used to convey data migration decisions, but no user data passes
+      through the MDM. Must be on the same network as the data network.
+      Must be externally accessible if no MDM Management interface is used.
+      By default Juju will automatically determine internal IPs.
+  management-iface:
+    type: string
+    default:
+    description: |
+      Optional, but recommended;
+      Interface that can be used to provide access to ScaleIO
+      management applications, such as CLI, GUI, REST API,
+      OpenStack. IP address of this interface must be externally accessible.
