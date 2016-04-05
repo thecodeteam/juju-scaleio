@@ -48,21 +48,21 @@ function cluster-cmd {
 }
 
 function log-relation {
-	remote_name=${convert-name $JUJU_REMOTE_UNIT}
-	remote_internal_ip=$(relation-get internal_ip_$remote_name)
+	local remote_name=${convert-name $JUJU_REMOTE_UNIT}
+	local remote_internal_ip=$(relation-get internal_ip_$remote_name)
 	juju-log "$1: my name is $MY_NAME, relation is $remote_name, $remote_internal_ip"
 }
 
 function relation-set-all {
-	leader=`is-leader`
+	local leader=`is-leader`
 	if [ $leader != 'True' ]; then exit; fi
 
-	mdm_internal_ips=`leader-get mdm_internal_ips`
-	mdm_internal_ips=${mdm_internal_ips%,}
-	mdm_management_ips=`leader-get mdm_management_ips`
-	mdm_management_ips=${mdm_management_ips%,}
+	local mdm_internal_ips=`leader-get mdm_internal_ips`
+	local mdm_internal_ips=${mdm_internal_ips%,}
+	local mdm_management_ips=`leader-get mdm_management_ips`
+	local mdm_management_ips=${mdm_management_ips%,}
 
-	rids=`relation-ids scaleio-mdm`
+	local rids=`relation-ids scaleio-mdm`
 	if [ -n "$rids" ]; then
 		juju-log "ScaleIO MDM notifies SDCs and Gateways about changes: $rids"
 		for rid in $( echo $rids ); do
@@ -73,13 +73,13 @@ function relation-set-all {
 }
 
 function size-of {
-	if [ -z "${1-}" ]; then
-		echo 0;
-	else
-		commas=${1//[^,]}
-		count=${#commas}
-		echo $count
-	fi
+  if [ -z "${1-}" ]; then
+    echo 0;
+  else
+    local commas=${1//[^,]}
+    local count=${#commas}
+    echo $count
+  fi
 }
 
 function cluster-change-list {
@@ -88,8 +88,8 @@ function cluster-change-list {
 	else
 		(( mode_dif = ($current_mode-$cluster_mode)/2 ))
 	fi
-	nodes=(${1//,/ })
-	result=${nodes[0]}
+	local nodes=(${1//,/ })
+	local result=${nodes[0]}
 	if (( mode_dif == 2 )); then
 		result=$result","${nodes[1]}
 	fi
@@ -104,6 +104,7 @@ function resize-cluster {
 	# TODO: When cluster is reduced ScaleIO doesn't support having only 1 manager MDM left when tiebreaker and slave are removed,
 	# so the algorythm here wouldn't work. I believe this should be fixed in ScaleIO, not here.
 	# Also the algorythm for removing works for steps -2 only.
+	# TODO: Define all variables as local
 
 	cluster_mode=`config-get cluster-mode`
 	current_mode=`leader-get cluster_mode`

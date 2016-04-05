@@ -45,7 +45,7 @@ function cluster-cmd {
 }
 
 function relation-set-all {
-  rid=`relation-ids scaleio-sds`
+  local rid=`relation-ids scaleio-sds`
   if [ -z "$rid" ]; then return ; fi
   relation-set -r $rid sds_internal_ip_$MY_NAME=$INTERNAL_IP
   relation-set -r $rid sds_storage_ip_$MY_NAME=$STORAGE_IP
@@ -56,7 +56,7 @@ function relation-set-all {
 }
 
 function log-relation {
-  remote_name=$(convert-name $JUJU_REMOTE_UNIT)
-  remote_ip=`relation-get private-address`
+  local remote_name=$(convert-name $JUJU_REMOTE_UNIT)
+  local remote_ip=`relation-get private-address`
   juju-log "$1: $remote_name, $remote_ip"
 }

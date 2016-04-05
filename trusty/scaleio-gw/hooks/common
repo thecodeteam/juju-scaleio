@@ -34,7 +34,7 @@ function cluster-cmd {
 }
 
 function log-relation {
-  remote_name=$(convert-name $JUJU_REMOTE_UNIT)
-  remote_ip=`relation-get private-address`
+  local remote_name=$(convert-name $JUJU_REMOTE_UNIT)
+  local remote_ip=`relation-get private-address`
   juju-log "$1: $remote_name, $remote_ip"
 }
