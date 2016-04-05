@@ -6,6 +6,8 @@ juju-log "ScaleIO MDM config changed"
 
 leader=`is-leader`
 
+# TODO: handle config interface changes (management-iface/internal-iface) (also check what happens in resize-cluster)
+
 # Check if cluster should be resized
 if [ -n "$leader" ] && [[ $leader == 'True' ]]; then
 	old_password=`leader-get password`
