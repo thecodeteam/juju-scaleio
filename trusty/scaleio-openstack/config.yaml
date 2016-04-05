@@ -7,3 +7,11 @@ options:
     type: string
     default: "default_storage_pool"
     description: "Comma-separated list of storage pool names"
+  provisioning-type:
+    type: string
+    default: "ThickProvisioned"
+    description: |
+      Define volumes as thick, where the entire capacity
+      is provisioned for storage, or thin, where only the
+      capacity currently needed is provisioned.
+      Can be "ThickProvisioned" or "ThinProvisioned".

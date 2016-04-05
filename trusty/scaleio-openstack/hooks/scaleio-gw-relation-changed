@@ -7,6 +7,7 @@ password=`relation-get password`
 remote_ip=`relation-get private-address`
 protection_domains=`config-get protection-domains`
 storage_pools=`config-get storage-pools`
+provisioning_type=`config-get provisioning-type`
 sdcs_ready=`relation-get sdcs_ready`
 
 juju-log "ScaleIO OpenStack - ready sdcs: $sdcs_ready"
@@ -19,7 +20,7 @@ if [ -z "$password" ]; then exit; fi
 server-cmd "class { 'scaleio_openstack::nova':
   gateway_password => '$password', gateway_ip => '$remote_ip',
   protection_domains => '$protection_domains', storage_pools => '$storage_pools',
-  nova_compute_conf_file_name => 'nova-compute.conf',
+  provisioning_type => $provisioning_type, nova_compute_conf_file_name => 'nova-compute.conf',
 }"
 server-cmd "class { 'scaleio_openstack::cinder':
   gateway_password => '$password', gateway_ip => '$remote_ip',
