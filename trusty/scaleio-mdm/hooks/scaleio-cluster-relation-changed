@@ -55,6 +55,7 @@ else
 			is_manager=0
 		else
 			is_manager=1
+			relation-set management_ip_$MY_NAME=$MY_MANAGEMENT_IP
 		fi
 		server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
 		relation-set state_$MY_NAME=installed

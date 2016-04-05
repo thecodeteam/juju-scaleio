@@ -17,7 +17,7 @@ if [ -z "$protection_domain" ] || [ $leader != 'True' ]; then exit; fi
 
 if [ -n "$remote_storage_ip" ] ; then
   ips="$remote_internal_ip,$remote_storage_ip"
-  ip_roles='all,sdc_only'
+  ip_roles='sds_only,sdc_only'
 else
   ips="$remote_internal_ip"
   ip_roles='all'

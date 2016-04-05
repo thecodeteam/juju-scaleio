@@ -9,7 +9,6 @@ remote_name=$(convert-name $JUJU_REMOTE_UNIT)
 # Set our management IP because MaaS-based Juju returns a DNS name
 if [ -z "$(relation-get internal_ip_$MY_NAME)" ]; then
 	relation-set internal_ip_$MY_NAME=$MY_INTERNAL_IP
-	relation-set management_ip_$MY_NAME=$MY_MANAGEMENT_IP
 fi
 
 # Determine required role and order a new standby to provision with it
