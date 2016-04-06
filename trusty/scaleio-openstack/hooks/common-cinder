@@ -6,12 +6,23 @@ function update-cinder() {
     rel_param="-r $1"
   fi
 
-  local password=`relation-get $rel_param password $JUJU_UNIT_NAME`
-  local remote_ip=`relation-get $rel_param private-address $JUJU_UNIT_NAME`
+  rid_gw=`relation-ids scaleio-gw`
+  if [ -z "$rid_gw" ] ; then
+    return 0
+  fi
+  # TODO: think about 'head -1'. maybe it is not correct.
+  unit_gw=`relation-list -r $rid_gw | head -1`
+
+  local password=`relation-get -r $rid_gw password $unit_gw`
+  # TODO: change provate-address to 'vip' for hacluster/haproxy
+  local remote_ip=`relation-get -r $rid_gw private-address $unit_gw`
   local protection_domains=`config-get protection-domains`
   local storage_pools=`config-get storage-pools`
 
-  tmp_cfg=$(mktemp)
+  tmp_cfg='/etc/cinder/__cinder-scaleio.conf'
+  rm -f $tmp_cfg
+  touch $tmp_cfg
+  chmod 600 $tmp_cfg
 
   server-cmd "class { 'scaleio_openstack::cinder':
     gateway_password => '$password', gateway_ip => '$remote_ip',
