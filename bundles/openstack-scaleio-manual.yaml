@@ -157,15 +157,11 @@ services:
       - "0"
   "scaleio-openstack":
     charm: "local:trusty/scaleio-openstack"
-    num_units: 2
     options:
       "provisioning-type": "thin"
     annotations: 
       "gui-x": "1055.180908203125"
       "gui-y": "337.02590942382812"
-    to: 
-      - "0"
-      - "2"
  
 relations:
   - - "scaleio-mdm:scaleio-sds"

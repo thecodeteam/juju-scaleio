@@ -81,10 +81,6 @@ services:
       - "compute-2"
   "scaleio-openstack":
     charm: "local:trusty/scaleio-openstack"
-    num_units: 2
-    to:
-      - "compute-1"
-      - "compute-2"
   "scaleio-gw":
     charm: "local:trusty/scaleio-gw"
     num_units: 1
