@@ -98,7 +98,7 @@ services:
       "gui-y": "694"
     to: 
       - "0"
- 
+
 relations:
   - - "nova-cloud-controller:cloud-compute"
     - "nova-compute:cloud-compute"
@@ -134,5 +134,3 @@ relations:
     - "cinder:identity-service"
   - - "keystone:identity-service"
     - "glance:identity-service"
-
-

@@ -145,6 +145,8 @@ relations:
     - "rabbitmq-server:amqp"
   - - "cinder:image-service"
     - "glance:image-service"
+  - - "cinder:storage-backend"
+    - "scaleio-openstack:storage-backend"
 machines:
   "compute-1":
     series: trusty

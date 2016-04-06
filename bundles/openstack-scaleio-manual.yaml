@@ -213,3 +213,6 @@ relations:
     - "glance:identity-service"
   - - "keystone:identity-service"
     - "openstack-dashboard:identity-service"
+
+  - - "cinder:storage-backend"
+    - "scaleio-openstack:storage-backend"
