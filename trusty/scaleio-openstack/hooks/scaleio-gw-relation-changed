@@ -1,6 +1,7 @@
 #!/bin/bash
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
+. "$my_dir/common-cinder"
 
 log-relation "ScaleIO GW joining"
 password=`relation-get password`
@@ -22,6 +23,14 @@ server-cmd "class { 'scaleio_openstack::nova':
   protection_domains => '$protection_domains', storage_pools => '$storage_pools',
   provisioning_type => $provisioning_type, nova_compute_conf_file_name => 'nova-compute.conf',
 }"
+
+
+# notify storage-backend relations
+rids=`relation-ids storage-backend`
+for rid in $rids ; do
+  update-cinder $rid
+done
+
 
 #status-set active
 
