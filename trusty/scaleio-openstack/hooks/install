@@ -8,4 +8,5 @@ $my_dir/common-temp
 
 juju-log "ScaleIO for OpenStack module installed"
 
-status-set waiting "Awaiting relation to scaleio-gw"
+#status-set waiting "Awaiting relation to scaleio-gw"
+status-set active

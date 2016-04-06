@@ -1,0 +1,49 @@
+#!/bin/bash
+
+function update-cinder() {
+  local rel_param=''
+  if [ -n "${1:-}" ] ; then
+    rel_param="-r $1"
+  fi
+
+  local password=`relation-get password`
+  local remote_ip=`relation-get private-address`
+  local protection_domains=`config-get protection-domains`
+  local storage_pools=`config-get storage-pools`
+
+  tmp_cfg=$(mktemp)
+
+  server-cmd "class { 'scaleio_openstack::cinder':
+    gateway_password => '$password', gateway_ip => '$remote_ip',
+    protection_domains => '$protection_domains', storage_pools => '$storage_pools',
+    cinder_config_file => '$tmp_cfg'
+  }"
+
+
+  declare -A values=()
+  while read line ; do
+    if echo $line | grep -qe '^\[.*\]$' ; then
+      # section
+      section_name=`echo $line | sed -e "s/[][]//g"`
+    elif echo $line | grep -ve "^\#.*" | grep -q '=' ; then
+      arrline=(${line//=/ })
+      key=${arrline[0]}
+      value=${arrline[1]}
+      values[$section_name]=${values[$section_name]:-}
+      values[$section_name]="${values[$section_name]}[\"$key\", \"$value\"],"
+    fi
+  done < "$tmp_cfg"
+
+  conf='{"cinder": {"/etc/cinder/cinder.conf": {"sections": {'
+  for section_name in "${!values[@]}"
+  do
+    params=${values[$section_name]}
+    params=${params%,}
+    conf="$conf \"$section_name\": [$params],"
+  done
+  conf=${conf%,}
+  conf=$conf'}}}}'
+
+  relation-set $rel_param backend_name='scaleio'
+  relation-set $rel_param subordinate_configuration='$conf'
+}

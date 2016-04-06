@@ -22,11 +22,7 @@ server-cmd "class { 'scaleio_openstack::nova':
   protection_domains => '$protection_domains', storage_pools => '$storage_pools',
   provisioning_type => $provisioning_type, nova_compute_conf_file_name => 'nova-compute.conf',
 }"
-server-cmd "class { 'scaleio_openstack::cinder':
-  gateway_password => '$password', gateway_ip => '$remote_ip',
-  protection_domains => '$protection_domains', storage_pools => '$storage_pools'
-}"
 
-status-set active
+#status-set active
 
 log-relation "ScaleIO GW joined"

@@ -1,0 +1,8 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+. "$my_dir/common-cinder"
+
+log-relation "cinder-backend changed"
+
+update-cinder

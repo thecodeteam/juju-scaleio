@@ -6,6 +6,14 @@ description: |
 tags:
   - storage
   - openstack
+subordinate: true
+provides:
+  storage-backend:
+    interface: cinder-backend
+    scope: container
 requires:
   scaleio-gw:
     interface: scaleio-gw
+  juju-info:
+    interface: juju-info
+    scope: container
