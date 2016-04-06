@@ -241,6 +241,14 @@ def image_service_changed():
     CONFIGS.write(NOVA_CONF)
 
 
+@hooks.hook('ephemeral-backend-relation-joined',
+            'ephemeral-backend-relation-changed',
+            'ephemeral-backend-relation-broken')
+@restart_on_change(restart_map())
+def ephemeral_backend_hook():
+    CONFIGS.write(NOVA_CONF)
+
+
 @hooks.hook('cloud-compute-relation-joined')
 def compute_joined(rid=None):
     # NOTE(james-page) in MAAS environments the actual hostname is a CNAME

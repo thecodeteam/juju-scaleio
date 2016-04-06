@@ -39,6 +39,9 @@ requires:
   zeromq-configuration:
     interface: zeromq-configuration
     scope: container
+  ephemeral-backend:
+    interface: ephemeral-backend
+    scope: container
 peers:
   compute-peer:
     interface: nova

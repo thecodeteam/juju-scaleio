@@ -194,8 +194,8 @@ class NovaComputeCephContext(context.CephContext):
                 assert_libvirt_imagebackend_allowed()):
             ctxt['libvirt_images_type'] = 'rbd'
             ctxt['libvirt_rbd_images_ceph_conf'] = ceph_config_file()
-        elif config('libvirt-image-backend') == 'lvm':
-            ctxt['libvirt_images_type'] = 'lvm'
+        elif config('libvirt-image-backend'):
+            ctxt['libvirt_images_type'] = config('libvirt-image-backend')
 
         rbd_cache = config('rbd-client-cache') or ""
         if rbd_cache.lower() == "enabled":
