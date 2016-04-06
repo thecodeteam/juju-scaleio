@@ -2,6 +2,6 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
-log-relation "cinder-backend changed"
+log-relation "ephemeral-backend joining"
 
-update-cinder
+update-nova

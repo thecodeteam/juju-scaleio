@@ -1,0 +1,24 @@
+#!/bin/bash
+
+function update-nova() {
+  local rid_gw=`relation-ids scaleio-gw`
+  if [ -z "$rid_gw" ] ; then
+    return 0
+  fi
+  # TODO: think about 'head -1'. maybe it is not correct.
+  local unit_gw=`relation-list -r $rid_gw | head -1`
+
+  local password=`relation-get -r $rid_gw password $unit_gw`
+  # TODO: change provate-address to 'vip' for hacluster/haproxy
+  local remote_ip=`relation-get -r $rid_gw private-address $unit_gw`
+
+  local protection_domains=`config-get protection-domains`
+  local storage_pools=`config-get storage-pools`
+  local provisioning_type=`config-get provisioning-type`
+
+  server-cmd "class { 'scaleio_openstack::nova':
+    gateway_password => '$password', gateway_ip => '$remote_ip',
+    protection_domains => '$protection_domains', storage_pools => '$storage_pools',
+    provisioning_type => $provisioning_type, nova_compute_conf_file_name => 'nova-compute.conf',
+  }"
+}

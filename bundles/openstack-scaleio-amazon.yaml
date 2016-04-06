@@ -29,7 +29,7 @@ services:
     to:
       - "io-3"
   "nova-compute":
-    charm: "cs:trusty/nova-compute"
+    charm: "local:trusty/nova-compute"
     num_units: 2
     options:
       debug: true
@@ -141,8 +141,12 @@ relations:
     - "rabbitmq-server:amqp"
   - - "cinder:image-service"
     - "glance:image-service"
+  - - "scaleio-openstack:scaleio-gw"
+    - "scaleio-gw:scaleio-gw"
   - - "cinder:storage-backend"
     - "scaleio-openstack:storage-backend"
+  - - "nova-compute:ephemeral-backend"
+    - "scaleio-openstack:ephemeral-backend"
 machines:
   "compute-1":
     series: trusty

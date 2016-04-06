@@ -2,10 +2,8 @@
 my_dir="$(dirname "$0")"
 set -eu
 
-if [ $# -eq 1 ] && [ $1 == "-d" ]
-then
-  . "$my_dir/debug"
-fi
+. "$my_dir/common-cinder"
+. "$my_dir/common-nova"
 
 function convert-name {
   echo ${1//[-\/]/_}
@@ -34,4 +32,22 @@ function log-relation {
   local remote_name=$(convert-name $JUJU_REMOTE_UNIT)
   local remote_ip=`relation-get private-address`
   juju-log "$1: $remote_name, $remote_ip"
+}
+
+function update-relations {
+  rids=`relation-ids storage-backend`
+  for rid in "$rids" ; do
+    update-cinder $rid
+  done
+  if [ -n "$rids" ] ; then
+    service cinder-volume restart
+  fi
+
+  rids=`relation-ids ephemeral-backend`
+  for rid in "$rids" ; do
+    update-nova $rid
+  done
+  if [ -n "$rids" ] ; then
+    service nova-compute restart
+  fi
 }

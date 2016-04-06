@@ -11,6 +11,9 @@ provides:
   storage-backend:
     interface: cinder-backend
     scope: container
+  ephemeral-backend:
+    interface: ephemeral-backend
+    scope: container
 requires:
   scaleio-gw:
     interface: scaleio-gw
