@@ -6,8 +6,8 @@ function update-cinder() {
     rel_param="-r $1"
   fi
 
-  local password=`relation-get password`
-  local remote_ip=`relation-get private-address`
+  local password=`relation-get $rel_param password $JUJU_UNIT_NAME`
+  local remote_ip=`relation-get $rel_param private-address $JUJU_UNIT_NAME`
   local protection_domains=`config-get protection-domains`
   local storage_pools=`config-get storage-pools`
 
@@ -45,5 +45,5 @@ function update-cinder() {
   conf=$conf'}}}}'
 
   relation-set $rel_param backend_name='scaleio'
-  relation-set $rel_param subordinate_configuration='$conf'
+  relation-set $rel_param subordinate_configuration="$conf"
 }
