@@ -1,24 +1,62 @@
 #!/bin/bash
 
 function update-nova() {
+  local rel_param=''
+  if [ -n "${1:-}" ] ; then
+    rel_param="-r $1"
+  fi
+
   local rid_gw=`relation-ids scaleio-gw`
   if [ -z "$rid_gw" ] ; then
     return 0
   fi
+
   # TODO: think about 'head -1'. maybe it is not correct.
   local unit_gw=`relation-list -r $rid_gw | head -1`
-
   local password=`relation-get -r $rid_gw password $unit_gw`
   # TODO: change provate-address to 'vip' for hacluster/haproxy
   local remote_ip=`relation-get -r $rid_gw private-address $unit_gw`
-
   local protection_domains=`config-get protection-domains`
   local storage_pools=`config-get storage-pools`
   local provisioning_type=`config-get provisioning-type`
 
+  local tmp_cfg='/etc/nova/__nova-scaleio.conf'
+  rm -f $tmp_cfg
+  touch $tmp_cfg
+  chmod 600 $tmp_cfg
+
   server-cmd "class { 'scaleio_openstack::nova':
     gateway_password => '$password', gateway_ip => '$remote_ip',
     protection_domains => '$protection_domains', storage_pools => '$storage_pools',
-    provisioning_type => $provisioning_type, nova_compute_conf_file_name => 'nova-compute.conf',
+    provisioning_type => $provisioning_type, nova_config_file => '$tmp_cfg',
   }"
+
+
+  declare -A values=()
+  while read line ; do
+    if echo $line | grep -qe '^\[.*\]$' ; then
+      # section
+      section_name=`echo $line | sed -e "s/[][]//g"`
+    elif echo $line | grep -ve "^\#.*" | grep -q '=' ; then
+      arrline=(${line//=/ })
+      if [ ${#arrline[@]} == 2 ] ; then
+        key=${arrline[0]}
+        value=${arrline[1]}
+        values[$section_name]=${values[$section_name]:-}
+        values[$section_name]="${values[$section_name]}[\"$key\", \"$value\"],"
+      fi
+    fi
+  done < "$tmp_cfg"
+
+  conf='{"nova": {"/etc/nova/nova.conf": {"sections": {'
+  for section_name in "${!values[@]}"
+  do
+    params=${values[$section_name]}
+    params=${params%,}
+    conf="$conf \"$section_name\": [$params],"
+  done
+  conf=${conf%,}
+  conf=$conf'}}}}'
+
+  relation-set $rel_param subordinate_configuration="$conf"
 }

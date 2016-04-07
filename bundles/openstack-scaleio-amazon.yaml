@@ -38,6 +38,7 @@ services:
       "enable-resize": True
       "enable-live-migration": True
       "migration-auth-type": ssh
+      "libvirt-image-backend": sio
     expose: true
     to:
       - "compute-1"

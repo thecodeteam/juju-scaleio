@@ -10,9 +10,9 @@ function update-cinder() {
   if [ -z "$rid_gw" ] ; then
     return 0
   fi
+
   # TODO: think about 'head -1'. maybe it is not correct.
   local unit_gw=`relation-list -r $rid_gw | head -1`
-
   local password=`relation-get -r $rid_gw password $unit_gw`
   # TODO: change provate-address to 'vip' for hacluster/haproxy
   local remote_ip=`relation-get -r $rid_gw private-address $unit_gw`
@@ -38,10 +38,12 @@ function update-cinder() {
       section_name=`echo $line | sed -e "s/[][]//g"`
     elif echo $line | grep -ve "^\#.*" | grep -q '=' ; then
       arrline=(${line//=/ })
-      key=${arrline[0]}
-      value=${arrline[1]}
-      values[$section_name]=${values[$section_name]:-}
-      values[$section_name]="${values[$section_name]}[\"$key\", \"$value\"],"
+      if [ ${#arrline[@]} == 2 ] ; then
+        key=${arrline[0]}
+        value=${arrline[1]}
+        values[$section_name]=${values[$section_name]:-}
+        values[$section_name]="${values[$section_name]}[\"$key\", \"$value\"],"
+      fi
     fi
   done < "$tmp_cfg"
 
