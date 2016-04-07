@@ -48,7 +48,7 @@ function update-nova() {
     fi
   done < "$tmp_cfg"
 
-  conf='{"nova": {"/etc/nova/nova.conf": {"sections": {'
+  conf='{"nova-compute": {"/etc/nova/nova.conf": {"sections": {'
   for section_name in "${!values[@]}"
   do
     params=${values[$section_name]}
