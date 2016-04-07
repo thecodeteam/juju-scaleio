@@ -228,5 +228,9 @@ relations:
   - - "keystone:identity-service"
     - "openstack-dashboard:identity-service"
 
+  - - "scaleio-openstack:scaleio-gw"
+    - "scaleio-gw:scaleio-gw"
   - - "cinder:storage-backend"
     - "scaleio-openstack:storage-backend"
+  - - "nova-compute:ephemeral-backend"
+    - "scaleio-openstack:ephemeral-backend"
