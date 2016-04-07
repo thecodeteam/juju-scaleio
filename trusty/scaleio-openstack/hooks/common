@@ -37,13 +37,17 @@ function log-relation {
 function update-relations {
   rids=`relation-ids storage-backend`
   for rid in $rids ; do
-    update-cinder $rid
-    service cinder-volume restart
+    if [ -n "`relation-list -r $rid`" ] ; then
+      update-cinder $rid
+      service cinder-volume restart
+    fi
   done
 
   rids=`relation-ids ephemeral-backend`
   for rid in $rids ; do
-    update-nova $rid
-    service nova-compute restart
+    if [ -n "`relation-list -r $rid`" ] ; then
+      update-nova $rid
+      service nova-compute restart
+    fi
   done
 }
