@@ -180,7 +180,12 @@ class NovaComputeCephContext(context.CephContext):
     def __call__(self):
         ctxt = super(NovaComputeCephContext, self).__call__()
         if not ctxt:
-            return {}
+            ctxt = dict()
+            if config('libvirt-image-backend'):
+                ctxt['libvirt_images_type_generic'] = (
+                    config('libvirt-image-backend'))
+            return ctxt
+
         svc = service_name()
         # secret.xml
         ctxt['ceph_secret_uuid'] = CEPH_SECRET_UUID
