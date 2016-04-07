@@ -35,13 +35,15 @@ function log-relation {
 }
 
 function update-relations {
-  local rids=`relation-ids storage-backend`
-  for rid in "$rids" ; do
-    relation-set -r $rid fake=r_$RANDOM
+  rids=`relation-ids storage-backend`
+  for rid in $rids ; do
+    update-cinder $rid
+    service cinder-volume restart
   done
 
   rids=`relation-ids ephemeral-backend`
-  for rid in "$rids" ; do
-    relation-set -r $rid fake=r_$RANDOM
+  for rid in $rids ; do
+    update-nova $rid
+    service nova-compute restart
   done
 }
