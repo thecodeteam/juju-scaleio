@@ -24,3 +24,8 @@ options:
       Interface that can be used to provide access to ScaleIO
       management applications, such as CLI, GUI, REST API,
       OpenStack. IP address of this interface must be externally accessible.
+  scaleio-apt-repo:
+    type: string
+    default: "http://ec2-52-37-140-129.us-west-2.compute.amazonaws.com"
+    description: |
+      Optional. URL of apt repo where charm can find ScaleOI packages.
