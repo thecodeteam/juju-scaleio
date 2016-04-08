@@ -59,6 +59,4 @@ function update-cinder() {
 
   relation-set $rel_param backend_name='scaleio'
   relation-set $rel_param subordinate_configuration="$conf"
-
-  service cinder-volume restart
 }
