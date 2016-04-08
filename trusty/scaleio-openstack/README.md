@@ -41,6 +41,7 @@ Example:
 
 * protection-domains - Comma-separated list of protection domains
 * storage-pools	- Comma-separated list of storage pools
+* provisioning-type - Volume provisioning type thin or thick
 
 # Relations
 
