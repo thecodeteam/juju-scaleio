@@ -35,6 +35,7 @@ Example:
 # Configuration
 
 * password - password for the cluster
+* scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
 
 # Relations
 
