@@ -1,6 +1,11 @@
 Overview
 ========
 
+This charm is in ScaleIO package because currently Nova Compute doesn't support
+extension with ephemeral storage backends so it's patched to allow such
+functionality. Later when changes are made in the original charm this will be
+dropped.
+
 This charm provides Nova Compute, the Openstack compute service. It's target
 platform is Ubuntu (preferably LTS) + Openstack.
 
