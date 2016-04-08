@@ -59,4 +59,6 @@ function update-nova() {
   conf=$conf'}}}}'
 
   relation-set $rel_param subordinate_configuration="$conf"
+
+  service nova-compute restart
 }
