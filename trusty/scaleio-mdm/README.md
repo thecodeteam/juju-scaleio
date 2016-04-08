@@ -56,6 +56,9 @@ Example:
 
 * cluster-mode - mode of the cluster: 1, 3 or 5.
 * password - password for the cluster
+* internal-iface - Interface used for MDM control communications with SDSs and SDCs, by default JuJu-provided IPs are used
+* management-iface - Interface used to provide access to ScaleIO management applications, by default internal-iface is used
+* scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
 
 # Relations
 
