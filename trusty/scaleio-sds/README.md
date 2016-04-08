@@ -78,6 +78,9 @@ Example:
 * fault-set - Fault Set for the group of SDSs
 * storage-pools - Comma-separated list of Storage Pools for the group of SDSs
 * device-paths - Comma-separated list of Device Paths for the group of SDSs
+* internal-iface - Network interface for internal cluster communications, by default internal JuJu-provided IP is used
+* storage-iface - Network interface for storage communication of SDS with SDC, by default internal-iface is used
+* scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
 
 # Relations
 
