@@ -6,6 +6,6 @@ options:
       Optional. URL of apt repo where charm can find ScaleOI packages.
   scaleio-driver-ftp:
     type: string
-    default: "ftp://QNzgdxXix:@Aw3wFAwAq3ftp.emc.com"
+    default: "ftp://QNzgdxXix:Aw3wFAwAq3@ftp.emc.com"
     description: |
       URL for driver_sync.sh script from sdc package to sync & verify driver.
