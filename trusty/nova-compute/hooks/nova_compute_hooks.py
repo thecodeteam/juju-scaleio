@@ -246,6 +246,7 @@ def image_service_changed():
             'ephemeral-backend-relation-broken')
 @restart_on_change(restart_map())
 def ephemeral_backend_hook():
+    log('ephemeral-backend hook called')
     CONFIGS.write(NOVA_CONF)
 
 
