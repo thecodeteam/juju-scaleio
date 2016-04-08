@@ -8,7 +8,8 @@ $my_dir/common-temp
 
 juju-log "ScaleIO SDC installing"
 
-server-cmd "class { 'scaleio::sdc_server': }"
+ftp=`config-get scaleio-driver-ftp`
+server-cmd "class { 'scaleio::sdc_server': ftp=>'$ftp' }"
 
 juju-log "ScaleIO SDC installed"
 
