@@ -39,7 +39,6 @@ function update-relations {
   for rid in $rids ; do
     if [ -n "`relation-list -r $rid`" ] ; then
       update-cinder $rid
-      service cinder-volume restart
     fi
   done
 
@@ -47,7 +46,40 @@ function update-relations {
   for rid in $rids ; do
     if [ -n "`relation-list -r $rid`" ] ; then
       update-nova $rid
-      service nova-compute restart
     fi
   done
+}
+
+function update-config {
+  service_name=$1
+  service_conf=$2
+  tmp_cfg=$3
+
+  declare -A values=()
+  while read line ; do
+    if echo $line | grep -qe '^\[.*\]$' ; then
+      # section
+      section_name=`echo $line | sed -e "s/[][]//g"`
+    elif echo $line | grep -ve "^\#.*" | grep -q '=' ; then
+      # split line with first '='
+      IFS='=' read -r key value <<< "$line"
+      # trim spaces
+      key=$(echo $key)
+      value=$(echo $value)
+      if [ -n "$key" ] ; then
+        values[$section_name]=${values[$section_name]:-}
+        values[$section_name]="${values[$section_name]}[\"$key\", \"$value\"],"
+      fi
+    fi
+  done < "$tmp_cfg"
+
+  conf="{\"$service_name\": {\"$service_conf\": {\"sections\": {"
+  for section_name in "${!values[@]}" ; do
+    params=${values[$section_name]}
+    params=${params%,}
+    conf="$conf \"$section_name\": [$params],"
+  done
+  conf=${conf%,}
+  conf=$conf'}}}}'
+  echo "$conf"
 }

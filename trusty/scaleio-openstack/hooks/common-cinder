@@ -30,32 +30,7 @@ function update-cinder() {
     cinder_config_file => '$tmp_cfg'
   }"
 
-
-  declare -A values=()
-  while read line ; do
-    if echo $line | grep -qe '^\[.*\]$' ; then
-      # section
-      section_name=`echo $line | sed -e "s/[][]//g"`
-    elif echo $line | grep -ve "^\#.*" | grep -q '=' ; then
-      arrline=(${line//=/ })
-      if [ ${#arrline[@]} == 2 ] ; then
-        key=${arrline[0]}
-        value=${arrline[1]}
-        values[$section_name]=${values[$section_name]:-}
-        values[$section_name]="${values[$section_name]}[\"$key\", \"$value\"],"
-      fi
-    fi
-  done < "$tmp_cfg"
-
-  conf='{"cinder": {"/etc/cinder/cinder.conf": {"sections": {'
-  for section_name in "${!values[@]}"
-  do
-    params=${values[$section_name]}
-    params=${params%,}
-    conf="$conf \"$section_name\": [$params],"
-  done
-  conf=${conf%,}
-  conf=$conf'}}}}'
+  conf=`update-config cinder /etc/cinder/cinder.conf $tmp_cfg`
 
   relation-set $rel_param backend_name='scaleio'
   relation-set $rel_param subordinate_configuration="$conf"
