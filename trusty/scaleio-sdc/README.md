@@ -32,7 +32,8 @@ Example:
   
 # Configuration
 
-none
+* scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
+* scaleio-driver-ftp - FTP to fetch ScaleIO SDC drivers from
 
 # Relations
 
