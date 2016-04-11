@@ -2,10 +2,6 @@
 my_dir="$(dirname "$0")"
 set -eu
 
-if [ $# -eq 1 ] && [ $1 == "-d" ] ; then
-  . "$my_dir/debug"
-fi
-
 function convert-name {
   echo ${1//[-\/]/_}
 }
@@ -30,46 +26,46 @@ else
 fi
 
 function server-cmd {
-	juju-log "Running server-cmd with '$1'"
-	set +e
-	FACTER_mdm_ips=$MY_MDMS puppet apply -e "$1" --detailed-exitcodes
-	local exit_code=$?
-	if [[ $exit_code == 0 || $exit_code == 2 ]]; then
-		juju-log "The run succeeded. Exit code is $exit_code."
-	else
-		juju-log "The run failed. Exit code is $exit_code."
-		exit 1
-	fi
-	set -e
+  juju-log "Running server-cmd with '$1'"
+  set +e
+  FACTER_mdm_ips=$MY_MDMS puppet apply -e "$1" --detailed-exitcodes
+  local exit_code=$?
+  if [[ $exit_code == 0 || $exit_code == 2 ]]; then
+    juju-log "The run succeeded. Exit code is $exit_code."
+  else
+    juju-log "The run failed. Exit code is $exit_code."
+    exit 1
+  fi
+  set -e
 }
 
 function cluster-cmd {
-	server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
+  server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
 }
 
 function log-relation {
-	local remote_name=${convert-name $JUJU_REMOTE_UNIT}
-	local remote_internal_ip=$(relation-get internal_ip_$remote_name)
-	juju-log "$1: my name is $MY_NAME, relation is $remote_name, $remote_internal_ip"
+  local remote_name=${convert-name $JUJU_REMOTE_UNIT}
+  local remote_internal_ip=$(relation-get internal_ip_$remote_name)
+  juju-log "$1: my name is $MY_NAME, relation is $remote_name, $remote_internal_ip"
 }
 
 function relation-set-all {
-	local leader=`is-leader`
-	if [ $leader != 'True' ]; then exit; fi
+  local leader=`is-leader`
+  if [ $leader != 'True' ]; then exit; fi
 
-	local mdm_internal_ips=`leader-get mdm_internal_ips`
-	local mdm_internal_ips=${mdm_internal_ips%,}
-	local mdm_management_ips=`leader-get mdm_management_ips`
-	local mdm_management_ips=${mdm_management_ips%,}
+  local mdm_internal_ips=`leader-get mdm_internal_ips`
+  local mdm_internal_ips=${mdm_internal_ips%,}
+  local mdm_management_ips=`leader-get mdm_management_ips`
+  local mdm_management_ips=${mdm_management_ips%,}
 
-	local rids=`relation-ids scaleio-mdm`
-	if [ -n "$rids" ]; then
-		juju-log "ScaleIO MDM notifies SDCs and Gateways about changes: $rids"
-		for rid in $( echo $rids ); do
-			relation-set -r $rid mdm_internal_ips=$mdm_internal_ips
-			relation-set -r $rid mdm_management_ips=$mdm_management_ips
-		done
-	fi
+  local rids=`relation-ids scaleio-mdm`
+  if [ -n "$rids" ]; then
+    juju-log "ScaleIO MDM notifies SDCs and Gateways about changes: $rids"
+    for rid in $( echo $rids ); do
+      relation-set -r $rid mdm_internal_ips=$mdm_internal_ips
+      relation-set -r $rid mdm_management_ips=$mdm_management_ips
+    done
+  fi
 }
 
 function size-of {
@@ -83,115 +79,115 @@ function size-of {
 }
 
 function cluster-change-list {
-	if (( cluster_mode > current_mode )); then
-		(( mode_dif = ($cluster_mode-$current_mode)/2 ))
-	else
-		(( mode_dif = ($current_mode-$cluster_mode)/2 ))
-	fi
-	local nodes=(${1//,/ })
-	local result=${nodes[0]}
-	if (( mode_dif == 2 )); then
-		result=$result","${nodes[1]}
-	fi
-	echo $result
+  if (( cluster_mode > current_mode )); then
+    (( mode_dif = ($cluster_mode-$current_mode)/2 ))
+  else
+    (( mode_dif = ($current_mode-$cluster_mode)/2 ))
+  fi
+  local nodes=(${1//,/ })
+  local result=${nodes[0]}
+  if (( mode_dif == 2 )); then
+    result=$result","${nodes[1]}
+  fi
+  echo $result
 }
 
 function resize-cluster {
-	# Check and adjust cluster size - should be called from leader only
-	# Checking that cluster mode is 1,3 or 5 should be done outside
-	# Reducing cluster can be done only from 5 to 3.
-	# In order to reduce cluster one Manager and one Tiebreaker units should be removed and the cluster mode changed
-	# TODO: When cluster is reduced ScaleIO doesn't support having only 1 manager MDM left when tiebreaker and slave are removed,
-	# so the algorythm here wouldn't work. I believe this should be fixed in ScaleIO, not here.
-	# Also the algorythm for removing works for steps -2 only.
-	# TODO: Define all variables as local
+  # Check and adjust cluster size - should be called from leader only
+  # Checking that cluster mode is 1,3 or 5 should be done outside
+  # Reducing cluster can be done only from 5 to 3.
+  # In order to reduce cluster one Manager and one Tiebreaker units should be removed and the cluster mode changed
+  # TODO: When cluster is reduced ScaleIO doesn't support having only 1 manager MDM left when tiebreaker and slave are removed,
+  # so the algorythm here wouldn't work. I believe this should be fixed in ScaleIO, not here.
+  # Also the algorythm for removing works for steps -2 only.
+  # TODO: Define all variables as local
 
-	cluster_mode=`config-get cluster-mode`
-	current_mode=`leader-get cluster_mode`
+  cluster_mode=`config-get cluster-mode`
+  current_mode=`leader-get cluster_mode`
 
-	standby_internal_ips=`leader-get standby_internal_ips`
-	standby_management_ips=`leader-get standby_management_ips`
-	mdm_internal_ips=`leader-get mdm_internal_ips`
-	mdm_management_ips=`leader-get mdm_management_ips`
-	tbs_ready=`leader-get tbs_ready`
-	managers_ready=`leader-get managers_ready`
-	tbs=`leader-get tbs`
-	managers=`leader-get managers`
+  standby_internal_ips=`leader-get standby_internal_ips`
+  standby_management_ips=`leader-get standby_management_ips`
+  mdm_internal_ips=`leader-get mdm_internal_ips`
+  mdm_management_ips=`leader-get mdm_management_ips`
+  tbs_ready=`leader-get tbs_ready`
+  managers_ready=`leader-get managers_ready`
+  tbs=`leader-get tbs`
+  managers=`leader-get managers`
 
-	# Check and grow the Cluster
-	tbs_ready_count=`size-of $tbs_ready`
-	managers_ready_count=`size-of $managers_ready`
+  # Check and grow the Cluster
+  tbs_ready_count=`size-of $tbs_ready`
+  managers_ready_count=`size-of $managers_ready`
 
-	juju-log "Checking if increase is needed: $tbs_ready, $managers_ready, $tbs_ready_count, $managers_ready_count, $cluster_mode, $current_mode"
+  juju-log "Checking if increase is needed: $tbs_ready, $managers_ready, $tbs_ready_count, $managers_ready_count, $cluster_mode, $current_mode"
 
-	if [[ $cluster_mode > $current_mode ]] && 
-			(( tbs_ready_count >= (cluster_mode-current_mode)/2 )) && \
-			(( managers_ready_count >= (cluster_mode-current_mode)/2 )); then
+  if [[ $cluster_mode > $current_mode ]] && 
+      (( tbs_ready_count >= (cluster_mode-current_mode)/2 )) && \
+      (( managers_ready_count >= (cluster_mode-current_mode)/2 )); then
 
-		# Prepare changes lists
-		managers_change=`cluster-change-list $managers_ready`
-		tbs_change=`cluster-change-list $tbs_ready`
-		internal_ips_change=`cluster-change-list $standby_internal_ips`
-		management_ips_change=`cluster-change-list $standby_management_ips`
+    # Prepare changes lists
+    managers_change=`cluster-change-list $managers_ready`
+    tbs_change=`cluster-change-list $tbs_ready`
+    internal_ips_change=`cluster-change-list $standby_internal_ips`
+    management_ips_change=`cluster-change-list $standby_management_ips`
 
-		# Issue the cluster command for growing
-		juju-log "ScaleIO cluster is being increased to $cluster_mode - slaves: $managers_change tbs: $tbs_change new ips: $internal_ips_change ($management_ips_change)"
-		cluster-cmd "scaleio::cluster {'cluster': \
-			cluster_mode=>'$cluster_mode', slave_names=>'$managers_change', tb_names=>'$tbs_change' }"
+    # Issue the cluster command for growing
+    juju-log "ScaleIO cluster is being increased to $cluster_mode - slaves: $managers_change tbs: $tbs_change new ips: $internal_ips_change ($management_ips_change)"
+    cluster-cmd "scaleio::cluster {'cluster': \
+      cluster_mode=>'$cluster_mode', slave_names=>'$managers_change', tb_names=>'$tbs_change' }"
 
-		# Update lists
-		tbs="$tbs_change,$tbs"
-		managers="$managers_change,$managers"
-		mdm_internal_ips="$internal_ips_change,$mdm_internal_ips"
-		mdm_management_ips="$management_ips_change,$mdm_management_ips"
-		tbs_ready=${tbs_ready/$tbs_change","}
-		managers_ready=${managers_ready/$managers_change","}
-		standby_internal_ips=${standby_internal_ips/$internal_ips_change","}
-		standby_management_ips=${standby_management_ips/$management_ips_change","}
-		juju-log "ScaleIO cluster $cluster_mode is set - managers: $managers tiebreakers: $tbs IPs: $mdm_internal_ips ($mdm_management_ips) \
-			remaining ready standby - managers: $managers_ready tiebreakers: $tbs_ready ips: $standby_internal_ips ($standby_management_ips)"
+    # Update lists
+    tbs="$tbs_change,$tbs"
+    managers="$managers_change,$managers"
+    mdm_internal_ips="$internal_ips_change,$mdm_internal_ips"
+    mdm_management_ips="$management_ips_change,$mdm_management_ips"
+    tbs_ready=${tbs_ready/$tbs_change","}
+    managers_ready=${managers_ready/$managers_change","}
+    standby_internal_ips=${standby_internal_ips/$internal_ips_change","}
+    standby_management_ips=${standby_management_ips/$management_ips_change","}
+    juju-log "ScaleIO cluster $cluster_mode is set - managers: $managers tiebreakers: $tbs IPs: $mdm_internal_ips ($mdm_management_ips) \
+      remaining ready standby - managers: $managers_ready tiebreakers: $tbs_ready ips: $standby_internal_ips ($standby_management_ips)"
 
-		leader-set resize_cluster=False cluster_mode=$cluster_mode mdm_internal_ips=$mdm_internal_ips \
-			mdm_management_ips=$mdm_management_ips tbs=$tbs managers=$managers \
-			tbs_ready=$tbs_ready managers_ready=$managers_ready standby_internal_ips=$standby_internal_ips standby_management_ips=$standby_management_ips
+    leader-set resize_cluster=False cluster_mode=$cluster_mode mdm_internal_ips=$mdm_internal_ips \
+      mdm_management_ips=$mdm_management_ips tbs=$tbs managers=$managers \
+      tbs_ready=$tbs_ready managers_ready=$managers_ready standby_internal_ips=$standby_internal_ips standby_management_ips=$standby_management_ips
 
-		relation-set-all
-	fi
+    relation-set-all
+  fi
 
-	# Check and reduce the Cluster
-	tbs_leaving=`leader-get tbs_leaving`
-	managers_leaving=`leader-get managers_leaving`
-	internal_ips_leaving=`leader-get internal_ips_leaving`
-	management_ips_leaving=`leader-get management_ips_leaving`
+  # Check and reduce the Cluster
+  tbs_leaving=`leader-get tbs_leaving`
+  managers_leaving=`leader-get managers_leaving`
+  internal_ips_leaving=`leader-get internal_ips_leaving`
+  management_ips_leaving=`leader-get management_ips_leaving`
 
-	juju-log "Checking if decrease is needed: $tbs_leaving, $managers_leaving, $cluster_mode, $current_mode"
-	if (( (current_mode-cluster_mode) == 2 )) && [ -n "$tbs_leaving" ] && [ -n "$managers_leaving" ]; then
+  juju-log "Checking if decrease is needed: $tbs_leaving, $managers_leaving, $cluster_mode, $current_mode"
+  if (( (current_mode-cluster_mode) == 2 )) && [ -n "$tbs_leaving" ] && [ -n "$managers_leaving" ]; then
 
-		# Prepare changes lists
-		managers_change=`cluster-change-list $managers_leaving`
-		tbs_change=`cluster-change-list $tbs_leaving`
-		internal_ips_change=`cluster-change-list $internal_ips_leaving`
-		management_ips_change=`cluster-change-list $management_ips_leaving`
+    # Prepare changes lists
+    managers_change=`cluster-change-list $managers_leaving`
+    tbs_change=`cluster-change-list $tbs_leaving`
+    internal_ips_change=`cluster-change-list $internal_ips_leaving`
+    management_ips_change=`cluster-change-list $management_ips_leaving`
 
-		# Issue the cluster command for reducing
-		juju-log "ScaleIO cluster is being reduced to $cluster_mode - slaves: $managers_change, tbs: $tbs_change, removing ips: $internal_ips_change ($management_ips_change)"
-		cluster-cmd "scaleio::cluster {'cluster': \
-			cluster_mode=>'$cluster_mode', slave_names=>'$managers_change', tb_names=>'$tbs_change', ensure=>'absent' }"
-		cluster-cmd "scaleio::mdm { 'mdm $tbs_change': name=>'$tbs_change', ensure=>'absent' }"
-		cluster-cmd "scaleio::mdm { 'mdm $managers_change': name=>'$managers_change', ensure=>'absent' }"
+    # Issue the cluster command for reducing
+    juju-log "ScaleIO cluster is being reduced to $cluster_mode - slaves: $managers_change, tbs: $tbs_change, removing ips: $internal_ips_change ($management_ips_change)"
+    cluster-cmd "scaleio::cluster {'cluster': \
+      cluster_mode=>'$cluster_mode', slave_names=>'$managers_change', tb_names=>'$tbs_change', ensure=>'absent' }"
+    cluster-cmd "scaleio::mdm { 'mdm $tbs_change': name=>'$tbs_change', ensure=>'absent' }"
+    cluster-cmd "scaleio::mdm { 'mdm $managers_change': name=>'$managers_change', ensure=>'absent' }"
 
-		# Update lists
-		tbs=${tbs/$tbs_change","}
-		managers=${managers/$managers_change","}
-		mdm_internal_ips=${mdm_internal_ips/$internal_ips_change","}
-		mdm_management_ips=${mdm_management_ips/$management_ips_change","}
-		juju-log "ScaleIO cluster $cluster_mode is set - managers: $managers, tiebreakers: $tbs, IPs: $mdm_internal_ips ($mdm_management_ips); \
-			remaining ready standby - managers: $managers_ready, tiebreakers: $tbs_ready, ips: $standby_internal_ips ($standby_management_ips)"
+    # Update lists
+    tbs=${tbs/$tbs_change","}
+    managers=${managers/$managers_change","}
+    mdm_internal_ips=${mdm_internal_ips/$internal_ips_change","}
+    mdm_management_ips=${mdm_management_ips/$management_ips_change","}
+    juju-log "ScaleIO cluster $cluster_mode is set - managers: $managers, tiebreakers: $tbs, IPs: $mdm_internal_ips ($mdm_management_ips); \
+      remaining ready standby - managers: $managers_ready, tiebreakers: $tbs_ready, ips: $standby_internal_ips ($standby_management_ips)"
 
-		leader-set resize_cluster=False cluster_mode=$cluster_mode mdm_internal_ips=$mdm_internal_ips \
-			mdm_management_ips=$mdm_management_ips tbs=$tbs managers=$managers \
-			tbs_ready=$tbs_ready managers_ready=$managers_ready standby_internal_ips=$standby_internal_ips standby_management_ips=$standby_management_ips
+    leader-set resize_cluster=False cluster_mode=$cluster_mode mdm_internal_ips=$mdm_internal_ips \
+      mdm_management_ips=$mdm_management_ips tbs=$tbs managers=$managers \
+      tbs_ready=$tbs_ready managers_ready=$managers_ready standby_internal_ips=$standby_internal_ips standby_management_ips=$standby_management_ips
 
-		relation-set-all
-	fi
+    relation-set-all
+  fi
 }

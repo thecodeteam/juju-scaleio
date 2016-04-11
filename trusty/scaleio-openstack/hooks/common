@@ -9,10 +9,6 @@ function convert-name {
   echo ${1//[-\/]/_}
 }
 
-MY_IP=`unit-get private-address`
-MY_NAME=$(convert-name $JUJU_UNIT_NAME)
-MY_PASSWORD=`config-get password`
-
 function server-cmd {
   juju-log "Running server-cmd with '$1'"
   local ignore_errors=${2:-0}

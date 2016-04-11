@@ -3,7 +3,7 @@ options:
     type: string
     default: "http://ec2-52-37-140-129.us-west-2.compute.amazonaws.com"
     description: |
-      Optional. URL of apt repo where charm can find ScaleOI packages.
+      Optional. URL of apt repo where charm can find ScaleIO packages.
   scaleio-driver-ftp:
     type: string
     default: "ftp://QNzgdxXix:Aw3wFAwAq3@ftp.emc.com"

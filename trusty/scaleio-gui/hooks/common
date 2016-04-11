@@ -2,14 +2,6 @@
 my_dir="$(dirname "$0")"
 set -eu
 
-function convert-name {
-  echo ${1//[-\/]/_}
-}
-
-MY_IP=`unit-get private-address`
-MY_NAME=${convert-name $JUJU_UNIT_NAME}
-MY_PASSWORD=`config-get password`
-
 function server-cmd {
   juju-log "Running server-cmd with '$1'"
   set +e
@@ -22,14 +14,4 @@ function server-cmd {
     exit 1
   fi
   set -e
-}
-
-function cluster-cmd {
-  server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
-}
-
-function log-relation {
-  local remote_name=${convert-name $JUJU_REMOTE_UNIT}
-  local remote_ip=`relation-get private-address`
-  juju-log "$1: $remote_name, $remote_ip"
 }

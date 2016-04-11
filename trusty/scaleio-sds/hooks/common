@@ -2,11 +2,6 @@
 my_dir="$(dirname "$0")"
 set -eu
 
-if [ $# -eq 1 ] && [ $1 == "-d" ]
-then
-  . "$my_dir/debug"
-fi
-
 function convert-name {
   echo ${1//[-\/]/_}
 }
@@ -17,7 +12,6 @@ else
   INTERNAL_IP=`ifconfig $INTERNAL_IFACE | awk '/inet addr/{print substr($2,6)}'`
 fi
 MY_NAME=$(convert-name $JUJU_UNIT_NAME)
-MY_PASSWORD=`config-get password`
 
 STORAGE_IFACE=`config-get storage-iface`
 if [ -n "$STORAGE_IFACE" ]; then
@@ -38,10 +32,6 @@ function server-cmd {
     exit 1
   fi
   set -e
-}
-
-function cluster-cmd {
-  server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
 }
 
 function relation-set-all {
