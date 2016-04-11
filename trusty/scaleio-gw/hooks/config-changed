@@ -4,10 +4,13 @@ my_dir="$(dirname "$0")"
 
 juju-log "ScaleIO GW config changed"
 
+password=$(config-get password)
+port=$(config-get port)
+
 rids=`relation-ids scaleio-openstack`
 for rid in $rids ; do
-  relation-set -r $rid password=$(config-get password)
-  relation-set -r $rid port=$(config-get port)
+  relation-set -r $rid password=$password
+  relation-set -r $rid port=$port
 done
 
 server-cmd "class { 'scaleio::gateway_server': password=>'$password', port=>'$port' }"
