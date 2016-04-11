@@ -1,4 +1,8 @@
 options:
+  port:
+    type: int
+    default: 4443
+    description: Port where gateway will listen.
   password:
     type: string
     default: "Default_password"

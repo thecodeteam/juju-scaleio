@@ -4,8 +4,8 @@ my_dir="$(dirname "$0")"
 
 log-relation "ScaleIO client joining"
 
-password=`config-get password`
-relation-set password=$password
+relation-set password=$(config-get password)
+relation-set port=$(config-get port)
 
 # TODO: Signal that sdcs are ready. Gets permission denied now by some reason.
 #rid=`relation-ids scaleio-mdm`

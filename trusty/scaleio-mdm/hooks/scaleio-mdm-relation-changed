@@ -18,7 +18,7 @@ if [ $ready == 'true' ]; then
 fi
 if [ -n "$rids" ]; then
 	juju-log "Updating ready SDCs list for scaleio-openstack: relation - $rids, sdcs - $sdcs_ready" 
-	for rid in $( echo $rids ); do
+	for rid in $rids ; do
 		if [ $rid != $JUJU_RELATION_ID ]; then
 			juju-log "Notifying ScaleIO Gateway: relation - $rid, sdcs - $sdcs_ready" 
 			relation-set -r $rid sdcs_ready=$sdcs_ready

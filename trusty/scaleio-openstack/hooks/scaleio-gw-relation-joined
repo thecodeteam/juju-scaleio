@@ -2,6 +2,6 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
-log-relation "ephemeral-backend joining"
+log-relation "ScaleIO GW joined"
 
-update-nova
+status-set active

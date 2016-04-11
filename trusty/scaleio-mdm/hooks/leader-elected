@@ -44,7 +44,7 @@ if [ -z "$cluster_mode" ]; then
 	juju-log "ScaleIO MDM elected leader rids of MDMs: $rids"
 	if [ -n "$rids" ]; then
 		juju-log "ScaleIO MDM elected leader notifies MDMs: $rids"
-		for rid in $( echo $rids ); do
+		for rid in $rids ; do
 			relation-set -r $rid notify=true
 	    done
 	fi

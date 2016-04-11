@@ -61,7 +61,7 @@ function relation-set-all {
   local rids=`relation-ids scaleio-mdm`
   if [ -n "$rids" ]; then
     juju-log "ScaleIO MDM notifies SDCs and Gateways about changes: $rids"
-    for rid in $( echo $rids ); do
+    for rid in $rids ; do
       relation-set -r $rid mdm_internal_ips=$mdm_internal_ips
       relation-set -r $rid mdm_management_ips=$mdm_management_ips
     done

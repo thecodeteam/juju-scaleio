@@ -2,16 +2,8 @@
 my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
-log-relation "ScaleIO GW joining"
-
-#sdcs_ready=`relation-get sdcs_ready`
-#juju-log "ScaleIO OpenStack - ready sdcs: $sdcs_ready"
-# TODO: Check for readiness of sdcs. Right now doesn't work when scaleio-openstack
-# joins after scaleio-gw.
-# if [ -z "$password" ] || [[ $sdcs_ready != *$MY_IP* ]]; then exit; fi
+log-relation "ScaleIO GW changing"
 
 update-relations
 
-#status-set active
-
-log-relation "ScaleIO GW joined"
+log-relation "ScaleIO GW changed"

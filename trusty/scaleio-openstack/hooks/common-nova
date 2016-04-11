@@ -13,9 +13,15 @@ function update-nova() {
 
   # TODO: think about 'head -1'. maybe it is not correct.
   local unit_gw=`relation-list -r $rid_gw | head -1`
-  local password=`relation-get -r $rid_gw password $unit_gw`
-  # TODO: change provate-address to 'vip' for hacluster/haproxy
+  # TODO: change private-address to 'vip' for hacluster/haproxy
   local remote_ip=`relation-get -r $rid_gw private-address $unit_gw`
+  local password=`relation-get -r $rid_gw password $unit_gw`
+  local port=`relation-get -r $rid_gw port $unit_gw`
+  if [[ -z "$password" || -z "$port" ]] ; then
+    # data is not ready in relation. waiting for next relation-changed event
+    return 0
+  fi
+
   local protection_domains=`config-get protection-domains`
   local storage_pools=`config-get storage-pools`
   local provisioning_type=`config-get provisioning-type`
@@ -26,7 +32,7 @@ function update-nova() {
   chmod 600 $tmp_cfg
 
   server-cmd "class { 'scaleio_openstack::nova':
-    gateway_password => '$password', gateway_ip => '$remote_ip',
+    gateway_password => '$password', gateway_ip => '$remote_ip', gateway_port => '$port',
     protection_domains => '$protection_domains', storage_pools => '$storage_pools',
     provisioning_type => $provisioning_type, nova_config_file => '$tmp_cfg',
   }"

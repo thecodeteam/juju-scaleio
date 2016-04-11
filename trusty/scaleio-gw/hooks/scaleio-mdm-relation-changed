@@ -17,8 +17,8 @@ status-set active
 sdcs_ready=`relation-get sdcs_ready`
 rid=`relation-ids scaleio-gw`
 if [ -n "$rid" ]; then
-	juju-log "Updating ready SDCs list for scaleio-openstack: relation - $rid, sdcs - $sdcs_ready" 
-	relation-set -r $rid sdcs_ready=$sdcs_ready
+  juju-log "Updating ready SDCs list for scaleio-openstack: relation - $rid, sdcs - $sdcs_ready" 
+  relation-set -r $rid sdcs_ready=$sdcs_ready
 fi
 
 log-relation "ScaleIO MDM changed for ScaleIO Gateway"
