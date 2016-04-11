@@ -11,4 +11,6 @@ provides:
 requires:
   scaleio-mdm:
     interface: scaleio-mdm
-    
+peers:
+  scaleio-gw-cluster:
+    interface: scaleio-gw-ha

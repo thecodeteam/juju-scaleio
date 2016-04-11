@@ -8,8 +8,8 @@ $my_dir/common-temp
 
 juju-log "ScaleIO GW installing"
 
-password=`config-get password`
-port=`config-get port`
+password=$(config-get password)
+port=$(get-port)
 server-cmd "class { 'scaleio::gateway_server': password=>'$password', port=>'$port' }"
 
 juju-log "ScaleIO GW installed"

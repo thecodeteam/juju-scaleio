@@ -5,12 +5,16 @@ my_dir="$(dirname "$0")"
 juju-log "ScaleIO GW config changed"
 
 password=$(config-get password)
-port=$(config-get port)
+port=$(get-port)
+ip=$(get-ip)
 
 rids=`relation-ids scaleio-openstack`
 for rid in $rids ; do
   relation-set -r $rid password=$password
   relation-set -r $rid port=$port
+  relation-set -r $rid ip=$ip
 done
 
 server-cmd "class { 'scaleio::gateway_server': password=>'$password', port=>'$port' }"
+
+update-haproxy

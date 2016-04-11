@@ -4,6 +4,17 @@ my_dir="$(dirname "$0")"
 
 log-relation "ScaleIO GW changing"
 
+password=$(relation-get password)
+port=$(relation-get port)
+ip=$(relation-get ip)
+
+if [[ -z "$ip" || -z "$port" ]] ; then
+  # relation data is not ready yet
+  exit
+fi
+
+status-set active
+
 update-relations
 
 log-relation "ScaleIO GW changed"
