@@ -6,13 +6,3 @@ log-relation "ScaleIO client joining"
 
 relation-set password=$(config-get password)
 relation-set port=$(config-get port)
-
-# TODO: Signal that sdcs are ready. Gets permission denied now by some reason.
-#rid=`relation-ids scaleio-mdm`
-#if [ -n "$rid" ]; then
-# 	sdcs_ready=`relation-get -r $rid sdcs_ready`
-#	juju-log "Updating ready SDCs list for scaleio-openstack: sdcs - $sdcs_ready" 
-#	if [ -n "$sdcs_ready" ]; then
-#		relation-set sdcs_ready=$sdcs_ready
-#	fi
-#fi
