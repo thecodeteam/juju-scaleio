@@ -101,7 +101,7 @@ function update-haproxy() {
       remote_ip=`relation-get -r $rid private-address $unit`
       if [ -n "$remote_ip" ] ; then
         cname=$(convert-name $unit)
-        echo "    server $cname $remote_ip:$api_port check" >> $tmp_cfg
+        echo "    server $cname $remote_ip:$api_port" >> $tmp_cfg
       fi
     done
   done
