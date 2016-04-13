@@ -86,7 +86,7 @@ services:
     charm: "local:trusty/scaleio-gw"
     num_units: 1
     to:
-      - "io-1"
+      - "compute-2"
   "scaleio-mdm":
     charm: "local:trusty/scaleio-mdm"
     num_units: 3
