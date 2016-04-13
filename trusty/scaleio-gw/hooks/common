@@ -2,7 +2,7 @@
 my_dir="$(dirname "$0")"
 set -eu
 
-HAPROXY_CONF='/etc/haproxy/haproxy.conf'
+HAPROXY_CONF='/etc/haproxy/haproxy.cfg'
 
 function convert-name {
   echo ${1//[-\/]/_}
@@ -56,7 +56,7 @@ function update-haproxy() {
     return
   fi
 
-  local api_port=$(get_port)
+  local api_port=$(get-port)
   local haproxy_port=$(config-get port)
   local my_ip=$(unit-get private-address)
   my_ip=`python -c "import socket; print(socket.gethostbyname('$my_ip'))"`
@@ -69,12 +69,12 @@ function update-haproxy() {
   for cfg_key in haproxy_queue_timeout haproxy_connect_timeout ; do
     value=$(config-get $cfg_key)
     value=${value:-5000}
-    values[$cfg_key]=value
+    values[$cfg_key]=$value
   done
   for cfg_key in haproxy_client_timeout haproxy_server_timeout ; do
     value=$(config-get $cfg_key)
     value=${value:-30000}
-    values[$cfg_key]=value
+    values[$cfg_key]=$value
   done
   values['local_host']='127.0.0.1'
   values['stat_port']='8888'
@@ -87,8 +87,8 @@ function update-haproxy() {
   rm -f $tmp_cfg
   cp $my_dir/../templates/haproxy.cfg $tmp_cfg
   for key in "${!values[@]}" ; do
-    value=${values[$section_name]}
-    sed -i "s/{{ $key }}/$value/m" $tmp_cfg
+    value=${values[$key]}
+    sed -i "s|{{ $key }}|$value|g" $tmp_cfg
   done
 
   # next lines can have several occurences. render it here.

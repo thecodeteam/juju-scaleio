@@ -19,7 +19,7 @@ options:
       Virtual IP to use to front API service in HA configuration.
       Only one IP is allowed. It will be passed to clients like
       OpenStack for accessing ScaleIO cluster.
-      If it is provided then haproxy will be installed and configured.
+      Haproxy will be installed and configured if vip is set.
   haproxy-server-timeout:
     type: int
     default:
