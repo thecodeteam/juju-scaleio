@@ -56,6 +56,9 @@ function update-haproxy() {
     return
   fi
 
+  # ensure haproxy is installed
+  apt-get install -fqy haproxy
+
   local api_port=$(get-port)
   local haproxy_port=$(config-get port)
   local my_ip=$(unit-get private-address)
@@ -95,7 +98,7 @@ function update-haproxy() {
   echo "    server $my_name $my_ip:$api_port check" >> $tmp_cfg
   for rid in $(relation-ids 'scaleio-gw-cluster') ; do
     for unit in $(relation-list -r $rid) ; do
-      remote_ip=`relation-get -r $rid private-address $unit_gw`
+      remote_ip=`relation-get -r $rid private-address $unit`
       if [ -n "$remote_ip" ] ; then
         cname=$(convert-name $unit)
         echo "    server $cname $remote_ip:$api_port check" >> $tmp_cfg

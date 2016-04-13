@@ -8,7 +8,7 @@ password=$(config-get password)
 port=$(get-port)
 ip=$(get-ip)
 
-rids=`relation-ids scaleio-openstack`
+rids=`relation-ids scaleio-gw`
 for rid in $rids ; do
   relation-set -r $rid password=$password
   relation-set -r $rid port=$port
