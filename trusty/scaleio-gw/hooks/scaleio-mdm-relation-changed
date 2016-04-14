@@ -13,12 +13,4 @@ server-cmd "class { 'scaleio::gateway_server': mdm_ips=>'$mdm_management_ips' }"
 
 status-set active
 
-# Notify ScaleIO OpenStack that SDC is ready
-sdcs_ready=`relation-get sdcs_ready`
-rids=`relation-ids scaleio-gw`
-for rid in $rids ; do
-  juju-log "Updating ready SDCs list for scaleio-openstack: relation - $rid, sdcs - $sdcs_ready"
-  relation-set -r $rid sdcs_ready=$sdcs_ready
-done
-
 log-relation "ScaleIO MDM changed for ScaleIO Gateway"

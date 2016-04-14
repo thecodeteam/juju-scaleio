@@ -5,31 +5,12 @@ my_dir="$(dirname "$0")"
 leader=`is-leader`
 if [ $leader != 'True' ]; then exit; fi
 
-log-relation "ScaleIO MDM relation changing for ScaleIO Gateway"
+remote_name=$(convert-name $JUJU_REMOTE_UNIT)
+log-relation "ScaleIO MDM relation changing for ScaleIO Gateway/SDC ($remote_name)"
 
-# Notify ScaleIO OpenStack that SDC is ready
-ready=`relation-get ready` # its sdc`s only flag
-sdcs_ready=`leader-get sdcs_ready`
-remote_ip=`relation-get private-address`
+ready=`relation-get ready` # it is a flag from sdc`s side
 if [ $ready == 'true' ]; then
-  sdcs_ready="$remote_ip,$sdcs_ready"
-  leader-set sdcs_ready=$sdcs_ready
-
-  set +e
-  FACTER_mdm_ips=$MY_MDMS puppet apply -e "scaleio::login {'login': password=>$MY_PASSWORD} -> \
-    scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip' }"
-  set -e
+  cluster-cmd "scaleio::sdc { 'sdc $remote_name': }"
 fi
 
-rids=`relation-ids scaleio-mdm`
-if [ -n "$rids" ]; then
-  juju-log "Updating ready SDCs list for scaleio-openstack: relation - $rids, sdcs - $sdcs_ready" 
-  for rid in $rids ; do
-    if [ $rid != $JUJU_RELATION_ID ]; then
-      juju-log "Notifying ScaleIO Gateway: relation - $rid, sdcs - $sdcs_ready" 
-      relation-set -r $rid sdcs_ready=$sdcs_ready
-    fi
-  done
-fi
-
-log-relation "ScaleIO MDM changed for ScaleIO Gateway"
+log-relation "ScaleIO MDM changed for ScaleIO Gateway/SDC"

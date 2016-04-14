@@ -18,7 +18,6 @@ my_dir="$(dirname "$0")"
 # managers_leaving - departed managers (to be removed during cluster resizing)
 # internal_ips_leaving - internal IPs of departed members
 # management_ips_leaving - management IPs of departed members
-# sdcs_ready - IPs of ready SDCs
 
 juju-log "ScaleIO leader elected"
 
