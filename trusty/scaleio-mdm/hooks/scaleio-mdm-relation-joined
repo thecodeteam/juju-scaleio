@@ -12,3 +12,20 @@ relation-set mdm_internal_ips=$ips
 
 ips=`leader-get mdm_management_ips`
 relation-set mdm_management_ips=$ips
+
+
+remote_name=$(convert-name $JUJU_REMOTE_UNIT)
+remote_ip=`relation-get private-address`
+
+if [[ $remote_name == "scaleio_sdc"* ]]; then
+  log-relation "ScaleIO SDC $remote_name joining"
+
+  set +e
+  FACTER_mdm_ips=$MY_MDMS puppet apply -e "scaleio::login {'login': password=>$MY_PASSWORD} -> \
+    scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip' }"
+  set -e
+
+  log-relation "ScaleIO SDC $remote_name joined"
+else
+  log-relation "ScaleIO GW joined"
+fi

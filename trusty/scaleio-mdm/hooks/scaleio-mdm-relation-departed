@@ -30,7 +30,7 @@ if [[ $remote_name == "scaleio_sdc"* ]]; then
 		scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip', ensure=>'absent'}"
 	set -e
 
-	log-relation "ScaleIO SDS $remote_name departed"
+	log-relation "ScaleIO SDC $remote_name departed"
 else
 	log-relation "ScaleIO GW departed"
 fi
