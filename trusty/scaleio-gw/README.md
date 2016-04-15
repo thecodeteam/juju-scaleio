@@ -17,7 +17,7 @@ Example:
 
   Deploy a Gateway
   ```
-	juju deploy scaleio-gw
+    juju deploy scaleio-gw
   ```
   
   Connect the Gateway to MDM
@@ -34,15 +34,17 @@ Example:
 
 # Configuration
 
+* port - port where Gateway will listen
 * password - password for the cluster
 * scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
+* vip - Virtual IP to use to front API service in HA configuration.
+* haproxy-server-timeout - Server timeout configuration in ms for haproxy, used in HA configurations.
+* haproxy-client-timeout - Client timeout configuration in ms for haproxy, used in HA configurations.
+* haproxy-queue-timeout - Queue timeout configuration in ms for haproxy, used in HA configurations.
+* haproxy-connect-timeout - Connect timeout configuration in ms for haproxy, used in HA configurations.
 
 # Relations
 
 Should be related to scaleio-mdm.
 Can be related to scaleio-openstack or other client-side charms.
-
-# Limitations
-
-* Currently no special support of HA is provided by this charm
 
