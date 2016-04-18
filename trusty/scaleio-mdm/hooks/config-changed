@@ -16,5 +16,11 @@ if [ -n "$leader" ] && [[ $leader == 'True' ]]; then
 		juju-log "ScaleIO cluster password changed"
 	fi
 	juju-log "Request to check and resize cluster because of config changed"
+	old_mode=`leader-get cluster_mode`
+	new_mode=`config-get cluster_mode`
+	if [[ $old_mode != $new_mode ]]; then
+		# Remove previous ordering if it's in action
+		leader-set ordered_nodes=
+	fi
 	resize-cluster
 fi

@@ -7,59 +7,36 @@ leader=`is-leader`
 remote_name=$(convert-name $JUJU_REMOTE_UNIT)
 
 if [ $leader == 'True' ]; then
-	role=`leader-get role_$remote_name`
+	role=`relation-get role_$remote_name`
 	state=`relation-get state_$remote_name`
 else
-	role=`leader-get role_$MY_NAME`
-	state=`relation-get state_$MY_NAME`
-fi
-if [ -z "$state" ]; then
-	state='unknown'
+	role=`relation-get role`
+	state=`relation-get state`
 fi
 
 juju-log "STATE AND ROLE in $MY_NAME: $role, $state"
 
 if [ $leader == 'True' ] ; then
 	log-relation "ScaleIO cluster-relation-changed, leader-side"
-
-	remote_internal_ip=$(relation-get internal_ip_$remote_name)
-	remote_management_ip=$(relation-get management_ip_$remote_name)
-	standby_internal_ips=`leader-get standby_internal_ips`
-	standby_management_ips=`leader-get standby_management_ips`
-	tbs_ready=`leader-get tbs_ready`
-	managers_ready=`leader-get managers_ready`
-
-	# Finish adding ready standby
-	if [ $state == 'installed' ] ; then
-		cluster-cmd "scaleio::mdm { 'mdm $remote_name': name=>'$remote_name', ips=>'$remote_internal_ip', role=>'$role', management_ips=>'$remote_management_ip' }"
-		status-set active
-		if [ $role == 'manager' ] ; then
-			managers_ready="$remote_name,$managers_ready"
-			standby_internal_ips="$remote_internal_ip,$standby_internal_ips"
-			standby_management_ips="$remote_management_ip,$standby_management_ips"
-			leader-set managers_ready=$managers_ready standby_internal_ips=$standby_internal_ips standby_management_ips=$standby_management_ips
-		else
-			tbs_ready="$remote_name,$tbs_ready"
-			leader-set tbs_ready=$tbs_ready
-		fi
-		juju-log "ScaleIO Standby MDM $remote_name added as $role, standby IPs are $standby_internal_ips ($standby_management_ips)"
-		# Check if cluster should be resized
-		resize-cluster
-	fi
+	
+	adjust-cluster
 else
 	log-relation "ScaleIO cluster-relation-changed, slave-side" 
 
-	# Provision a new standby with the required role and notify leader
-	if [ $state == 'ordered' ]; then
-		if [ $role == 'tb' ]; then
-			is_manager=0
-		else
+	eval `leader-get requested_nodes`
+	requested_role=${requested_nodes[$MY_NAME]}
+	if [ -n "$requested_role" ]; then
+		if [[ $requested_role == slave ]]; then
 			is_manager=1
-			relation-set management_ip_$MY_NAME=$MY_MANAGEMENT_IP
+			relation-set management_ip=$MY_MANAGEMENT_IP
+		else
+			is_manager=0
 		fi
+		# Remove it from list of standbies first, just in case error occurred in previous cluster adjustments
+		cluster-cmd "scaleio::mdm { 'remove from cluster': name=>'$MY_NAME', ensure=>'absent' }"
 		server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
-		relation-set state_$MY_NAME=installed
+		relation-set role=$requested_role
 		status-set active
-		juju-log "ScaleIO MDM $MY_NAME changed role to $role"
+		juju-log "ScaleIO MDM $MY_NAME changed role to $requested_role"
 	fi
 fi

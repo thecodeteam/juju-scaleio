@@ -3,34 +3,21 @@ my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
 log-relation "ScaleIO Standby MDM joining"
+relation-set internal_ip=$MY_INTERNAL_IP
 
-leader=`is-leader`
-remote_name=$(convert-name $JUJU_REMOTE_UNIT)
-# Set our management IP because MaaS-based Juju returns a DNS name
-if [ -z "$(relation-get internal_ip_$MY_NAME)" ]; then
-	relation-set internal_ip_$MY_NAME=$MY_INTERNAL_IP
-fi
+my_state=`relation-get state $JUJU_UNIT_NAME`
 
-# Determine required role and order a new standby to provision with it
-if [ $leader == 'True' ]; then
-	managers=`leader-get managers_standby`
-	tbs=`leader-get tbs_standby`
-	manager_count=`size-of $managers`
-	tb_count=`size-of $tbs`
-	juju-log  "Determining future MDM role: $managers, $tbs, $manager_count, $tb_count"
-	if (( manager_count > tb_count )); then
-		tbs="$remote_name,$tbs"
-		leader-set role_$remote_name=tb tbs_standby=$tbs
-		log-relation "ScaleIO Standby MDM is ordered to join as tb"
-	else
-		managers="$remote_name,$managers"
-		leader-set role_$remote_name=manager managers_standby=$managers
-		log-relation "ScaleIO Standby MDM is ordered to join as manager"
-	fi
-	relation-set state_$remote_name=ordered
-else
-	state=`relation-get state_$MY_NAME`
-	if [ -n "$state" ] && [ $state != "installed" ]; then
+if [ $leader != 'True' ]; then
+	state=`relation-get role`
+	if [ -z "$role" ]; then
+		# Newcomer status initialization
 		status-set blocked "ScaleIO MDM is waiting to join cluster"
+		relation-set role=none
 	fi
+else
+	if [ -z "$role" ]; then
+		# Initial master first role initialization - couldn't be done earlier because no relation existed
+		# We don't care that it's actually master - all non-tiebreakers are current or potential slaves
+		relation-set role=slave
+	fi	
 fi
