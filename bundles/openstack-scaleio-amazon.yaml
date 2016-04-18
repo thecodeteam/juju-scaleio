@@ -90,6 +90,8 @@ services:
   "scaleio-mdm":
     charm: "local:trusty/scaleio-mdm"
     num_units: 3
+    options:
+      cluster-mode: 3
     to:
       - "io-1"
       - "io-2"
