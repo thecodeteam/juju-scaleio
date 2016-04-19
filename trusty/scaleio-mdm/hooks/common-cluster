@@ -2,6 +2,8 @@
 if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
 . "$my_dir/common"
 
+scaleio_cluster_rids=(`relation-ids scaleio-cluster`)
+scaleio_cluster_rid=${scaleio_cluster_rids[0]}
 required_mode=`config-get cluster-mode`
 current_mode=`leader-get cluster_mode`
 eval `leader-get cluster_nodes`
@@ -21,11 +23,11 @@ function retrieve-cluster-info {
 	# The function should be called in a scope of scaleio-cluster-relation-* hooks only
 
 	# Looking up present nodes and recording their roles in present_nodes
-	local nodes=`relation-list`
+	local nodes=`relation-list -r $scaleio_cluster_rid`
   	for node in $nodes; do
   		# TODO: Most probably the check below isn't required
   		if [ $JUJU_HOOK_NAME == 'scaleio-cluster-relation-departed' ] && [ $JUJU_REMOTE_UNIT == $node ]; then continue; fi
-  		local role=`relation-get role $node`
+  		local role=`relation-get -r $scaleio_cluster_rid role $node`
 		present_nodes[$node]=$role
 		present_count[$role]=$(( present_count[$role]+1 ))
     done
@@ -144,8 +146,8 @@ function restore-cluster {
 	declare -A add_str=([slave]='' [tb]='')
 	for node in ${!ordered_nodes[*]}; do
 		local name=`convert-name $node`
-		local internal_ip=`relation-get internal_ip $node`
-		local management_ip=`relation-get management_ip $node`
+		local internal_ip=`relation-get -r $scaleio_cluster_rid internal_ip $node`
+		local management_ip=`relation-get -r $scaleio_cluster_rid management_ip $node`
 		local role=${ordered_nodes[$node]}
 		cluster-cmd "scaleio::mdm { 'mdm $node': name=>'$name', ips=>'$internal_ip', role=>'$role', management_ips=>'$management_ip' }"
 		add_str[$role]+="$name,"
@@ -186,8 +188,8 @@ function grow-cluster {
 	declare -A add_str=([slave]='' [tb]='')
 	for node in ${!ordered_nodes[*]}; do
 		local name=`convert-name $node`
-		local internal_ip=`relation-get internal_ip $node`
-		local management_ip=`relation-get management_ip $node`
+		local internal_ip=`relation-get -r $scaleio_cluster_rid internal_ip $node`
+		local management_ip=`relation-get -r $scaleio_cluster_rid management_ip $node`
 		local role=${ordered_nodes[$node]}
 		cluster-cmd "scaleio::mdm { 'mdm $node': name=>'$name', ips=>'$internal_ip', role=>'$role', management_ips=>'$management_ip' }"
 		add_str[$role]+="$name,"
@@ -213,8 +215,8 @@ function update-cluster-ips
   	for node in ${!cluster_nodes[*]}; do
   		local role=${cluster_nodes[$node]}
   		if [[ $role == tb ]]; then continue; fi
-  		local internal_ip=`relation-get internal_ip $node`
-  		local management_ip=`relation-get management_ip $node`
+  		local internal_ip=`relation-get -r $scaleio_cluster_rid internal_ip $node`
+  		local management_ip=`relation-get -r $scaleio_cluster_rid management_ip $node`
   		internal_ips+="$internal_ip,"
   		management_ips+="$management_ip,"
 	done  

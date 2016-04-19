@@ -23,12 +23,16 @@ function relation-list {
 }
 
 function relation-get {
-	case $1 in
-		role			) echo ${relation_get_roles[$2]};;
-		management_ip	) if [ -n "${relation_get_management_ips[$2]+x}" ]; then echo ${relation_get_management_ips[$2]}; else echo ''; fi;;
-		internal_ip		) if [ -n "${relation_get_internal_ips[$2]+x}" ]; then echo ${relation_get_internal_ips[$2]}; else echo ''; fi;;
+	case $3 in
+		role			) echo ${relation_get_roles[$4]};;
+		management_ip	) if [ -n "${relation_get_management_ips[$4]+x}" ]; then echo ${relation_get_management_ips[$4]}; else echo ''; fi;;
+		internal_ip		) if [ -n "${relation_get_internal_ips[$4]+x}" ]; then echo ${relation_get_internal_ips[$4]}; else echo ''; fi;;
 		*				) echo '';;
 	esac
+}
+
+function relation-ids {
+	echo "$relation_ids"
 }
 
 function juju-log {

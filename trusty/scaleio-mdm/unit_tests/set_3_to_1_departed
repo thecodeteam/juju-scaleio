@@ -8,6 +8,7 @@ declare -A relation_get_roles=(['scaleio-mdm/0']=slave ['scaleio-mdm/1']=tb ['sc
 declare -A relation_get_management_ips=(['scaleio-mdm/0']='10.0.0.1' ['scaleio-mdm/2']='10.0.0.3')
 declare -A relation_get_internal_ips=(['scaleio-mdm/0']='10.0.0.1' ['scaleio-mdm/2']='10.0.0.3')
 relation_list="scaleio-mdm/0 scaleio-mdm/1 scaleio-mdm/2"
+relation_ids="scaleio-cluster:0"
 current_cluster_mode=3
 config_cluster_mode=1
 
