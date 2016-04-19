@@ -3,7 +3,7 @@
 apt-get install -y puppet
 puppet module install puppetlabs-firewall
 puppet module install puppetlabs-stdlib
-puppet module install --version "<0.3.0" cloudscaling-scaleio
+puppet module install --version "<0.4.0" cloudscaling-scaleio
 
 # TODO: remove when packages will be in official repo
 apt_repo=`config-get scaleio-apt-repo`
