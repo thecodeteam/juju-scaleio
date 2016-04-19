@@ -1,0 +1,36 @@
+#!/bin/bash
+
+function config-get {
+	case $1 in
+		internal-iface 	) echo "eth0";;
+		password		) echo "Default_password";;
+		cluster-mode	) echo $config_cluster_mode;;
+		*				) echo '';;
+	esac
+}
+
+function leader-get {
+	case $1 in
+		cluster_mode	) echo $current_cluster_mode;;
+		cluster_nodes	) echo `declare -p cluster_nodes`;;
+		ordered_nodes	) if [ -n "${ordered_nodes+x}" ]; then echo `declare -p ordered_nodes`; else echo ''; fi;;
+		*				) echo '';;
+	esac
+}
+
+function relation-list {
+	echo $relation_list
+}
+
+function relation-get {
+	case $1 in
+		role			) echo ${relation_get_roles[$2]};;
+		management_ip	) if [ -n "${relation_get_management_ips[$2]+x}" ]; then echo ${relation_get_management_ips[$2]}; else echo ''; fi;;
+		internal_ip		) if [ -n "${relation_get_internal_ips[$2]+x}" ]; then echo ${relation_get_internal_ips[$2]}; else echo ''; fi;;
+		*				) echo '';;
+	esac
+}
+
+function juju-log {
+	:
+}

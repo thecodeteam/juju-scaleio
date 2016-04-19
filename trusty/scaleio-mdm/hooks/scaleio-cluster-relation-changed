@@ -1,5 +1,5 @@
 #!/bin/bash
-my_dir="$(dirname "$0")"
+if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
 . "$my_dir/common"
 
 log-relation "ScaleIO Standby MDM joining"
@@ -23,10 +23,10 @@ if [ $leader == 'True' ] ; then
 else
 	log-relation "ScaleIO cluster-relation-changed, slave-side" 
 
-	eval `leader-get requested_nodes`
-	requested_role=${requested_nodes[$MY_NAME]}
-	if [ -n "$requested_role" ]; then
-		if [[ $requested_role == slave ]]; then
+	eval `leader-get ordered_nodes`
+	ordered_role=${ordered_nodes[$MY_NAME]}
+	if [ -n "$ordered_role" ]; then
+		if [[ $ordered_role == slave ]]; then
 			is_manager=1
 			relation-set management_ip=$MY_MANAGEMENT_IP
 		else
@@ -35,8 +35,8 @@ else
 		# Remove it from list of standbies first, just in case error occurred in previous cluster adjustments
 		cluster-cmd "scaleio::mdm { 'remove from cluster': name=>'$MY_NAME', ensure=>'absent' }"
 		server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
-		relation-set role=$requested_role
+		relation-set role=$ordered_role
 		status-set active
-		juju-log "ScaleIO MDM $MY_NAME changed role to $requested_role"
+		juju-log "ScaleIO MDM $MY_NAME changed role to $ordered_role"
 	fi
 fi

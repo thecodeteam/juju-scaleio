@@ -1,5 +1,5 @@
 #!/bin/bash
-my_dir="$(dirname "$0")"
+if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
 . "$my_dir/common"
 
 status=`status-get`
@@ -14,7 +14,7 @@ if [ $leader == 'True' ]; then
 	
 	# Invalidating current ordered tbs and slaves if any
 	leader-set ordered_nodes=
-	
+
+	DEPARTING_NODE=$JUJU_REMOTE_UNIT
 	adjust-cluster
 fi
-

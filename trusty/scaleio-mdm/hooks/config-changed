@@ -1,5 +1,5 @@
 #!/bin/bash
-my_dir="$(dirname "$0")"
+if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
 . "$my_dir/common"
 
 juju-log "ScaleIO MDM config changed"

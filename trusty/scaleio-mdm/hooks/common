@@ -1,5 +1,5 @@
 #!/bin/bash
-my_dir="$(dirname "$0")"
+if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
 set -eu
 
 if [ $# -eq 1 ] && [ $1 == "-d" ] ; then
@@ -17,7 +17,6 @@ else
   MY_INTERNAL_IP=`unit-get private-address`
 fi
 MY_NAME=$(convert-name $JUJU_UNIT_NAME)
-echo $MY_NAME
 MY_PASSWORD=`config-get password`
 # MY_MDMS used in calls to scli. so set it to management ips.
 MY_MDMS=`leader-get mdm_management_ips`

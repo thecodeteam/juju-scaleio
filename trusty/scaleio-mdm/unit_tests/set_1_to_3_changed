@@ -1,0 +1,15 @@
+#!/bin/bash
+JUJU_HOOK_NAME='scaleio-cluster-relation-changed'
+JUJU_UNIT_NAME='scaleio-mdm/0'
+JUJU_REMOTE_UNIT='scaleio-mdm/1'
+
+declare -A cluster_nodes=(['scaleio-mdm/0']=slave)
+declare -A relation_get_roles=(['scaleio-mdm/0']=slave ['scaleio-mdm/1']=tb ['scaleio-mdm/2']=slave)
+declare -A relation_get_management_ips=(['scaleio-mdm/0']='10.0.0.1' ['scaleio-mdm/2']='10.0.0.3')
+declare -A relation_get_internal_ips=(['scaleio-mdm/0']='10.0.0.1' ['scaleio-mdm/2']='10.0.0.3')
+relation_list="scaleio-mdm/0 scaleio-mdm/1 scaleio-mdm/2"
+current_cluster_mode=1
+config_cluster_mode=3
+
+. "$my_dir/common-cluster"
+
