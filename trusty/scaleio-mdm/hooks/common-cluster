@@ -3,6 +3,7 @@ if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
 . "$my_dir/common"
 
 scaleio_cluster_rids=(`relation-ids scaleio-cluster`)
+if [[ -z ${scaleio_cluster_rids[*]+x} ]]; then exit 0; fi
 scaleio_cluster_rid=${scaleio_cluster_rids[0]}
 required_mode=`config-get cluster-mode`
 current_mode=`leader-get cluster_mode`
@@ -10,6 +11,7 @@ eval `leader-get cluster_nodes`
 eval `leader-get ordered_nodes`
 declare -A present_nodes=()
 declare -A leaving_nodes=()
+declare -A ready_nodes=()
 declare -A required_count
 declare -A current_count
 declare -A leaving_count=([tb]=0 [slave]=0)
@@ -23,10 +25,9 @@ function retrieve-cluster-info {
 	# The function should be called in a scope of scaleio-cluster-relation-* hooks only
 
 	# Looking up present nodes and recording their roles in present_nodes
-	local nodes=`relation-list -r $scaleio_cluster_rid`
-  	for node in $nodes; do
+	local nodes=(`relation-list -r $scaleio_cluster_rid` $JUJU_UNIT_NAME)
+  	for node in ${nodes[*]}; do
   		# TODO: Most probably the check below isn't required
-  		if [ $JUJU_HOOK_NAME == 'scaleio-cluster-relation-departed' ] && [ $JUJU_REMOTE_UNIT == $node ]; then continue; fi
   		local role=`relation-get -r $scaleio_cluster_rid role $node`
 		present_nodes[$node]=$role
 		present_count[$role]=$(( present_count[$role]+1 ))
@@ -44,7 +45,9 @@ function retrieve-cluster-info {
 
 function adjust-cluster {
 	# The function should be called in a scope of scaleio-cluster-relation-* hooks only
-
+	
+	if [[ -z ${scaleio_cluster_rid+x} ]]; then exit 0; fi
+	
 	retrieve-cluster-info
 
 	# Adjust or restore cluster
@@ -57,29 +60,48 @@ function adjust-cluster {
 	fi
 }
 
-function order-nodes {
+function order-status {
 	# Check if we have enough ready nodes of required roles. Order and return if not
-	local absent_slave_count=$1
-	local absent_tb_count=$2
+	declare -A additional_nodes_count=([slave]=$1 [tb]=$2)
 
-	# Already ordered, leave and wait while they set up
-	if [ -n "${ordered_nodes+x}" ]; then return 1; fi
-
-	# Order required roles
-	declare -A ordered_nodes
 	for node in ${!present_nodes[*]}; do
 		if [ -n "${cluster_nodes[$node]+x}" ]; then continue; fi
-		if (( absent_slave_count > 0 )); then
+		local role=${present_nodes[$node]}
+		if (( additional_nodes_count[$role]-- > 0)); then
+			ready_nodes[$node]=$role
+		fi
+	done
+	# Check if requirements are satisfied
+	if (( additional_nodes_count[slave] > 0 || additional_nodes_count[tb] > 0 )); then
+		juju-log "ScaleIO MDM cluster, not enough required roles exist - need to order more"
+		ready_nodes=()
+	fi
+}
+
+function order-nodes {
+	# Check if we have enough ready nodes of required roles. Order and return if not
+	local additional_slave_count=$1
+	local additional_tb_count=$2
+
+	# Check if enough nodes of required roles exist
+	order-status $additional_slave_count $additional_tb_count
+	if [ -n "${ready_nodes[*]+x}" ] || [ -n "${ordered_nodes[*]+x}" ]; then return 0; fi
+
+		# Order required roles
+	declare -A ordered_nodes=()
+	for node in ${!present_nodes[*]}; do
+		if [ -n "${cluster_nodes[$node]+x}" ]; then continue; fi
+		if (( additional_slave_count > 0 )); then
 			ordered_nodes[$node]=slave
-			absent_slave_count=$(( absent_slave_count-1 ))
-		elif (( absent_tb_count > 0 )); then
+			additional_slave_count=$(( additional_slave_count-1 ))
+		elif (( additional_tb_count > 0 )); then
 			ordered_nodes[$node]=tb
-			absent_tb_count=$(( absent_tb_count-1 ))
+			additional_tb_count=$(( additional_tb_count-1 ))
 		fi
 	done
 		
 	# Check if enough spares exists
-	if (( absent_slave_count > 0 || absent_tb_count > 0 )); then
+	if (( additional_slave_count > 0 || additional_tb_count > 0 )); then
 		juju-log "Not enough spare nodes exist - requested mode: $required_mode, current mode: $current_mode"
 	else
 		leader-set ordered_nodes="`declare -p ordered_nodes`"
@@ -134,21 +156,19 @@ function reduce-cluster {
 function restore-cluster {
 	# Restore the Cluster
 
-	if [[ `order-nodes leaving_count[slave] leaving_count[tb]` == 1 ]]; then
-		# Ordered required roles, leaving for now
-		return 0
-	fi
+	order-nodes ${leaving_count[slave]} ${leaving_count[tb]}
+	if [ -z "${ready_nodes[*]+x}" ]; then return 0; fi
 
 	# Ordered roles delivered, restoring the Cluster
-	
+
 	# Prepare replacement nodes for adding
 	declare -A adding_count=([slave]=0 [tb]=0)
 	declare -A add_str=([slave]='' [tb]='')
-	for node in ${!ordered_nodes[*]}; do
+	for node in ${!ready_nodes[*]}; do
 		local name=`convert-name $node`
 		local internal_ip=`relation-get -r $scaleio_cluster_rid internal_ip $node`
 		local management_ip=`relation-get -r $scaleio_cluster_rid management_ip $node`
-		local role=${ordered_nodes[$node]}
+		local role=${ready_nodes[$node]}
 		cluster-cmd "scaleio::mdm { 'mdm $node': name=>'$name', ips=>'$internal_ip', role=>'$role', management_ips=>'$management_ip' }"
 		add_str[$role]+="$name,"
 		adding_count[$role]=$(( adding_count[$role]+1 ))
@@ -180,22 +200,23 @@ function grow-cluster {
 	# Grow the Cluster
 	mode_change=$(( (required_mode - current_mode) / 2 ))
 	
-	if [[ `order-nodes mode_change mode_change` == 1 ]]; then
-		# Ordered required roles, leaving for now
-		return 0
-	fi
-		# Prepare replacement nodes for adding
+	order-nodes $mode_change $mode_change
+	if [ -z "${ready_nodes[*]+x}" ]; then return 0; fi
+		
+	# Prepare replacement nodes for adding
 	declare -A add_str=([slave]='' [tb]='')
-	for node in ${!ordered_nodes[*]}; do
+	for node in ${!ready_nodes[*]}; do
 		local name=`convert-name $node`
 		local internal_ip=`relation-get -r $scaleio_cluster_rid internal_ip $node`
 		local management_ip=`relation-get -r $scaleio_cluster_rid management_ip $node`
-		local role=${ordered_nodes[$node]}
+		local role=${ready_nodes[$node]}
+		echo bla $node %role >& 2
 		cluster-cmd "scaleio::mdm { 'mdm $node': name=>'$name', ips=>'$internal_ip', role=>'$role', management_ips=>'$management_ip' }"
 		add_str[$role]+="$name,"
 		cluster_nodes[$node]=$role	
 	done
 
+	echo tra ${add_str[tb]} >& 2
 	# Issue the cluster command for growing
 	juju-log "ScaleIO cluster is being grown to $required_mode - slaves: ${add_str[slave]}, tbs: ${add_str[tb]}"
 	cluster-cmd "scaleio::cluster {'cluster': cluster_mode=>'$required_mode', slave_names=>'${add_str[slave]}', tb_names=>'${add_str[tb]}' }"

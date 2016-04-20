@@ -8,7 +8,7 @@ juju-log "ScaleIO leader elected"
 cluster_mode=`leader-get cluster_mode`
 if [ -z "$cluster_mode" ]; then
 	declare -A cluster_nodes=([$JUJU_UNIT_NAME]=slave)
-	leader-set mdm_internal_ips="$MY_INTERNAL_IP," mdm_management_ips="$MY_MANAGEMENT_IP," cluster_mode=1
+	leader-set mdm_internal_ips="$MY_INTERNAL_IP," mdm_management_ips="$MY_MANAGEMENT_IP," cluster_mode=1 cluster_nodes="`declare -p cluster_nodes`"
 	juju-log "ScaleIO single-node cluster creating (name: $MY_NAME, internal_ip: $MY_INTERNAL_IP, management_ip: $MY_MANAGEMENT_IP)"
 	server-cmd "class { 'scaleio::mdm_server': master_mdm_name=>'$MY_NAME', mdm_ips=>'$MY_INTERNAL_IP', is_manager=>1, mdm_management_ips=>'$MY_MANAGEMENT_IP' }"
 	juju-log "ScaleIO single-node cluster created"

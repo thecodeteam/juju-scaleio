@@ -4,11 +4,9 @@ if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
 
 log-relation "ScaleIO Standby MDM joining"
 relation-set internal_ip=$MY_INTERNAL_IP
+role=`relation-get role $JUJU_UNIT_NAME`
 
-my_state=`relation-get state $JUJU_UNIT_NAME`
-
-if [ $leader != 'True' ]; then
-	state=`relation-get role`
+if [ `is-leader` != 'True' ]; then
 	if [ -z "$role" ]; then
 		# Newcomer status initialization
 		status-set blocked "ScaleIO MDM is waiting to join cluster"
@@ -17,7 +15,8 @@ if [ $leader != 'True' ]; then
 else
 	if [ -z "$role" ]; then
 		# Initial master first role initialization - couldn't be done earlier because no relation existed
-		# We don't care that it's actually master - all non-tiebreakers are current or potential slaves
+		# We set it to slave because don't care that it's actually master - 
+		# all non-tiebreakers are current or potential slaves
 		relation-set role=slave
 	fi	
 fi

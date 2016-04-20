@@ -1,6 +1,5 @@
 #!/bin/bash
 if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
-. "$my_dir/common"
 . "$my_dir/common-cluster"
 
 juju-log "ScaleIO MDM config changed"
@@ -23,5 +22,6 @@ if [ -n "$leader" ] && [[ $leader == 'True' ]]; then
 		# Remove previous ordering if it's in action
 		leader-set ordered_nodes=
 	fi
+
 	adjust-cluster
 fi
