@@ -18,5 +18,4 @@ Read particular charms' READMEs for details about relations and configuration.
 
 # ScaleIO charms Contact Information
 
-- [Project Homepage](https://launchpad.net/jujuscaleio)
-- [Project Bug Tracker](https://bugs.launchpad.net/jujuscaleio)
+- [Project Bug Tracker](https://github.com/cloudscaling/puppet-scaleio-openstack/issues)
