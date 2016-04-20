@@ -15,3 +15,8 @@ It includes:
 * nova-compute - Patched nova-compute which supports ephemeral-storage backend
 
 Read particular charms' READMEs for details about relations and configuration.
+
+# ScaleIO charms Contact Information
+
+- [Project Homepage](https://launchpad.net/jujuscaleio)
+- [Project Bug Tracker](https://bugs.launchpad.net/jujuscaleio)
