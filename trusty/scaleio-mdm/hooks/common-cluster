@@ -177,11 +177,13 @@ function restore-cluster {
 
 	# Prepare leaving nodes for removing, not exceeding the number of adding nodes
 	declare -A remove_str=([manager]='' [tb]='')
+	to_remove=()
 	for node in ${!leaving_nodes[*]}; do
 		local role=${cluster_nodes[$node]}
 		if (( adding_count[$role]-- <= 0 )); then continue; fi
 		local name=`convert-name $node`
 		remove_str[$role]+="$name,"
+		to_remove+=($node)
 		unset cluster_nodes[$node]
 	done
 	
@@ -189,6 +191,11 @@ function restore-cluster {
 	juju-log "ScaleIO cluster is being restored to $required_mode with adding managers ${add_str[manager]} " \
 		"tbs ${add_str[tb]} removing managers ${remove_str[manager]} tbs ${remove_str[tb]}"
 	cluster-cmd "scaleio::cluster {'cluster': slave_names=>'${add_str[manager]}', tb_names=>'${add_str[tb]}', slave_names_to_replace=>'${remove_str[manager]}', tb_names_to_replace=>'${remove_str[tb]}' }"
+	for node in ${to_remove[*]}; do
+		local name=`convert-name $node`
+		cluster-cmd "scaleio::mdm { 'mdm $node': name=>'$name', ensure=>'absent' }"
+		unset cluster_nodes[$node]
+	done
 	juju-log "ScaleIO cluster is successfully restored to $required_mode"
 
 	update-cluster-ips
