@@ -14,9 +14,8 @@ if [ `is-leader` != 'True' ]; then
 	fi
 else
 	if [ -z "$role" ]; then
-		# Initial master first role initialization - couldn't be done earlier because no relation existed
-		# We set it to slave because don't care that it's actually master - 
-		# all non-tiebreakers are current or potential slaves
-		relation-set role=slave
+		# Initial master first role  and ip initialization
+		relation-set role=manager
+		relation-set management_ip=$MY_MANAGEMENT_IP
 	fi	
 fi

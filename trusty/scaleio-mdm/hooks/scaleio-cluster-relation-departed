@@ -10,7 +10,7 @@ if [ `is-leader` == 'True' ]; then
 	# New code
 	juju-log "ScaleIO MDM departing"
 	
-	# Invalidating current ordered tbs and slaves if any
+	# Invalidating current ordered tbs and managers if any
 	leader-set ordered_nodes=
 
 	DEPARTING_NODE=$JUJU_REMOTE_UNIT

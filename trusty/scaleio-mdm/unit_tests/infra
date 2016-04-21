@@ -7,7 +7,7 @@ function test {
 
 function assert_equal {
 	if [[ "$1" != "$2" ]]; then
-		echo "Error in ${FUNCNAME[1]}, $1 is not equal to $2"
+		echo "Error in ${FUNCNAME[1]}, got: $1 expected: $2"
 		exit 1
 	fi
 }

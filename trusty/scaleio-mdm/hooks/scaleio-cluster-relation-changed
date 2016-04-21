@@ -8,23 +8,4 @@ if [ `is-leader` == 'True' ] ; then
 	log-relation "ScaleIO cluster-relation-changed, leader-side"
 	
 	adjust-cluster
-else
-	log-relation "ScaleIO cluster-relation-changed, slave-side" 
-
-	eval `leader-get ordered_nodes`
-    if [ -z "${ordered_nodes+x}" ]; then exit; fi
-    ordered_role=${ordered_nodes["$JUJU_UNIT_NAME"]}
-    if [ -z "${ordered_role+x}" ]; then exit; fi
-	if [[ $ordered_role == slave ]]; then
-		is_manager=1
-		relation-set management_ip=$MY_MANAGEMENT_IP
-	else
-		is_manager=0
-	fi
-	# Remove it from list of standbies first, just in case error occurred in previous cluster adjustments
-	cluster-cmd "scaleio::mdm { 'remove from cluster': name=>'$MY_NAME', ensure=>'absent' }"
-	server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
-	relation-set role=$ordered_role
-	status-set active
-	juju-log "ScaleIO MDM $MY_NAME changed role to $ordered_role"
 fi

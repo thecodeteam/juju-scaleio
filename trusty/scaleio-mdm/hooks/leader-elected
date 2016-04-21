@@ -7,7 +7,7 @@ juju-log "ScaleIO leader elected"
 # Init cluster configuration
 cluster_mode=`leader-get cluster_mode`
 if [ -z "$cluster_mode" ]; then
-	declare -A cluster_nodes=([$JUJU_UNIT_NAME]=slave)
+	declare -A cluster_nodes=([$JUJU_UNIT_NAME]=manager)
 	leader-set mdm_internal_ips="$MY_INTERNAL_IP," mdm_management_ips="$MY_MANAGEMENT_IP," cluster_mode=1 cluster_nodes="`declare -p cluster_nodes`"
 	juju-log "ScaleIO single-node cluster creating (name: $MY_NAME, internal_ip: $MY_INTERNAL_IP, management_ip: $MY_MANAGEMENT_IP)"
 	server-cmd "class { 'scaleio::mdm_server': master_mdm_name=>'$MY_NAME', mdm_ips=>'$MY_INTERNAL_IP', is_manager=>1, mdm_management_ips=>'$MY_MANAGEMENT_IP' }"
@@ -16,7 +16,7 @@ if [ -z "$cluster_mode" ]; then
 	server-cmd "scaleio::cluster { 'cluster': password=>'admin', new_password=>'$MY_PASSWORD' }"
 	juju-log "ScaleIO cluster password changed"
 	leader-set password=$MY_PASSWORD
-	
+
 	status-set active
 
 	# Notify MDMs which joined before leader's got elected

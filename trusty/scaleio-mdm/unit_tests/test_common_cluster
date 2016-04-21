@@ -9,10 +9,10 @@ function test_retrieve_cluster_info_1_to_3 {
 	
 	retrieve-cluster-info			
 	
-	assert_equal "`declare -p present_nodes`" "declare -A present_nodes='([scaleio-mdm/0]=\"slave\" [scaleio-mdm/1]=\"tb\" [scaleio-mdm/2]=\"slave\" )'"
-	assert_equal "`declare -p present_count`" "declare -A present_count='([slave]=\"2\" [tb]=\"1\" )'"
+	assert_equal "`declare -p present_nodes`" "declare -A present_nodes='([scaleio-mdm/0]=\"manager\" [scaleio-mdm/1]=\"tb\" [scaleio-mdm/2]=\"manager\" )'"
+	assert_equal "`declare -p present_count`" "declare -A present_count='([none]=\"0\" [manager]=\"2\" [tb]=\"1\" )'"
 	assert_equal "`declare -p leaving_nodes`" "declare -A leaving_nodes='()'"
-	assert_equal "`declare -p leaving_count`" "declare -A leaving_count='([slave]=\"0\" [tb]=\"0\" )'"
+	assert_equal "`declare -p leaving_count`" "declare -A leaving_count='([manager]=\"0\" [tb]=\"0\" )'"
 }
 
 function test_retrieve_cluster_info_3_to_1 {
@@ -20,10 +20,10 @@ function test_retrieve_cluster_info_3_to_1 {
 	
 	retrieve-cluster-info			
 	
-	assert_equal "`declare -p present_nodes`" "declare -A present_nodes='([scaleio-mdm/0]=\"slave\" [scaleio-mdm/1]=\"tb\" )'"
-	assert_equal "`declare -p present_count`" "declare -A present_count='([slave]=\"1\" [tb]=\"1\" )'"
-	assert_equal "`declare -p leaving_nodes`" "declare -A leaving_nodes='([scaleio-mdm/2]=\"slave\" )'"
-	assert_equal "`declare -p leaving_count`" "declare -A leaving_count='([slave]=\"1\" [tb]=\"0\" )'" 
+	assert_equal "`declare -p present_nodes`" "declare -A present_nodes='([scaleio-mdm/0]=\"manager\" [scaleio-mdm/1]=\"tb\" )'"
+	assert_equal "`declare -p present_count`" "declare -A present_count='([none]=\"0\" [manager]=\"1\" [tb]=\"1\" )'"
+	assert_equal "`declare -p leaving_nodes`" "declare -A leaving_nodes='([scaleio-mdm/2]=\"manager\" )'"
+	assert_equal "`declare -p leaving_count`" "declare -A leaving_count='([manager]=\"1\" [tb]=\"0\" )'" 
 }
 
 function test_adjust_cluster_1_to_3 {
@@ -71,7 +71,7 @@ function test_order_status_1_to_3 {
 	retrieve-cluster-info
 	order-status 1 1
 	
-	assert_equal "`declare -p ready_nodes`" "declare -A ready_nodes='([scaleio-mdm/1]=\"tb\" [scaleio-mdm/2]=\"slave\" )'"	
+	assert_equal "`declare -p ready_nodes`" "declare -A ready_nodes='([scaleio-mdm/1]=\"tb\" [scaleio-mdm/2]=\"manager\" )'"	
 }
 	
 function test_order_nodes_3_to_3 {
@@ -141,9 +141,9 @@ function test_grow_cluster_1_to_3 {
 	grow-cluster
 
 	assert_equal "${scli[0]}" "scaleio::mdm { 'mdm scaleio-mdm/1': name=>'scaleio_mdm_1', ips=>'', role=>'tb', management_ips=>'' }"
-	assert_equal "${scli[1]}" "scaleio::mdm { 'mdm scaleio-mdm/2': name=>'scaleio_mdm_2', ips=>'10.0.0.3', role=>'slave', management_ips=>'10.0.0.3' }"
+	assert_equal "${scli[1]}" "scaleio::mdm { 'mdm scaleio-mdm/2': name=>'scaleio_mdm_2', ips=>'10.0.0.3', role=>'manager', management_ips=>'10.0.0.3' }"
 	assert_equal "${scli[2]}" "scaleio::cluster {'cluster': cluster_mode=>'3', slave_names=>'scaleio_mdm_2,', tb_names=>'scaleio_mdm_1,' }"
-	assert_equal "$result" "cluster_nodes=declare -A cluster_nodes='([scaleio-mdm/0]=\"slave\" [scaleio-mdm/1]=\"tb\" [scaleio-mdm/2]=\"slave\" )'"
+	assert_equal "$result" "cluster_nodes=declare -A cluster_nodes='([scaleio-mdm/0]=\"manager\" [scaleio-mdm/1]=\"tb\" [scaleio-mdm/2]=\"manager\" )' cluster_mode=3"
 }
 
 function test_reduce_cluster_3_to_1 {
@@ -169,7 +169,7 @@ function test_reduce_cluster_3_to_1 {
 	assert_equal "${scli[0]}" "scaleio::cluster {'cluster': cluster_mode=>'1', slave_names=>'scaleio_mdm_2,', tb_names=>'scaleio_mdm_1,', ensure=>'absent' }"
 	assert_equal "${scli[1]}" "scaleio::mdm { 'mdm scaleio-mdm/2': name=>'scaleio_mdm_2', ensure=>'absent' }"
 	assert_equal "${scli[2]}" "scaleio::mdm { 'mdm scaleio-mdm/1': name=>'scaleio_mdm_1', ensure=>'absent' }"
-	assert_equal "$result" "cluster_nodes=declare -A cluster_nodes='([scaleio-mdm/0]=\"slave\" )'"
+	assert_equal "$result" "cluster_nodes=declare -A cluster_nodes='([scaleio-mdm/0]=\"manager\" )' cluster_mode=1"
 }
 
 function test_restore_cluster_3_to_3 {
@@ -192,9 +192,9 @@ function test_restore_cluster_3_to_3 {
 	retrieve-cluster-info
 	restore-cluster
 
-	assert_equal "${scli[0]}" "scaleio::mdm { 'mdm scaleio-mdm/3': name=>'scaleio_mdm_3', ips=>'10.0.0.4', role=>'slave', management_ips=>'10.0.0.4' }"
+	assert_equal "${scli[0]}" "scaleio::mdm { 'mdm scaleio-mdm/3': name=>'scaleio_mdm_3', ips=>'10.0.0.4', role=>'manager', management_ips=>'10.0.0.4' }"
 	assert_equal "${scli[1]}" "scaleio::cluster {'cluster': slave_names=>'scaleio_mdm_3,', tb_names=>'', slave_names_to_replace=>'scaleio_mdm_2,', tb_names_to_replace=>'' }"
-	assert_equal "$result" "cluster_nodes=declare -A cluster_nodes='([scaleio-mdm/0]=\"slave\" [scaleio-mdm/1]=\"tb\" [scaleio-mdm/3]=\"slave\" )'"
+	assert_equal "$result" "cluster_nodes=declare -A cluster_nodes='([scaleio-mdm/0]=\"manager\" [scaleio-mdm/1]=\"tb\" [scaleio-mdm/3]=\"manager\" )'"
 }
 
 test test_retrieve_cluster_info_1_to_3

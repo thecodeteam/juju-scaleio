@@ -2,8 +2,8 @@
 JUJU_UNIT_NAME='scaleio-mdm/0'
 JUJU_REMOTE_UNIT='scaleio-mdm/2'
 
-declare -A cluster_nodes=(['scaleio-mdm/0']=slave ['scaleio-mdm/1']=tb ['scaleio-mdm/2']=slave)
-declare -A relation_get_roles=(['scaleio-mdm/0']=slave ['scaleio-mdm/1']=tb ['scaleio-mdm/2']=slave ['scaleio-mdm/3']=slave)
+declare -A cluster_nodes=(['scaleio-mdm/0']=manager ['scaleio-mdm/1']=tb ['scaleio-mdm/2']=manager)
+declare -A relation_get_roles=(['scaleio-mdm/0']=manager ['scaleio-mdm/1']=tb ['scaleio-mdm/2']=manager ['scaleio-mdm/3']=manager)
 declare -A relation_get_management_ips=(['scaleio-mdm/0']='10.0.0.1' ['scaleio-mdm/2']='10.0.0.3' ['scaleio-mdm/3']='10.0.0.4')
 declare -A relation_get_internal_ips=(['scaleio-mdm/0']='10.0.0.1' ['scaleio-mdm/2']='10.0.0.3' ['scaleio-mdm/3']='10.0.0.4')
 relation_list="scaleio-mdm/1 scaleio-mdm/3"
