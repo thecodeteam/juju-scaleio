@@ -3,10 +3,10 @@ if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
 . "$my_dir/common-cluster"
 
 status=`status-get`
-if [ $status == 'terminated' ]; then exit; fi
+if [[ $status == 'terminated' ]] ; then exit; fi
 
 # Let go a departing MDMs and adjust counters
-if [ `is-leader` == 'True' ]; then
+if [[ `is-leader` == 'True' ]] ; then
 	# New code
 	juju-log "ScaleIO MDM departing"
 	

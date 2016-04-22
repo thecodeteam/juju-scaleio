@@ -6,7 +6,7 @@ log-relation "ScaleIO Standby MDM joining"
 relation-set internal_ip=$MY_INTERNAL_IP
 role=`relation-get role $JUJU_UNIT_NAME`
 
-if [ `is-leader` != 'True' ]; then
+if [[ `is-leader` != 'True' ]]; then
 	if [ -z "$role" ]; then
 		# Newcomer status initialization
 		status-set blocked "ScaleIO MDM is waiting to join cluster"
