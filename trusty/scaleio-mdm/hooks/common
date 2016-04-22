@@ -12,7 +12,7 @@ function convert-name {
 
 INTERNAL_IFACE=`config-get internal-iface`
 if [ -n "$INTERNAL_IFACE" ] ; then
-  MY_INTERNAL_IP=`ifconfig $INTERNAL_IFACE | awk '/inet addr/{print substr($2,6)}'`
+  MY_INTERNAL_IP=`ip addr show dev $INTERNAL_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`
 else
   MY_INTERNAL_IP=`unit-get private-address`
 fi
@@ -23,7 +23,7 @@ MY_MDMS=`leader-get mdm_management_ips`
 if [ -z "$MY_MDMS" ]; then MY_MDMS='127.0.0.1'; fi
 MANAGEMENT_IFACE=`config-get management-iface`
 if [ -n "$MANAGEMENT_IFACE" ] ; then
-  MY_MANAGEMENT_IP=`ifconfig $MANAGEMENT_IFACE | awk '/inet addr/{print substr($2,6)}'`
+  MY_MANAGEMENT_IP=`ip addr show dev $MANAGEMENT_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`
 else
   MY_MANAGEMENT_IP=$MY_INTERNAL_IP
 fi

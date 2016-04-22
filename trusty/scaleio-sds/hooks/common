@@ -9,13 +9,13 @@ INTERNAL_IFACE=`config-get internal-iface`
 if [ -z "$INTERNAL_IFACE" ]; then
   INTERNAL_IP=`unit-get private-address`
 else
-  INTERNAL_IP=`ifconfig $INTERNAL_IFACE | awk '/inet addr/{print substr($2,6)}'`
+  INTERNAL_IP=`ip addr show dev $INTERNAL_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`
 fi
 MY_NAME=$(convert-name $JUJU_UNIT_NAME)
 
 STORAGE_IFACE=`config-get storage-iface`
 if [ -n "$STORAGE_IFACE" ]; then
-  STORAGE_IP=`ifconfig $STORAGE_IFACE | awk '/inet addr/{print substr($2,6)}'`
+  STORAGE_IP=`ip addr show dev $STORAGE_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`
 else
   STORAGE_IP=''
 fi
