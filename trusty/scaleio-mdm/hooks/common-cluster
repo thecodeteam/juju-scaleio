@@ -29,7 +29,7 @@ function retrieve-cluster-info {
   	for node in ${nodes[*]}; do
   		local role=`relation-get -r $scaleio_cluster_rid role $node`
   		# If some role doesn't exist exit and wait for the node to get initialized
-        if [ -z ${role+x} ]; then exit; fi
+        if [ -z ${role} ]; then exit; fi
         present_nodes[$node]=$role
         present_count[$role]=$(( present_count[$role]+1 ))
     done
