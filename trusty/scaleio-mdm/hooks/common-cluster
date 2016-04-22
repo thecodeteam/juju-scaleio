@@ -27,10 +27,11 @@ function retrieve-cluster-info {
 	# Looking up present nodes and recording their roles in present_nodes
 	local nodes=(`relation-list -r $scaleio_cluster_rid` $JUJU_UNIT_NAME)
   	for node in ${nodes[*]}; do
-  		# TODO: Most probably the check below isn't required
   		local role=`relation-get -r $scaleio_cluster_rid role $node`
-		present_nodes[$node]=$role
-		present_count[$role]=$(( present_count[$role]+1 ))
+  		# If some role doesn't exist exit and wait for the node to get initialized
+        if [ -z ${role+x} ]; then exit; fi
+        present_nodes[$node]=$role
+        present_count[$role]=$(( present_count[$role]+1 ))
     done
 
 	# Looking for absent nodes and recording their roles in leaving_nodes

@@ -23,7 +23,5 @@ if [ -n "$leader" ] && [[ $leader == 'True' ]]; then
 		leader-set ordered_nodes=
 	fi
 
-	if [ -n "${scaleio_cluster_rid+x}" ]; then
-		adjust-cluster
-	fi
+	adjust-cluster
 fi
