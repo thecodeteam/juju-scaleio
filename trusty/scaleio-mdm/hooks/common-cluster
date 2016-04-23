@@ -168,6 +168,7 @@ function reduce-cluster {
 	done
 	juju-log "ScaleIO cluster is successfully reduced to $required_mode"
 
+    status-set active
 	update-cluster-ips
 	leader-set cluster_nodes="`declare -p cluster_nodes`" cluster_mode=$required_mode reducing_cluster=
 }
