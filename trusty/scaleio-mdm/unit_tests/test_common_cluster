@@ -163,7 +163,10 @@ function test_reduce_cluster_3_to_1 {
 		:
 	}
 	
-	retrieve-cluster-info
+    function status-set {
+        :
+    }
+		retrieve-cluster-info
 	reduce-cluster
 
 	assert_equal "${scli[0]}" "scaleio::cluster {'cluster': cluster_mode=>'1', slave_names=>'scaleio_mdm_2,', tb_names=>'scaleio_mdm_1,', ensure=>'absent' }"
