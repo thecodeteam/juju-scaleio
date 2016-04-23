@@ -2,10 +2,11 @@
 if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
 . "$my_dir/common-cluster"
 
-log-relation "ScaleIO Standby MDM joining"
+log-relation "ScaleIO MDM Cluster relation changed"
 
 if [ `is-leader` == 'True' ] ; then
 	log-relation "ScaleIO cluster-relation-changed, leader-side"
 	
+	leader-set departing_nodes=
 	adjust-cluster
 fi

@@ -24,4 +24,8 @@ if [ -z "$cluster_mode" ]; then
 	if [ -n "$rids" ]; then
 		relation-set -r ${rids[0]} notify=true
 	fi
+else
+	. "$my_dir/common-cluster"
+	leader-set departing_nodes=
+	adjust-cluster
 fi

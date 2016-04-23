@@ -169,7 +169,7 @@ function test_reduce_cluster_3_to_1 {
 	assert_equal "${scli[0]}" "scaleio::cluster {'cluster': cluster_mode=>'1', slave_names=>'scaleio_mdm_2,', tb_names=>'scaleio_mdm_1,', ensure=>'absent' }"
 	assert_equal "${scli[1]}" "scaleio::mdm { 'mdm scaleio-mdm/2': name=>'scaleio_mdm_2', ensure=>'absent' }"
 	assert_equal "${scli[2]}" "scaleio::mdm { 'mdm scaleio-mdm/1': name=>'scaleio_mdm_1', ensure=>'absent' }"
-	assert_equal "$result" "cluster_nodes=declare -A cluster_nodes='([scaleio-mdm/0]=\"manager\" )' cluster_mode=1"
+	assert_equal "$result" "cluster_nodes=declare -A cluster_nodes='([scaleio-mdm/0]=\"manager\" )' cluster_mode=1 reducing_cluster="
 }
 
 function test_restore_cluster_3_to_3 {

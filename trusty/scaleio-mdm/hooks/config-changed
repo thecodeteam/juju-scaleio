@@ -20,7 +20,8 @@ if [ -n "$leader" ] && [[ $leader == 'True' ]]; then
 	new_mode=`config-get cluster_mode`
 	if [[ $old_mode != $new_mode ]]; then
 		# Remove previous ordering if it's in action
-		leader-set ordered_nodes=
+		leader-set ordered_nodes= reducing_cluster=
+		status-set active
 	fi
 
 	adjust-cluster

@@ -21,9 +21,27 @@ required_count[manager]=$(( (required_mode+1)/2))
 current_count[tb]=$(( (current_mode-1)/2 ))
 current_count[manager]=$(( (current_mode+1)/2))
 
-function retrieve-cluster-info {
-	# The function should be called in a scope of scaleio-cluster-relation-* hooks only
+# Head function here - can be called to adjust current cluster according to current and requested cluster-mode
 
+function adjust-cluster {
+    if [[ -z ${scaleio_cluster_rid+x} ]]; then exit 0; fi
+    
+    retrieve-cluster-info
+
+    # Adjust or restore cluster
+    if (( required_mode < current_mode )); then
+        reduce-cluster
+    elif (( required_mode == current_mode && (leaving_count[manager] > 0 || leaving_count[tb] > 0) )); then
+        restore-cluster
+    elif (( required_mode > current_mode )); then
+        grow-cluster
+    fi
+}
+
+# Queries all existing nodes participating in relation and compiles hashes with present and
+# leaving nodes and their roles
+
+function retrieve-cluster-info {
 	# Looking up present nodes and recording their roles in present_nodes
 	local nodes=(`relation-list -r $scaleio_cluster_rid` $JUJU_UNIT_NAME)
   	for node in ${nodes[*]}; do
@@ -42,27 +60,11 @@ function retrieve-cluster-info {
 			leaving_count[$role]=$(( leaving_count[$role]+1 ))
 		fi
 	done
-} 	
-
-function adjust-cluster {
-	# The function should be called in a scope of scaleio-cluster-relation-* hooks only
-	
-	if [[ -z ${scaleio_cluster_rid+x} ]]; then exit 0; fi
-	
-	retrieve-cluster-info
-
-	# Adjust or restore cluster
-	if (( required_mode < current_mode )); then
-		reduce-cluster
-	elif (( required_mode == current_mode && (leaving_count[manager] > 0 || leaving_count[tb] > 0) )); then
-		restore-cluster
-	elif (( required_mode > current_mode )); then
-		grow-cluster
-	fi
 }
 
+# Checks sufficiency of nodes of required roles after previous ordering
+
 function order-status {
-	# Check if we have enough ready nodes of required roles. Order and return if not
 	declare -A additional_nodes_count=([manager]=$1 [tb]=$2)
 
 	for node in ${!present_nodes[*]}; do
@@ -79,8 +81,9 @@ function order-status {
 	fi
 }
 
+# Orders spare nodes to assume required roles to become cluster members if not enough yet
+
 function order-nodes {
-	# Check if we have enough ready nodes of required roles. Order and return if not
 	local additional_manager_count=$1
 	local additional_tb_count=$2
 
@@ -109,24 +112,39 @@ function order-nodes {
 	fi
 }
 
+# Checks possibility and reduces the cluster to required mode
+
 function reduce-cluster {
-	# Reduces the Cluster
 
 	mode_change=$(( (current_mode - required_mode) / 2 ))
 	
+	local reducing_msg=''
 	# Resizing from 5 or 3 to 1 can be done half-nicely, we should wait for managers to depart and then remove the tiebreakers and switch to 1
 	# Removing of all MDMs except one manager at the moment kills the cluster so we have to resort to having one tiebreaker left at least
 	# In order to determine which manager will stay we need to wait for the rest of them to leave
 	if (( required_mode == 1 && leaving_count[manager] < mode_change )); then
-		juju-log "Reducing cluster to 1 is not done - waiting for managers to depart first"
-		return 0
+        local change=$(( mode_change - leaving_count[manager] ))
+        reducing_msg="waiting for ${change} MDM managers to leave" 
+		juju-log "Reducing cluster to 1 is not done - $reducing_msg"
 	fi
 
 	# Resizing from 5 to 3 can be done nicely, waiting until specific nodes are removed explicitly
-	if (( required_mode == 3 && (leaving_count[tb] == 0 || leaving_count[manager] == 0) )); then
-		juju-log "Reducing cluster from 5 to 3 is not done - waiting for more nodes to depart first"
-		return 0
+	if (( required_mode == 3  && (leaving_count[tb] == 0 || leaving_count[manager] == 0) )); then
+	    local manager_change=$(( mode_change - leaving_count[manager] ))
+	    local tb_change=$(( mode_change - leaving_count[tb] ))
+	    reducing_msg="waiting for ${manager_change} MDM manager(s) and ${tb_change} MDM tiebreaker(s) to leave"
+        juju-log "Reducing cluster from 5 to 3 is not done - $reducing_msg"
 	fi
+
+	# Letting cluster nodes know that they need to block,
+    # blocking current leader and revealing its status in case it's cluster member
+	if [ -n "${reducing_msg}" ]; then
+        leader-set reducing_cluster="$reducing_msg"
+        if [ -n "${cluster_nodes[$JUJU_UNIT_NAME]+x}" ]; then 
+            status-set blocked "Cluster member with a role ${cluster_nodes[$JUJU_UNIT_NAME]} - $reducing_msg"
+        fi
+        return 0
+    fi
 
 	# Prepare leaving nodes for removing
 	declare -A mode_change_count=([manager]=$mode_change [tb]=$mode_change)
@@ -151,8 +169,11 @@ function reduce-cluster {
 	juju-log "ScaleIO cluster is successfully reduced to $required_mode"
 
 	update-cluster-ips
-	leader-set cluster_nodes="`declare -p cluster_nodes`" cluster_mode=$required_mode
+	leader-set cluster_nodes="`declare -p cluster_nodes`" cluster_mode=$required_mode reducing_cluster=
 }
+
+# Checks and restores degraded cluster if enough spare nodes exist
+# Orders required roles and waits until ready_nodes are delivered
 
 function restore-cluster {
 	# Restore the Cluster
@@ -204,6 +225,9 @@ function restore-cluster {
 	leader-set cluster_nodes="`declare -p cluster_nodes`"
 }
 
+# Grows cluster if mode change is requested and enough spare nodes exist
+# Orders required roles and waits until ready_nodes are delivered
+
 function grow-cluster {
 	# Grow the Cluster
 	mode_change=$(( (required_mode - current_mode) / 2 ))
@@ -232,6 +256,8 @@ function grow-cluster {
 	leader-set ordered_nodes=
 	leader-set cluster_nodes="`declare -p cluster_nodes`" cluster_mode=$required_mode
 }
+
+# Updates cluster internal and management ips in leader settings
 
 function update-cluster-ips
 {
