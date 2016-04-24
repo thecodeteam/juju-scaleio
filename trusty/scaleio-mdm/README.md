@@ -55,7 +55,7 @@ Example:
 
 This charm supports ScaleIO MDM clustering.
 ScaleIO cluster can consist of 1, 3 or 5 nodes. This is set by cluster-mode configuration parameter.
-Existing units will be automatically configured to become a cluster in accordance with the cluster-mode except for 1 case (see below)
+Existing units will be automatically configured to become a cluster in accordance with the cluster-mode except for reducing (see below)
 
 ## Grow the cluster
 
@@ -82,6 +82,7 @@ IMPORTANT: Use juju-status before replacement to check status of the nodes and u
 IMPORTANT: It's very easy to destroy the cluster if not reduced properly.
 
 You need to:
+
 1. Make sure that all of the participating nodes and units are alive and active by using ```juju status scaleio-mdm```
 2. Set the desired mode (1 or 3) like ```juju set scaleio-mdm cluster-mode=3```
 3. Issue ```juju status scaleio-mdm``` command
