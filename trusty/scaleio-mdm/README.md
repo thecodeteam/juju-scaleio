@@ -86,7 +86,8 @@ You need to:
 1. Make sure that all of the participating nodes and units are alive and active by using ```juju status scaleio-mdm```
 2. Set the desired mode (1 or 3) like ```juju set scaleio-mdm cluster-mode=3```
 3. Issue ```juju status scaleio-mdm``` command
-4. See status messages of blocked cluster members - they'll reveal roles (Manager or Tiebreaker) and show units of which roles should be removed
+4. See status messages of blocked cluster members - they'll reveal roles (Manager or Tiebreaker) and show units of which roles should be removed like this: 
+	``` message: Cluster member with a role manager - waiting for 1 MDM manager(s) and 1 MDM tiebreaker(s) to leave```
 5. Remove the prescribed amount of units of prescribed roles one by one like ```juju remove-unit scaleio-mdm/13``` (you can remove one and recheck juju status)
 
 Cluster will automatically switch to requested mode when it's possible.
