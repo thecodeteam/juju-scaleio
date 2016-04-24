@@ -16,6 +16,8 @@ It includes:
 
 Read particular charms' READMEs for details about relations and configuration.
 
+IMPORTANT: ScaleIO MDM cluster is very sensitive to its reconfiguration. Please read carefully the scaleio-mdm README.
+
 # ScaleIO charms Contact Information
 
 - [Project Bug Tracker](https://github.com/cloudscaling/juju-scaleio/issues)

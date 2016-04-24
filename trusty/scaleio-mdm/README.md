@@ -51,6 +51,53 @@ Example:
   ```
     juju set scaleio-mdm password="Non_default_password"  
   ```
+# Cluster reconfiguration
+
+This charm supports ScaleIO MDM clustering.
+ScaleIO cluster can consist of 1, 3 or 5 nodes. This is set by cluster-mode configuration parameter.
+Existing units will be automatically configured to become a cluster in accordance with the cluster-mode except for 1 case (see below)
+
+## Grow the cluster
+
+In any order:
+* use add-unit to add more MDMs
+* set required cluster-mode
+
+Cluster will switch to requested mode when the number of MDMs is sufficient
+
+## Replace nodes
+
+In any order:
+* use remove-unit to remove one MDM from the cluster
+* use add-unit to add the replacement
+
+Cluster will automatically replace the nodes
+
+IMPORTANT: Don't remove more than one node at a time for replacement for 3-node cluster and more than two in 5-node.
+
+IMPORTANT: Use juju-status before replacement to check status of the nodes and units - some of them might be lost already.
+
+## Reduce the cluster
+
+IMPORTANT: It's very easy to destroy the cluster if not reduced properly.
+
+You need to:
+1. Make sure that all of the participating nodes and units are alive and active by using ```juju status scaleio-mdm```
+2. Set the desired mode (1 or 3) like ```juju set scaleio-mdm cluster-mode=3```
+3. Issue ```juju status scaleio-mdm``` command
+4. See status messages of blocked cluster members - they'll reveal roles (Manager or Tiebreaker) and show units of which roles should be removed
+5. Remove the prescribed amount of units of prescribed roles one by one like ```juju remove-unit scaleio-mdm/13``` (you can remove one and recheck juju status)
+
+Cluster will automatically switch to requested mode when it's possible.
+
+The following units will have to be removed before the cluster can switch:
+* 5 to 3 - 1 Manager and 1 Tiebreaker
+* 5 to 1 - 2 Managers (2 spare units will remain after the change)
+* 3 to 1 - 1 Manager (1 spare unit will remain after the change)
+
+IMPORTANT: Do not try to remove units with any other roles combinations. In case it happened, first restore the cluster to current mode with all members active.
+
+IMPORTANT: Any changes in cluster and in JuJu can take time in each step, usually not more than 1 minute.
 
 # Configuration
 
@@ -63,8 +110,4 @@ Example:
 # Relations
 
 To build complete ScaleIO cluster it should be related to scaleio-sds, scaleio-sdc and scaleio-gw charms.
-
-# Limitations
-
-* No change from 3 or 5 node cluster to 1 node cluster is supported
 
