@@ -197,7 +197,7 @@ function test_restore_cluster_3_to_3 {
 
 	assert_equal "${scli[0]}" "scaleio::mdm { 'mdm scaleio-mdm/3': name=>'scaleio_mdm_3', ips=>'10.0.0.4', role=>'manager', management_ips=>'10.0.0.4' }"
 	assert_equal "${scli[1]}" "scaleio::cluster {'cluster': slave_names=>'scaleio_mdm_3,', tb_names=>'', slave_names_to_replace=>'scaleio_mdm_2,', tb_names_to_replace=>'' }"
-	assert_equal "$result" "cluster_nodes=declare -A cluster_nodes='([scaleio-mdm/0]=\"manager\" [scaleio-mdm/1]=\"tb\" [scaleio-mdm/3]=\"manager\" )'"
+	assert_equal "$result" "cluster_nodes=declare -A cluster_nodes='([scaleio-mdm/0]=\"manager\" [scaleio-mdm/1]=\"tb\" [scaleio-mdm/3]=\"manager\" )' reducing_cluster="
 }
 
 test test_retrieve_cluster_info_1_to_3
