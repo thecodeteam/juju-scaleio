@@ -54,7 +54,7 @@ function log-relation {
 
 function relation-set-all {
 	local leader=`is-leader`
-	if [[ $leader != 'True' ]]; then exit; fi
+	if [[ "$leader" != 'True' ]]; then exit; fi
 
 	local mdm_internal_ips=`leader-get mdm_internal_ips`
 	local mdm_internal_ips=${mdm_internal_ips%,}
