@@ -3,7 +3,7 @@ my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
 leader=`is-leader`
-if [ $leader != 'True' ]; then exit; fi
+if [[ "$leader" != 'True' ]] ; then exit; fi
 
 remote_name=$(convert-name $JUJU_REMOTE_UNIT)
 log-relation "ScaleIO SDS $remote_name departing"

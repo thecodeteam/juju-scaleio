@@ -2,7 +2,7 @@
 test_name=$0
 
 function status-set() {
-  if [ $1 != 'active' ]; then
+  if [[ $1 != 'active' ]]; then
     echo -e "\e[31mError in $test_name: Incorrect status-set call.\e[0m"
     echo -e "\e[31m    Args: $@\e[0m"
   fi
@@ -21,7 +21,7 @@ calls_count=0
 function puppet() {
   local args=$@
   ((++calls_count))
-  if [ $1 == 'apply' ] ; then
+  if [[ $1 == 'apply' ]] ; then
     if echo "$args" | grep -P '=>' ; then
       echo -e "\e[31mError in $test_name: puppet has called with incorrent args.\e[0m"
       echo -e "\e[31m    Args: $args\e[0m"

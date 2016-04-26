@@ -5,7 +5,7 @@ my_dir="$(dirname "$0")"
 log-relation "ScaleIO SDC or GW joined"
 
 leader=`is-leader`
-if [ $leader != 'True' ]; then exit; fi
+if [[ "$leader" != 'True' ]]; then exit; fi
 
 ips=`leader-get mdm_internal_ips`
 relation-set mdm_internal_ips=$ips

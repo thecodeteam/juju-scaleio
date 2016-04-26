@@ -3,13 +3,13 @@ my_dir="$(dirname "$0")"
 . "$my_dir/common"
 
 leader=`is-leader`
-if [ $leader != 'True' ]; then exit; fi
+if [[ "$leader" != 'True' ]]; then exit; fi
 
 remote_name=$(convert-name $JUJU_REMOTE_UNIT)
 log-relation "ScaleIO MDM relation changing for ScaleIO Gateway/SDC ($remote_name)"
 
 ready=`relation-get ready` # it is a flag from sdc`s side
-if [ $ready == 'true' ]; then
+if [[ "$ready" == 'true' ]]; then
   remote_ip=`relation-get private-address`
   cluster-cmd "scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip' }"
 fi

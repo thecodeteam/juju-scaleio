@@ -13,7 +13,7 @@ storage_pools=`relation-get storage_pools`
 device_paths=`relation-get device_paths`
 leader=`is-leader`
 
-if [ -z "$protection_domain" ] || [ $leader != 'True' ]; then exit; fi
+if [[ -z "$protection_domain" || "$leader" != 'True' ]]; then exit; fi
 
 if [ -n "$remote_storage_ip" ] ; then
   ips="$remote_internal_ip,$remote_storage_ip"
