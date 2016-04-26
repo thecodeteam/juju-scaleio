@@ -115,7 +115,8 @@ function order-nodes {
 # Checks possibility and reduces the cluster to required mode
 
 function reduce-cluster {
-
+    juju-log "Trying to reduce cluster from $current_mode to $required_mode"
+    
 	mode_change=$(( (current_mode - required_mode) / 2 ))
 	
 	local reducing_msg=''
@@ -155,6 +156,8 @@ function reduce-cluster {
         fi
         return 0
     fi
+
+    juju-log "Preparing to reduce cluster"
 
 	# Prepare leaving nodes for removing
 	declare -A mode_change_count=([manager]=$mode_change [tb]=$mode_change)
