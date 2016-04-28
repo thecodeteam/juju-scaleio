@@ -26,7 +26,11 @@ current_count[manager]=$(( (current_mode+1)/2))
 function adjust-cluster {
     if [[ -z ${scaleio_cluster_rid+x} ]]; then exit 0; fi
     
+    # Fill up the info about existing and removed nodes
     retrieve-cluster-info
+    
+    # Update cluster IPs because ScaleIO doesn't work sometimes with IPs of removed cluster MDMs in the list
+    update-cluster-ips
 
     # Adjust or restore cluster
     if (( required_mode < current_mode )); then

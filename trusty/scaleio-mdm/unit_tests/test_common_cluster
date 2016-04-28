@@ -34,6 +34,10 @@ function test_adjust_cluster_1_to_3 {
 		called=True
 	}
 
+    function update-cluster-ips {
+        :
+    }
+
 	adjust-cluster
 	
 	assert_true $called
@@ -47,6 +51,10 @@ function test_adjust_cluster_3_to_1 {
 		called=True
 	}
 
+    function update-cluster-ips {
+        :
+    }
+
 	adjust-cluster
 	
 	assert_true $called
@@ -59,6 +67,10 @@ function test_adjust_cluster_3_to_3 {
 	function restore-cluster {
 		called=True
 	}
+
+    function update-cluster-ips {
+        :
+    }
 
 	adjust-cluster
 	
