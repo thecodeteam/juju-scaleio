@@ -120,19 +120,19 @@ function order-nodes {
 
 function reduce-cluster {
     juju-log "Trying to reduce cluster from $current_mode to $required_mode"
-    
-	mode_change=$(( (current_mode - required_mode) / 2 ))
-	
-	local reducing_msg=''
-	local manager_change=$(( mode_change - leaving_count[manager] ))
-	local tb_change=$(( mode_change - leaving_count[tb] ))
-	if (( required_mode == 1 )); then
-	    # Resizing from 5 or 3 to 1 can be done half-nicely, we should wait for managers to depart and then remove the tiebreakers and switch to 1
-	    # Removing of all MDMs except one manager at the moment kills the cluster so we have to resort to having one tiebreaker left at least
-	    # In order to determine which manager will stay we need to wait for the rest of them to leave
-        if (( leaving_count[manager] < mode_change && leaving_count[tb] == 0 )); then       
-	        reducing_msg="waiting for ${change} MDM managers to leave"
-	    # All cases below are invalid for cluster reduction to 1
+
+    mode_change=$(( (current_mode - required_mode) / 2 ))
+
+    local reducing_msg=''
+    local manager_change=$(( mode_change - leaving_count[manager] ))
+    local tb_change=$(( mode_change - leaving_count[tb] ))
+    if (( required_mode == 1 )); then
+        # Resizing from 5 or 3 to 1 can be done half-nicely, we should wait for managers to depart and then remove the tiebreakers and switch to 1
+        # Removing of all MDMs except one manager at the moment kills the cluster so we have to resort to having one tiebreaker left at least
+        # In order to determine which manager will stay we need to wait for the rest of them to leave
+        if (( leaving_count[manager] < mode_change && leaving_count[tb] == 0 )); then
+                reducing_msg="waiting for ${manager_change} MDM managers to leave"
+            # All cases below are invalid for cluster reduction to 1
         elif (( current_mode == 5 && leaving_count[manager] == 1 && leaving_count[tb] == 1 )); then
             reducing_msg="cluster can't be reduced to 1 with 1 manager and 1 tiebreaker gone, either restore it to 5 or switch to 3-node mode"
         elif (( current_mode == 5 && leaving_count[manager] == 0 && leaving_count[tb] == 1 )); then
@@ -150,9 +150,9 @@ function reduce-cluster {
         reducing_msg="cluster can't be reduced to 3 with 2 managers gone, please restore it to 5-node mode or switch to 1-node mode"
     fi
 
-	# Letting cluster nodes know that they need to block,
+    # Letting cluster nodes know that they need to block,
     # blocking current leader and revealing its status in case it's cluster member
-	if [ -n "${reducing_msg}" ]; then
+    if [ -n "${reducing_msg}" ]; then
         juju-log "Reducing cluster from ${current_mode} to ${required_mode} is not done - $reducing_msg"
         leader-set reducing_cluster="$reducing_msg"
         if [ -n "${cluster_nodes[$JUJU_UNIT_NAME]+x}" ]; then 
@@ -163,31 +163,31 @@ function reduce-cluster {
 
     juju-log "Preparing to reduce cluster"
 
-	# Prepare leaving nodes for removing
-	declare -A mode_change_count=([manager]=$mode_change [tb]=$mode_change)
-	to_remove=()
-	declare -A remove_str
-	for node in ${!leaving_nodes[*]} ${!cluster_nodes[*]}; do
-		local role=${cluster_nodes[$node]}
-		local name=`convert-name $node`
-		if [[ remove_str[$role] == *"$name,"* ]] || (( mode_change_count[$role]-- <= 0 )); then continue; fi
-		to_remove+=($node)
-		remove_str[$role]+="$name,"
-	done
-	
-	# Issue the cluster command for reducing
-	juju-log "ScaleIO cluster is being reduced to $required_mode - managers: ${remove_str[manager]}, tbs: ${remove_str[tb]}"
-	cluster-cmd "scaleio::cluster {'cluster': cluster_mode=>'$required_mode', slave_names=>'${remove_str[manager]}', tb_names=>'${remove_str[tb]}', ensure=>'absent' }"
-	for node in ${to_remove[*]}; do
-		local name=`convert-name $node`
-		cluster-cmd "scaleio::mdm { 'mdm $node': name=>'$name', ensure=>'absent' }"
-		unset cluster_nodes[$node]
-	done
-	juju-log "ScaleIO cluster is successfully reduced to $required_mode"
+    # Prepare leaving nodes for removing
+    declare -A mode_change_count=([manager]=$mode_change [tb]=$mode_change)
+    to_remove=()
+    declare -A remove_str
+    for node in ${!leaving_nodes[*]} ${!cluster_nodes[*]}; do
+        local role=${cluster_nodes[$node]}
+        local name=`convert-name $node`
+        if [[ remove_str[$role] == *"$name,"* ]] || (( mode_change_count[$role]-- <= 0 )); then continue; fi
+        to_remove+=($node)
+        remove_str[$role]+="$name,"
+    done
+
+    # Issue the cluster command for reducing
+    juju-log "ScaleIO cluster is being reduced to $required_mode - managers: ${remove_str[manager]}, tbs: ${remove_str[tb]}"
+    cluster-cmd "scaleio::cluster {'cluster': cluster_mode=>'$required_mode', slave_names=>'${remove_str[manager]}', tb_names=>'${remove_str[tb]}', ensure=>'absent' }"
+    for node in ${to_remove[*]}; do
+        local name=`convert-name $node`
+        cluster-cmd "scaleio::mdm { 'mdm $node': name=>'$name', ensure=>'absent' }"
+        unset cluster_nodes[$node]
+    done
+    juju-log "ScaleIO cluster is successfully reduced to $required_mode"
 
     status-set active
-	update-cluster-ips
-	leader-set cluster_nodes="`declare -p cluster_nodes`" cluster_mode=$required_mode reducing_cluster=
+    update-cluster-ips
+    leader-set cluster_nodes="`declare -p cluster_nodes`" cluster_mode=$required_mode reducing_cluster=
 }
 
 # Checks and restores degraded cluster if enough spare nodes exist
