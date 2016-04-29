@@ -31,6 +31,7 @@ function adjust-cluster {
     
     # Update cluster IPs because ScaleIO doesn't work sometimes with IPs of removed cluster MDMs in the list
     update-cluster-ips
+    MY_MDMS=`leader-get mdm_management_ips`
 
     # Adjust or restore cluster
     if (( required_mode < current_mode )); then
