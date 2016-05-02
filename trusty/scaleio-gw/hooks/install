@@ -10,7 +10,8 @@ juju-log "ScaleIO GW installing"
 
 password=$(config-get password)
 api_port=$(get-port)
-server-cmd "class { 'scaleio::gateway_server': password=>'$password', port=>'$api_port' }"
+api_im_port=$(get-im-port)
+server-cmd "class { 'scaleio::gateway_server': password=>'$password', port=>'$api_port', im_port=>'$api_im_port' }"
 
 juju-log "ScaleIO GW installed"
 

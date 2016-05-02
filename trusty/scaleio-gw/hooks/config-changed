@@ -7,6 +7,7 @@ juju-log "ScaleIO GW config changed"
 password=$(config-get password)
 port=$(config-get port)
 api_port=$(get-port)
+api_im_port=$(get-im-port)
 ip=$(get-ip)
 
 rids=`relation-ids scaleio-gw`
@@ -16,6 +17,6 @@ for rid in $rids ; do
   relation-set -r $rid ip=$ip
 done
 
-server-cmd "class { 'scaleio::gateway_server': password=>'$password', port=>'$api_port' }"
+server-cmd "class { 'scaleio::gateway_server': password=>'$password', port=>'$api_port', 'im_port'=>'$api_im_port' }"
 
 update-haproxy

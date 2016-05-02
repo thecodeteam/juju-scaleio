@@ -2,7 +2,11 @@ options:
   port:
     type: int
     default: 4443
-    description: Port where gateway will listen.
+    description: Port where gateway will listen for REST API.
+  im-port:
+    type: int
+    default: 8081
+    description: Port of Installation Manager web server.
   password:
     type: string
     default: "Default_password"
