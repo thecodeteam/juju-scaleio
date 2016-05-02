@@ -31,7 +31,8 @@ function update-nova() {
   chmod 600 $tmp_cfg
 
   server-cmd "class { 'scaleio_openstack::nova':
-    gateway_password => '$password', gateway_ip => '$remote_ip', gateway_port => '$port',
+    gateway_user => 'admin', gateway_password => '$password',
+    gateway_ip => '$remote_ip', gateway_port => '$port',
     protection_domains => '$protection_domains', storage_pools => '$storage_pools',
     provisioning_type => $provisioning_type, nova_config_file => '$tmp_cfg',
   }"

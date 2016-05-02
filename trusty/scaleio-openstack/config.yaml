@@ -15,3 +15,15 @@ options:
       is provisioned for storage, or thin, where only the
       capacity currently needed is provisioned.
       Can be "thick" or "thin".
+  verify-server-certificate:
+    type: boolean
+    default: False
+    description: "Verify server certificate."
+  server-certificate-path:
+    type: string
+    default:
+    description: "Server certificate path."
+  round-volume-capacity:
+    type: boolean
+    default: True
+    description: "Round up volume capacity. Only Cinder's option."
