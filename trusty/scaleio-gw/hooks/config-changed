@@ -17,6 +17,6 @@ for rid in $rids ; do
   relation-set -r $rid ip=$ip
 done
 
-server-cmd "class { 'scaleio::gateway_server': password=>'$password', port=>'$api_port', 'im_port'=>'$api_im_port' }"
+server-cmd "class { 'scaleio::gateway_server': password=>'$password', port=>'$api_port', im_port=>'$api_im_port' }"
 
 update-haproxy
