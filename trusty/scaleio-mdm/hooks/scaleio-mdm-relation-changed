@@ -11,7 +11,8 @@ log-relation "ScaleIO MDM relation changing for ScaleIO Gateway/SDC ($remote_nam
 ready=`relation-get ready` # it is a flag from sdc`s side
 if [[ "$ready" == 'true' ]]; then
   remote_ip=`relation-get private-address`
-  cluster-cmd "scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip' }"
+  performance_profile=`config-get performance-profile`
+  cluster-cmd "scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip', performance_profile=>'$performance_profile' }"
 fi
 
 log-relation "ScaleIO MDM changed for ScaleIO Gateway/SDC"
