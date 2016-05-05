@@ -24,7 +24,7 @@ else
 fi
 
 cluster-cmd "scaleio::protection_domain { 'protection domain $protection_domain': 
-  name=>'$protection_domain', fault_sets=>['$fault_set'], storage_pools=>['$storage_pools'] }"
+  name=>'$protection_domain', fault_sets=>[$fault_set], storage_pools=>[$storage_pools] }"
 
 performance_profile=`config-get performance-profile`
 cluster-cmd "scaleio::sds { 'sds $remote_name':
