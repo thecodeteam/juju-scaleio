@@ -106,6 +106,7 @@ IMPORTANT: Any changes in cluster and in JuJu can take time in each step, usuall
 * internal-iface - Interface used for MDM control communications with SDSs and SDCs, by default JuJu-provided IPs are used
 * management-iface - Interface used to provide access to ScaleIO management applications, by default internal-iface is used
 * scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
+* performance-profile - Performance profile for SDC/SDS. Can be default or high_performance.
 
 # Relations
 

@@ -27,7 +27,7 @@ Example:
   
   Change password
   ```
-    juju set scaleio-gw password="Non_default_password"  
+    juju set scaleio-gw password="Non_default_password"
   ```
   
   Check the scaleio-openstack README for details on its relation.
@@ -35,6 +35,7 @@ Example:
 # Configuration
 
 * port - port where Gateway will listen
+* im-port - Port of Installation Manager web server.
 * password - password for the cluster
 * scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
 * vip - Virtual IP to use to front API service in HA configuration.
