@@ -4,12 +4,19 @@ my_dir="$(dirname "$0")"
 
 log-relation "ScaleIO GW changing"
 
-password=$(relation-get password)
-port=$(relation-get port)
-ip=$(relation-get ip)
+sdcs_ready=''
+if [ $(is-leader) == 'True' ] ; then
+    if relation-get - | grep sdcs_ready ; then
+        sdcs_ready=`relation-get sdcs_ready`
+        leader-set sdcs_ready="$sdcs_ready"
+        juju-log "sdcs_ready: $sdcs_ready"
+    fi
+    leader-set password=$(relation-get password) port=$(relation-get port) ip=$(relation-ip)
+fi
 
-if [[ -z "$ip" || -z "$port" ]] ; then
-  # relation data is not ready yet
+my_ip=`unit-get private-address`
+if ! echo "$sdcs_ready" | grep "$my_ip" ; then
+  # this sdc is not registred in mdm yet
   exit
 fi
 

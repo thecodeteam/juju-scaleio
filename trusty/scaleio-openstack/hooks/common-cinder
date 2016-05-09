@@ -6,19 +6,26 @@ function update-cinder() {
     rel_param="-r $1"
   fi
 
-  local rid_gw=`relation-ids scaleio-gw`
-  if [ -z "$rid_gw" ] ; then
-    return 0
+  local rids=`relation-ids scaleio-gw`
+  rids_count=`echo $rids | wc -w`
+  if (( rids_count < 0 )) ; then
+    status-set waiting "Awaiting realtion to scaleio-gw"
+    return
+  fi
+  if (( rids_count > 1 )) ; then
+    status-set blocked "More that one realtion found to scaleio-gw"
+    return
   fi
 
-  # TODO: think about 'head -1'. maybe it is not correct.
-  local unit_gw=`relation-list -r $rid_gw | head -1`
-  local remote_ip=`relation-get -r $rid_gw ip $unit_gw`
-  local password=`relation-get -r $rid_gw password $unit_gw`
-  local port=`relation-get -r $rid_gw port $unit_gw`
-  if [[ -z "$password" || -z "$port" ]] ; then
-    # data is not ready in relation. waiting for next relation-changed event
-    return 0
+  local remote_ip=`leader-get ip`
+  local password=`leader-get password`
+  local port=`leader-get port`
+  local sdcs_ready=`leader-get sdcs_ready`
+  local my_ip=`unit-get private-address`
+  if ! echo "$sdcs_ready" | grep "$my_ip" ; then
+    # this sdc is not ready. waiting.
+    status-set waiting "Awaiting local SDC to be connected"
+    return
   fi
 
   local protection_domains=`config-get protection-domains`

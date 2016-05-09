@@ -23,6 +23,13 @@ if [[ $remote_name == "scaleio_sdc"* ]]; then
     scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip', ensure=>'absent'}"
   set -e
 
+  # remove sdc from sdcs_ready list and propagate the list to gateways
+  sdcs_ready="$(leader-get sdcs_ready | sed 's/remote_ip//')"
+  leader-set sdcs_ready="$sdcs_ready"
+  for rid in `relation-ids scaleio-mdm` ; do
+    relation-set -r $rid sdcs_ready="$sdcs_ready"
+  done
+
   log-relation "ScaleIO SDC $remote_name departed"
 else
   log-relation "ScaleIO GW departed"

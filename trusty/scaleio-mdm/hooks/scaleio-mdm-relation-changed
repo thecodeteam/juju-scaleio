@@ -13,6 +13,13 @@ if [[ "$ready" == 'true' ]]; then
   remote_ip=`relation-get private-address`
   performance_profile=`config-get performance-profile`
   cluster-cmd "scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip', performance_profile=>'$performance_profile' }"
+
+  # add sdc to sdcs_ready list and propagate the list to gateways
+  sdcs_ready="$(leader-get sdcs_ready),$remote_ip"
+  leader-set sdcs_ready="$sdcs_ready"
+  for rid in `relation-ids scaleio-mdm` ; do
+    relation-set -r $rid sdcs_ready="$sdcs_ready"
+  done
 fi
 
 log-relation "ScaleIO MDM changed for ScaleIO Gateway/SDC"

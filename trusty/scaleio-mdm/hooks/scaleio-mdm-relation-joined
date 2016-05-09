@@ -12,3 +12,7 @@ relation-set mdm_internal_ips=$ips
 
 ips=`leader-get mdm_management_ips`
 relation-set mdm_management_ips=$ips
+
+# propagate sdcs_ready to GW
+sdcs_ready=`leader-get sdcs_ready`
+relation-set sdcs_ready=$sdcs_ready
