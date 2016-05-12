@@ -42,14 +42,6 @@ function get-port() {
   echo $port
 }
 
-function get-im-port() {
-  im_port=$(config-get im-port)
-  if use-haproxy ; then
-    ((im_port = im_port - 10))
-  fi
-  echo $im_port
-}
-
 function get-ip() {
   ip=$(config-get vip)
   if [ -z "$ip" ] ; then
@@ -67,14 +59,8 @@ function update-haproxy() {
   # ensure haproxy is installed
   apt-get install -fqy haproxy
 
-  local tmp_cfg="$HAPROXY_CONF""_new"
-  rm -f $tmp_cfg
-
-  # collect parameters
-  local api_rest_port=$(get-port)
-  local api_im_port=$(get-im-port)
-  local haproxy_rest_port=$(config-get port)
-  local haproxy_im_port=$(config-get im-port)
+  local api_port=$(get-port)
+  local haproxy_port=$(config-get port)
   local my_ip=$(unit-get private-address)
   my_ip=`python -c "import socket; print(socket.gethostbyname('$my_ip'))"`
   local my_name=$(convert-name $JUJU_UNIT_NAME)
@@ -82,65 +68,41 @@ function update-haproxy() {
   iface_addr=`ip route get $my_ip | grep 'dev' | awk '{print $NF}'`
   my_ip_network=`ip -o -f inet addr show | grep "$iface_addr" | awk '{print $4}'`
 
-  # store parameters in hash array
-  declare -A main_values=()
+  declare -A values=()
   for cfg_key in haproxy_queue_timeout haproxy_connect_timeout ; do
     value=$(config-get $cfg_key)
     value=${value:-5000}
-    main_values[$cfg_key]=$value
+    values[$cfg_key]=$value
   done
   for cfg_key in haproxy_client_timeout haproxy_server_timeout ; do
     value=$(config-get $cfg_key)
     value=${value:-30000}
-    main_values[$cfg_key]=$value
+    values[$cfg_key]=$value
   done
-  main_values['local_host']='127.0.0.1'
-  main_values['stat_port']='8888'
-  main_values['stat_password']="Password@$RANDOM"
+  values['local_host']='127.0.0.1'
+  values['stat_port']='8888'
+  values['stat_password']="Password@$RANDOM"
+  values['haproxy_port']="$haproxy_port"
+  values['my_ip']="$my_ip"
+  values['my_ip_network']="$my_ip_network"
 
-  # main part of config file
-  cp $my_dir/../templates/haproxy-main.cfg $tmp_cfg
-  for key in "${!main_values[@]}" ; do
-    value=${main_values[$key]}
+  local tmp_cfg="$HAPROXY_CONF""_new"
+  rm -f $tmp_cfg
+  cp $my_dir/../templates/haproxy.cfg $tmp_cfg
+  for key in "${!values[@]}" ; do
+    value=${values[$key]}
     sed -i "s|{{ $key }}|$value|g" $tmp_cfg
   done
 
-  # store common item parameters
-  declare -A item_values=()
-  item_values['my_ip']="$my_ip"
-  item_values['my_ip_network']="$my_ip_network"
-
-  # iterate over items
-  for item_type in 'rest' 'im' ; do
-    if [[ $item_type == 'rest' ]] ; then
-      api_port=$api_rest_port
-      haproxy_port=$haproxy_rest_port
-    else
-      api_port=$api_im_port
-      haproxy_port=$haproxy_im_port
-    fi
-
-    # add specific values to item parameters
-    item_values['item_type']="$item_type"
-    item_values['haproxy_port']="$haproxy_port"
-
-    # append item config file part
-    cat $my_dir/../templates/haproxy-item.cfg >> $tmp_cfg
-    for key in "${!item_values[@]}" ; do
-      value=${item_values[$key]}
-      sed -i "s|{{ $key }}|$value|g" $tmp_cfg
-    done
-
-    # next lines can have several occurences. render it here.
-    echo "    server $my_name $my_ip:$api_port" >> $tmp_cfg
-    for rid in $(relation-ids 'scaleio-gw-cluster') ; do
-      for unit in $(relation-list -r $rid) ; do
-        remote_ip=`relation-get -r $rid private-address $unit`
-        if [ -n "$remote_ip" ] ; then
-          cname=$(convert-name $unit)
-          echo "    server $cname $remote_ip:$api_port backup" >> $tmp_cfg
-        fi
-      done
+  # next lines can have several occurences. render it here.
+  echo "    server $my_name $my_ip:$api_port check" >> $tmp_cfg
+  for rid in $(relation-ids 'scaleio-gw-cluster') ; do
+    for unit in $(relation-list -r $rid) ; do
+      remote_ip=`relation-get -r $rid private-address $unit`
+      if [ -n "$remote_ip" ] ; then
+        cname=$(convert-name $unit)
+        echo "    server $cname $remote_ip:$api_port" >> $tmp_cfg
+      fi
     done
   done
 
