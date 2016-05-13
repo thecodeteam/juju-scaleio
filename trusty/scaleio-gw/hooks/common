@@ -95,7 +95,7 @@ function update-haproxy() {
   done
 
   # next lines can have several occurences. render it here.
-  echo "    server $my_name $my_ip:$api_port check" >> $tmp_cfg
+  echo "    server $my_name $my_ip:$api_port" >> $tmp_cfg
   for rid in $(relation-ids 'scaleio-gw-cluster') ; do
     for unit in $(relation-list -r $rid) ; do
       remote_ip=`relation-get -r $rid private-address $unit`
