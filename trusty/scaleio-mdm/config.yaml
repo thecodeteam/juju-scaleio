@@ -37,12 +37,12 @@ options:
   restricted-sdc-mode:
     type: string
     default:
-    description: Restricted SDC mode: 'enabled' or 'disabled'.
+    description: "Restricted SDC mode: 'enabled' or 'disabled'."
   license-file-path:
     type: string
     default:
-    description: Path to license file.
+    description: "Path to license file."
   remote-readonly-limit-state:
     type: string
     default:
-    description: Remote readonly limit state: 'enabled' or 'disabled'.
+    description: "Remote readonly limit state: 'enabled' or 'disabled'."
