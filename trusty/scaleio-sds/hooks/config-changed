@@ -4,6 +4,4 @@ my_dir="$(dirname "$0")"
 
 juju-log "ScaleIO SDS config changed"
 
-# TODO: call storage_pool
-
 relation-set-all
