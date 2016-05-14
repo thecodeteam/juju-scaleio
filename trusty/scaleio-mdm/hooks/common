@@ -8,9 +8,9 @@ function convert-name {
 
 INTERNAL_IFACE=`config-get internal-iface`
 if [ -n "$INTERNAL_IFACE" ] ; then
-  MY_INTERNAL_IP=`ip addr show dev $INTERNAL_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`
+    MY_INTERNAL_IP=`ip addr show dev $INTERNAL_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`
 else
-  MY_INTERNAL_IP=`unit-get private-address`
+    MY_INTERNAL_IP=`unit-get private-address`
 fi
 MY_NAME=$(convert-name $JUJU_UNIT_NAME)
 MY_PASSWORD=`config-get password`
@@ -19,50 +19,50 @@ MY_MDMS=`leader-get mdm_management_ips`
 if [ -z "$MY_MDMS" ]; then MY_MDMS='127.0.0.1'; fi
 MANAGEMENT_IFACE=`config-get management-iface`
 if [ -n "$MANAGEMENT_IFACE" ] ; then
-  MY_MANAGEMENT_IP=`ip addr show dev $MANAGEMENT_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`
+    MY_MANAGEMENT_IP=`ip addr show dev $MANAGEMENT_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`
 else
-  MY_MANAGEMENT_IP=$MY_INTERNAL_IP
+    MY_MANAGEMENT_IP=$MY_INTERNAL_IP
 fi
 
 function server-cmd {
-	juju-log "Running server-cmd with '$1'"
-	set +e
-	FACTER_mdm_ips=$MY_MDMS puppet apply -e "$1" --detailed-exitcodes
-	local exit_code=$?
-	if [[ $exit_code == 0 || $exit_code == 2 ]]; then
-		juju-log "The run succeeded. Exit code is $exit_code."
-	else
-		juju-log "The run failed. Exit code is $exit_code."
-		exit 1
-	fi
-	set -e
+    juju-log "Running server-cmd with '$1'"
+    set +e
+    FACTER_mdm_ips=$MY_MDMS puppet apply -e "$1" --detailed-exitcodes
+    local exit_code=$?
+    if [[ $exit_code == 0 || $exit_code == 2 ]]; then
+        juju-log "The run succeeded. Exit code is $exit_code."
+    else
+        juju-log "The run failed. Exit code is $exit_code."
+        exit 1
+    fi
+    set -e
 }
 
 function cluster-cmd {
-	server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
+    server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
 }
 
 function log-relation {
-	local remote_name=${convert-name $JUJU_REMOTE_UNIT}
-	local remote_internal_ip=$(relation-get internal_ip_$remote_name)
-	juju-log "$1: my name is $MY_NAME, relation is $remote_name, $remote_internal_ip"
+    local remote_name=${convert-name $JUJU_REMOTE_UNIT}
+    local remote_internal_ip=$(relation-get internal_ip_$remote_name)
+    juju-log "$1: my name is $MY_NAME, relation is $remote_name, $remote_internal_ip"
 }
 
 function relation-set-all {
-	local leader=`is-leader`
-	if [[ "$leader" != 'True' ]]; then exit; fi
+    local leader=`is-leader`
+    if [[ "$leader" != 'True' ]]; then exit; fi
 
-	local mdm_internal_ips=`leader-get mdm_internal_ips`
-	local mdm_internal_ips=${mdm_internal_ips%,}
-	local mdm_management_ips=`leader-get mdm_management_ips`
-	local mdm_management_ips=${mdm_management_ips%,}
+    local mdm_internal_ips=`leader-get mdm_internal_ips`
+    local mdm_internal_ips=${mdm_internal_ips%,}
+    local mdm_management_ips=`leader-get mdm_management_ips`
+    local mdm_management_ips=${mdm_management_ips%,}
 
-	local rids=`relation-ids scaleio-mdm`
-	if [ -n "$rids" ]; then
-		juju-log "ScaleIO MDM notifies SDCs and Gateways about changes: $rids"
-		for rid in $rids; do
-			relation-set -r $rid mdm_internal_ips=$mdm_internal_ips
-			relation-set -r $rid mdm_management_ips=$mdm_management_ips
-		done
-	fi
+    local rids=`relation-ids scaleio-mdm`
+    if [ -n "$rids" ]; then
+        juju-log "ScaleIO MDM notifies SDCs and Gateways about changes: $rids"
+        for rid in $rids; do
+            relation-set -r $rid mdm_internal_ips=$mdm_internal_ips
+            relation-set -r $rid mdm_management_ips=$mdm_management_ips
+        done
+    fi
 }

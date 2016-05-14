@@ -1,31 +1,33 @@
 #!/bin/bash
 if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
-. "$my_dir/common"
+. "$my_dir/common-cluster"
 
 juju-log "ScaleIO leader elected"
 
 # Init cluster configuration
 cluster_mode=`leader-get cluster_mode`
 if [ -z "$cluster_mode" ]; then
-	declare -A cluster_nodes=([$JUJU_UNIT_NAME]=manager)
-	leader-set mdm_internal_ips="$MY_INTERNAL_IP," mdm_management_ips="$MY_MANAGEMENT_IP," cluster_mode=1 cluster_nodes="`declare -p cluster_nodes`"
-	juju-log "ScaleIO single-node cluster creating (name: $MY_NAME, internal_ip: $MY_INTERNAL_IP, management_ip: $MY_MANAGEMENT_IP)"
-	server-cmd "class { 'scaleio::mdm_server': master_mdm_name=>'$MY_NAME', mdm_ips=>'$MY_INTERNAL_IP', is_manager=>1, mdm_management_ips=>'$MY_MANAGEMENT_IP' }"
-	juju-log "ScaleIO single-node cluster created"
-	server-cmd "scaleio::login { 'first login': password=>'admin' }"
-	server-cmd "scaleio::cluster { 'cluster': password=>'admin', new_password=>'$MY_PASSWORD' }"
-	juju-log "ScaleIO cluster password changed"
-	leader-set password=$MY_PASSWORD
+    declare -A cluster_nodes=([$JUJU_UNIT_NAME]=manager)
+    leader-set mdm_internal_ips="$MY_INTERNAL_IP," mdm_management_ips="$MY_MANAGEMENT_IP," cluster_mode=1 cluster_nodes="`declare -p cluster_nodes`"
+    juju-log "ScaleIO single-node cluster creating (name: $MY_NAME, internal_ip: $MY_INTERNAL_IP, management_ip: $MY_MANAGEMENT_IP)"
+    server-cmd "class { 'scaleio::mdm_server': master_mdm_name=>'$MY_NAME', mdm_ips=>'$MY_INTERNAL_IP', is_manager=>1, mdm_management_ips=>'$MY_MANAGEMENT_IP' }"
+    juju-log "ScaleIO single-node cluster created"
+    server-cmd "scaleio::login { 'first login': password=>'admin' }"
+    server-cmd "scaleio::cluster { 'cluster': password=>'admin', new_password=>'$MY_PASSWORD' }"
+    juju-log "ScaleIO cluster password changed"
+    leader-set password=$MY_PASSWORD
 
-	status-set active
+    update-cluster-options
 
-	# Notify MDMs which joined before leader's got elected
-	rids=`relation-ids scaleio-cluster`
-	if [ -n "$rids" ]; then
-		relation-set -r ${rids[0]} notify=true
-	fi
+    status-set active
+
+    # Notify MDMs which joined before leader's got elected
+    rids=`relation-ids scaleio-cluster`
+    if [ -n "$rids" ]; then
+        relation-set -r ${rids[0]} notify=true
+    fi
 else
-	. "$my_dir/common-cluster"
-	leader-set departing_nodes=
-	adjust-cluster
+    . "$my_dir/common-cluster"
+    leader-set departing_nodes=
+    adjust-cluster
 fi

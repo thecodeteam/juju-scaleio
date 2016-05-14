@@ -9,20 +9,26 @@ leader=`is-leader`
 # TODO: handle config interface changes (management-iface/internal-iface) (also check what happens in resize-cluster)
 
 # Check if cluster should be resized
-if [ -n "$leader" ] && [[ "$leader" == 'True' ]]; then
-	old_password=`leader-get password`
-	if [[ $MY_PASSWORD != $old_password ]]; then
-		server-cmd "scaleio::cluster { 'cluster': password=>'$old_password', new_password=>'$MY_PASSWORD' }"
-		juju-log "ScaleIO cluster password changed"
-	fi
-	juju-log "Request to check and resize cluster because of config changed"
-	old_mode=`leader-get cluster_mode`
-	new_mode=`config-get cluster_mode`
-	if [[ $old_mode != $new_mode ]]; then
-		# Remove previous ordering if it's in action
-		leader-set ordered_nodes= reducing_cluster=
-		status-set active
-	fi
+if [[ "$leader" == 'True' ]]; then
+    old_password=`leader-get password`
+    if [[ $MY_PASSWORD != $old_password ]]; then
+        server-cmd "scaleio::cluster { 'cluster': password=>'$old_password', new_password=>'$MY_PASSWORD' }"
+        juju-log "ScaleIO cluster password changed"
+    fi
 
-	adjust-cluster
+    profile=`config-get performance-profile`
+    cluster-cmd "scaleio::cluster { 'cluster': performance_profile=>'$profile' }"
+
+    update-cluster-options
+
+    juju-log "Request to check and resize cluster because of config changed"
+    old_mode=`leader-get cluster_mode`
+    new_mode=`config-get cluster_mode`
+    if [[ $old_mode != $new_mode ]]; then
+        # Remove previous ordering if it's in action
+        leader-set ordered_nodes= reducing_cluster=
+        status-set active
+    fi
+
+    adjust-cluster
 fi

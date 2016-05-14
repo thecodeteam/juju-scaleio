@@ -107,6 +107,9 @@ IMPORTANT: Any changes in cluster and in JuJu can take time in each step, usuall
 * management-iface - Interface used to provide access to ScaleIO management applications, by default internal-iface is used
 * scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
 * performance-profile - Performance profile for SDC/SDS. Can be default or high_performance.
+* restricted-sdc-mode - 'enabled'|'disabled' Restricted SDC mode.
+* license-file-path - Path to license file.
+* remote-readonly-limit-state - 'enabled'|'disabled' Remote readonly limit state.
 
 # Relations
 

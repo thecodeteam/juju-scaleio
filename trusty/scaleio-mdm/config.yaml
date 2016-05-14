@@ -34,3 +34,15 @@ options:
     default: high_performance
     description: |
       Performance profile for SDC/SDS. Can be default or high_performance.
+  restricted-sdc-mode:
+    type: string
+    default:
+    description: 'enabled'|'disabled' - Restricted SDC mode
+  license-file-path:
+    type: string
+    default:
+    description: Path to license file
+  remote-readonly-limit-state:
+    type: string
+    default:
+    description: 'enabled'|'disabled' - Remote readonly limit state
