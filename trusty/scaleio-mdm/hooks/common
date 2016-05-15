@@ -66,3 +66,18 @@ function relation-set-all {
         done
     fi
 }
+
+function update-cluster-options {
+    # The function should be called by leader only
+
+    local opts=""
+    local val=`config-get restricted-sdc-mode`
+    if [ -n "$val" ] ; then opts="restricted_sdc_mode=>'$val'" ; fi
+    local val=`config-get license-file-path`
+    if [ -n "$val" ] ; then opts=", license_file_path=>'$val'" ; fi
+    local val=`config-get remote-readonly-limit-state`
+    if [ -n "$val" ] ; then opts=", remote_readonly_limit_state=>'$val'" ; fi
+    if [ -n "$opts" ] ; then
+        server-cmd "scaleio::cluster { 'cluster': $opts }"
+    fi
+}
