@@ -33,6 +33,7 @@ function update-cinder() {
   local verify_server_certificate=`config-get verify-server-certificate`
   local server_certificate_path=`config-get server-certificate-path`
   local round_volume_capacity=`config-get round-volume-capacity`
+  local provisioning_type=`config-get provisioning-type`
 
   local tmp_cfg='/etc/cinder/__cinder-scaleio.conf'
   rm -f $tmp_cfg
@@ -46,7 +47,8 @@ function update-cinder() {
     verify_server_certificate => '$verify_server_certificate',
     server_certificate_path => '$server_certificate_path',
     round_volume_capacity => '$round_volume_capacity',
-    cinder_config_file => '$tmp_cfg'
+    provisioning_type => $provisioning_type,
+    cinder_config_file => '$tmp_cfg',
   }"
 
   conf=`update-config cinder /etc/cinder/cinder.conf $tmp_cfg`
