@@ -16,3 +16,6 @@ relation-set mdm_management_ips=$ips
 # propagate sdcs_ready to GW
 sdcs_ready=`leader-get sdcs_ready`
 relation-set sdcs_ready=$sdcs_ready
+# propogate MDM password to GW
+password=`config-get password`
+relation-set password=$password

@@ -8,11 +8,13 @@ leader=`is-leader`
 
 # TODO: handle config interface changes (management-iface/internal-iface) (also check what happens in resize-cluster)
 
-# Check if cluster should be resized
 if [[ "$leader" == 'True' ]]; then
     old_password=`leader-get password`
     if [[ $MY_PASSWORD != $old_password ]]; then
-        server-cmd "scaleio::cluster { 'cluster': password=>'$old_password', new_password=>'$MY_PASSWORD' }"
+        cluster-cmd "scaleio::cluster { 'cluster': password=>'$old_password', new_password=>'$MY_PASSWORD' }"
+        for rid in `relation-ids scaleio-mdm` ; do
+            relation-set -r $rid password=$password
+        done
         juju-log "ScaleIO cluster password changed"
     fi
 
@@ -21,6 +23,7 @@ if [[ "$leader" == 'True' ]]; then
 
     update-cluster-options
 
+    # Check if cluster should be resized
     juju-log "Request to check and resize cluster because of config changed"
     old_mode=`leader-get cluster_mode`
     new_mode=`config-get cluster_mode`

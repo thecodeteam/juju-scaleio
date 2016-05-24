@@ -19,24 +19,18 @@ Example:
   ```
     juju deploy scaleio-gw
   ```
-  
+
   Connect the Gateway to MDM
   ```
     juju add-relation scaleio-gw scaleio-mdm
   ```
-  
-  Change password
-  ```
-    juju set scaleio-gw password="Non_default_password"
-  ```
-  
+
   Check the scaleio-openstack README for details on its relation.
 
 # Configuration
 
 * port - port where Gateway will listen
 * im-port - Port of Installation Manager web server.
-* password - password for the cluster
 * scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
 * vip - Virtual IP to use to front API service in HA configuration.
 * haproxy-server-timeout - Server timeout configuration in ms for haproxy, used in HA configurations.

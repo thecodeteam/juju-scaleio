@@ -3,10 +3,6 @@ options:
     type: int
     default: 4443
     description: Port where gateway will listen.
-  password:
-    type: string
-    default: "Default_password"
-    description: MDM password
   scaleio-apt-repo:
     type: string
     default: "http://ec2-52-37-140-129.us-west-2.compute.amazonaws.com"

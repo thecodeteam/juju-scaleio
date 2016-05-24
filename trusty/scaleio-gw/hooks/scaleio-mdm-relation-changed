@@ -4,11 +4,18 @@ my_dir="$(dirname "$0")"
 
 log-relation "ScaleIO MDM relation changing for ScaleIO Gateway"
 
+password=`relation-get password`
+
 if [ $(is-leader) == 'True' ] ; then
+    rids=`relation-ids scaleio-gw`
+    leader-set password=$password
+    for rid in $rids ; do
+        relation-set -r $rid password=$password
+    done
+
     if relation-get - | grep sdcs_ready ; then
         sdcs_ready=`relation-get sdcs_ready`
         leader-set sdcs_ready="$sdcs_ready"
-        rids=`relation-ids scaleio-gw`
         for rid in $rids ; do
             relation-set -r $rid sdcs_ready="$sdcs_ready"
         done
@@ -21,7 +28,7 @@ if [ -z "$mdm_management_ips" ]; then exit; fi
 
 api_port=$(get-port)
 log-relation "ScaleIO Gateway setting up mdm_ips to $mdm_management_ips"
-server-cmd "class { 'scaleio::gateway_server': mdm_ips=>'$mdm_management_ips', port=>'$api_port' }"
+server-cmd "class { 'scaleio::gateway_server': mdm_ips=>'$mdm_management_ips', password=>'$password', port=>'$api_port' }"
 
 status-set active
 
