@@ -7,7 +7,7 @@
 series: trusty
 services:
   cinder:
-    charm: "cs:trusty/cinder"
+    charm: "local:trusty/cinder"
     num_units: 1
     options:
       "block-device": None
@@ -39,7 +39,6 @@ services:
       "enable-live-migration": True
       "migration-auth-type": ssh
       "libvirt-image-backend": sio
-    expose: true
     to:
       - "compute-1"
       - "compute-2"
@@ -53,7 +52,7 @@ services:
     to:
       - "io-1"
   keystone:
-    charm: "cs:trusty/keystone"
+    charm: "local:trusty/keystone"
     num_units: 1
     options:
       "admin-password": password
@@ -85,6 +84,7 @@ services:
   "scaleio-gw":
     charm: "local:trusty/scaleio-gw"
     num_units: 1
+    expose: true
     to:
       - "compute-2"
   "scaleio-mdm":

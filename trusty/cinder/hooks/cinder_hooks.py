@@ -42,6 +42,7 @@ from charmhelpers.core.hookenv import (
     service_name,
     unit_get,
     log,
+    open_port,
     ERROR,
     status_set,
     network_get_primary_address,
@@ -172,6 +173,7 @@ def config_changed():
         service_restart('cinder-volume')
 
     CONFIGS.write_all()
+    open_port(config('api-listening-port'))
     configure_https()
     update_nrpe_config()
 
