@@ -8,7 +8,7 @@ function update-nova() {
 
   local rids=`relation-ids scaleio-gw`
   rids_count=`echo $rids | wc -w`
-  if (( rids_count < 0 )) ; then
+  if (( rids_count < 1 )) ; then
     status-set waiting "Awaiting realtion to scaleio-gw"
     return
   fi

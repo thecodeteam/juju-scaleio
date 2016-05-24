@@ -8,7 +8,7 @@ function update-cinder() {
 
   local rids=`relation-ids scaleio-gw`
   rids_count=`echo $rids | wc -w`
-  if (( rids_count < 0 )) ; then
+  if (( rids_count < 1 )) ; then
     status-set waiting "Awaiting realtion to scaleio-gw"
     return
   fi
@@ -47,7 +47,6 @@ function update-cinder() {
     verify_server_certificate => '$verify_server_certificate',
     server_certificate_path => '$server_certificate_path',
     round_volume_capacity => '$round_volume_capacity',
-    provisioning_type => $provisioning_type,
     cinder_config_file => '$tmp_cfg',
   }"
 
