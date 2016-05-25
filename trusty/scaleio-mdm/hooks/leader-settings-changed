@@ -19,20 +19,20 @@ fi
 # Check if this node is ordered to change role
 if [ -n "${ordered_nodes[*]+x}" ] && [ -n "${ordered_nodes[$JUJU_UNIT_NAME]+x}" ]; then
     # This node is ordered to change role
-	ordered_role=${ordered_nodes["$JUJU_UNIT_NAME"]}
-	if [[ $ordered_role == manager ]]; then
-		is_manager=1
-		relation-set -r $scaleio_cluster_rid management_ip=$MY_MANAGEMENT_IP
-	else
-		is_manager=0
-	fi
-	# Remove it from list of standbies first, just in case error occurred in previous cluster adjustments
+    ordered_role=${ordered_nodes["$JUJU_UNIT_NAME"]}
+    if [[ $ordered_role == manager ]]; then
+        is_manager=1
+        relation-set -r $scaleio_cluster_rid management_ip=$MY_MANAGEMENT_IP
+    else
+        is_manager=0
+    fi
+    # Remove it from list of standbies first, just in case error occurred in previous cluster adjustments
     cluster-cmd "scaleio::mdm { 'remove from cluster': name=>'$MY_NAME', ensure=>'absent' }"
-	server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
-	relation-set -r $scaleio_cluster_rid role=$ordered_role
-	status-set waiting "Waiting to become cluster member with a role ${ordered_role}"
-	juju-log "ScaleIO MDM $MY_NAME changed role to $ordered_role"
-	exit
+    server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
+    relation-set -r $scaleio_cluster_rid role=$ordered_role
+    status-set waiting "Waiting to become cluster member with a role ${ordered_role}"
+    juju-log "ScaleIO MDM $MY_NAME changed role to $ordered_role"
+    exit
 fi
 
 status-set active

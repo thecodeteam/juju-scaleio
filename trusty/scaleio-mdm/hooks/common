@@ -78,6 +78,6 @@ function update-cluster-options {
     local val=`config-get remote-readonly-limit-state`
     if [ -n "$val" ] ; then opts=", remote_readonly_limit_state=>'$val'" ; fi
     if [ -n "$opts" ] ; then
-        server-cmd "scaleio::cluster { 'cluster': $opts }"
+        cluster-cmd "scaleio::cluster { 'cluster': $opts }"
     fi
 }
