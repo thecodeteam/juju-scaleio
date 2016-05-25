@@ -4,31 +4,33 @@ my_dir="$(dirname "$0")"
 
 log-relation "ScaleIO MDM relation changing for ScaleIO Gateway"
 
-password=`relation-get password`
-
-if [ $(is-leader) == 'True' ] ; then
-    rids=`relation-ids scaleio-gw`
-    leader-set password=$password
-    for rid in $rids ; do
-        relation-set -r $rid password=$password
-    done
-
-    if relation-get - | grep sdcs_ready ; then
-        sdcs_ready=`relation-get sdcs_ready`
-        leader-set sdcs_ready="$sdcs_ready"
+rids=`relation-ids scaleio-gw`
+function propogate_value() {
+    key="$1"
+    if relation-get - | grep "$key:" >/dev/null ; then
+        value=`relation-get $key`
+        leader-set $key=$value
         for rid in $rids ; do
-            relation-set -r $rid sdcs_ready="$sdcs_ready"
+            relation-set -r $rid $key=$value
         done
     fi
+}
+
+if [ $(is-leader) == 'True' ] ; then
+    propogate_value "password"
+    propogate_value "sdcs_ready"
 fi
 
 mdm_management_ips=`relation-get mdm_management_ips`
-
 if [ -z "$mdm_management_ips" ]; then exit; fi
 
+password=`relation-get password`
+if [ -n "$password" ] ; then
+    p_opts="password=>'$password'"
+fi
 api_port=$(get-port)
 log-relation "ScaleIO Gateway setting up mdm_ips to $mdm_management_ips"
-server-cmd "class { 'scaleio::gateway_server': mdm_ips=>'$mdm_management_ips', password=>'$password', port=>'$api_port' }"
+server-cmd "class { 'scaleio::gateway_server': mdm_ips=>'$mdm_management_ips', port=>'$api_port', $p_opts }"
 
 status-set active
 
