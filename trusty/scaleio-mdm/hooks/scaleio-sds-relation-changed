@@ -22,7 +22,7 @@ function get_value_or_undef() {
     echo "undef"
   else
     # add quotas here
-    echo '$val'
+    echo "'$val'"
   fi
 }
 
@@ -45,7 +45,7 @@ cluster-cmd "scaleio::protection_domain { 'protection domain $protection_domain'
   name=>'$protection_domain', fault_sets=>[$fault_set], storage_pools=>[$storage_pools],
   zero_padding_policy=>$zero_padding_policy }"
 
-opts=", checksum_mode=>$checksum_mode"
+opts="checksum_mode=>$checksum_mode"
 opts="$opts, rmcache_usage=>$rmcache_usage"
 opts="$opts, rmcache_write_handling_mode=>$rmcache_write_handling_mode"
 opts="$opts, scanner_mode=>$scanner_mode"
