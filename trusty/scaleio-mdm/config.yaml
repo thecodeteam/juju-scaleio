@@ -34,15 +34,17 @@ options:
     default: high_performance
     description: |
       Performance profile for SDC/SDS. Can be default or high_performance.
-  restricted-sdc-mode:
-    type: string
-    default:
-    description: "Restricted SDC mode: 'enabled' or 'disabled'."
   license-file-path:
     type: string
     default:
     description: "Path to license file."
-  remote-readonly-limit-state:
-    type: string
+  capacity-high-alert-threshold:
+    type: int
     default:
-    description: "Remote readonly limit state: 'enabled' or 'disabled'."
+    description: |
+      Percent of consumed storage space for high priority alert, should be used toghether with capacity_critical_alert_threshold
+  capacity-critical-alert-threshold:
+    type: int
+    default:
+    description: |
+      Percent of consumed storage space for critical priority alert, should be used toghether with capacity_high_alert_threshold

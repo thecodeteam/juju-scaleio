@@ -4,16 +4,18 @@ my_dir="$(dirname "$0")"
 
 log-relation "ScaleIO SDS relation changing"
 
-remote_name=$(convert-name $JUJU_REMOTE_UNIT)
-remote_internal_ip=`relation-get sds_internal_ip_$remote_name`
-remote_storage_ip=`relation-get sds_storage_ip_$remote_name`
 protection_domain=`relation-get protection_domain`
-fault_set=`relation-get fault_set`
-storage_pools=`relation-get storage_pools`
-device_paths=`relation-get device_paths`
 leader=`is-leader`
 
 if [[ -z "$protection_domain" || "$leader" != 'True' ]]; then exit; fi
+
+remote_name=$(convert-name $JUJU_REMOTE_UNIT)
+remote_internal_ip=`relation-get sds_internal_ip_$remote_name`
+remote_storage_ip=`relation-get sds_storage_ip_$remote_name`
+fault_set=`relation-get fault_set`
+storage_pools=`relation-get storage_pools`
+device_paths=`relation-get device_paths`
+zero_padding_policy=`relation-get zero_padding_policy`
 
 if [ -n "$remote_storage_ip" ] ; then
   ips="$remote_internal_ip,$remote_storage_ip"
@@ -23,8 +25,9 @@ else
   ip_roles='all'
 fi
 
-cluster-cmd "scaleio::protection_domain { 'protection domain $protection_domain': 
-  name=>'$protection_domain', fault_sets=>[$fault_set], storage_pools=>[$storage_pools] }"
+cluster-cmd "scaleio::protection_domain { 'protection domain $protection_domain':
+  name=>'$protection_domain', fault_sets=>[$fault_set], storage_pools=>[$storage_pools],
+  zero_padding_policy=>'$zero_padding_policy' }"
 
 performance_profile=`config-get performance-profile`
 cluster-cmd "scaleio::sds { 'sds $remote_name':

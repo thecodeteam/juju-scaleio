@@ -70,14 +70,14 @@ function relation-set-all {
 function update-cluster-options {
     # The function should be called by leader only
 
-    local opts=""
-    local val=`config-get restricted-sdc-mode`
-    if [ -n "$val" ] ; then opts="restricted_sdc_mode=>'$val'" ; fi
     local val=`config-get license-file-path`
-    if [ -n "$val" ] ; then opts=", license_file_path=>'$val'" ; fi
-    local val=`config-get remote-readonly-limit-state`
-    if [ -n "$val" ] ; then opts=", remote_readonly_limit_state=>'$val'" ; fi
-    if [ -n "$opts" ] ; then
-        cluster-cmd "scaleio::cluster { 'cluster': $opts }"
+    if [ -n "$val" ] ; then
+        cluster-cmd "scaleio::cluster { 'cluster': license_file_path=>'$val' }"
+    fi
+
+    local val1=`config-get capacity-high-alert-threshold`
+    local val2=`config-get capacity-critical-alert-threshold`
+    if [[ -n "$val1" && -n "$val2" ]] ; then
+        cluster-cmd "scaleio::cluster { 'cluster': capacity_high_alert_threshold=>'$val1', capacity_critical_alert_threshold=>'$val2' }"
     fi
 }

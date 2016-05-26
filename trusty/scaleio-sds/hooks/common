@@ -43,6 +43,7 @@ function relation-set-all {
   relation-set -r $rid fault_set=$(config-get fault-set)
   relation-set -r $rid storage_pools=$(config-get storage-pools)
   relation-set -r $rid device_paths=$(config-get device-paths)
+  relation-set -r $rid zero_padding_policy=$(config-get zero-padding-policy)
 }
 
 function log-relation {

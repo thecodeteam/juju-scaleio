@@ -17,51 +17,51 @@ Example:
 
   Deploy an SDS
   ```
-	juju deploy scaleio-sds
+    juju deploy scaleio-sds
   ```
-  
+
   Set up protection domain, storage pool and device path
   ```
-  	juju set scaleio-sds protection-domain="pd1" storage-pools="sp1" device-paths="/dev/sdb"
+      juju set scaleio-sds protection-domain="pd1" storage-pools="sp1" device-paths="/dev/sdb"
   ```  
 
   Connect SDS to MDM
   ```
     juju add-relation scaleio-sds scaleio-mdm
   ```
-  
+
   Add two more SDSs to get working protection domain
   ```
-	juju add-unit scaleio-sds -n 2
+    juju add-unit scaleio-sds -n 2
   ```
 
   Add another group of SDSs for a different protection domain
   ```
-	juju deploy scaleio-sds scaleio-sds-pd2
-	juju add-unit scaleio-sds-pd2 -n 2
+    juju deploy scaleio-sds scaleio-sds-pd2
+    juju add-unit scaleio-sds-pd2 -n 2
   ```
-  
+
   Configure them for a different protection domain, different fault set and several storage pools and devices
   ```
-  	juju set scaleio-sds-pd2 protection-domain="pd2" fault-set="fs1" storage-pools="sp1,sp2" device-paths="/dev/sdc,/dev/sdd"
-  ```  
-  
+    juju set scaleio-sds-pd2 protection-domain="pd2" fault-set="fs1" storage-pools="sp1,sp2" device-paths="/dev/sdc,/dev/sdd"
+  ```
+
   Connect them to MDM
   ```
     juju add-relation scaleio-sds-pd2 scaleio-mdm
   ```
-  
+
   Add another group of SDSs for a different fault set in the second protection domain
   ```
-	juju deploy scaleio-sds scaleio-sds-pd2-fs2
-	juju add-unit scaleio-sds-pd2-fs2 -n 2
+    juju deploy scaleio-sds scaleio-sds-pd2-fs2
+    juju add-unit scaleio-sds-pd2-fs2 -n 2
   ```
-  
+
   Configure them for a different fault set of the same protection domain
   ```
-  	juju set scaleio-sds-pd2-fs2 protection-domain="pd2" fault-set="fs2" storage-pools="sp1,sp2" device-paths="/dev/sdc,/dev/sdd"
-  ```  
-  
+    juju set scaleio-sds-pd2-fs2 protection-domain="pd2" fault-set="fs2" storage-pools="sp1,sp2" device-paths="/dev/sdc,/dev/sdd"
+  ```
+
   Connect them to MDM
   ```
     juju add-relation scaleio-sds-pd2-fs2 scaleio-mdm
@@ -81,12 +81,8 @@ Example:
 * internal-iface - Network interface for internal cluster communications, by default internal JuJu-provided IP is used
 * storage-iface - Network interface for storage communication of SDS with SDC, by default internal-iface is used
 * scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
+* zero-padding-policy - Ensures that every read from an area previously not written to returns zeros
 
 # Relations
 
 Should be related to scaleio-mdm.
-
-# Usage with OpenStack
-
-Should be placed in the same machines where nova-compute or cinder charms reside.
- 

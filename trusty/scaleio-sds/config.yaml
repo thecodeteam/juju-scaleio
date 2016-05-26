@@ -15,6 +15,15 @@ options:
     type: string
     default: "/dev/sdb"
     description: "Comma-separated list of device paths"
+  zero-padding-policy:
+    type: string
+    default:
+    description: |
+      Ensures that every read from an area previously not written to returns zeros.
+      Some applications might depend on this behavior. Furthermore, zero padding
+      ensures that reading from a volume will not return information that was
+      previously deleted from the volume.
+      Can be 'enable' or 'disable'.
   internal-iface:
     type: string
     default:
