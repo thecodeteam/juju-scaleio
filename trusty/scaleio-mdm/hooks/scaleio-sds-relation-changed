@@ -15,7 +15,23 @@ remote_storage_ip=`relation-get sds_storage_ip_$remote_name`
 fault_set=`relation-get fault_set`
 storage_pools=`relation-get storage_pools`
 device_paths=`relation-get device_paths`
-zero_padding_policy=`relation-get zero_padding_policy`
+
+function get_value_or_undef() {
+  val=`relation-get $1`
+  if [ -z "$val" ] ; then
+    echo "undef"
+  else
+    # add quotas here
+    echo '$val'
+  fi
+}
+
+checksum_mode=`get_value_or_undef checksum_mode`
+rmcache_usage=`get_value_or_undef rmcache_usage`
+rmcache_write_handling_mode=`get_value_or_undef rmcache_write_handling_mode`
+scanner_mode=`get_value_or_undef scanner_mode`
+spare_percentage=`get_value_or_undef spare_percentage`
+zero_padding_policy=`get_value_or_undef zero_padding_policy`
 
 if [ -n "$remote_storage_ip" ] ; then
   ips="$remote_internal_ip,$remote_storage_ip"
@@ -27,7 +43,17 @@ fi
 
 cluster-cmd "scaleio::protection_domain { 'protection domain $protection_domain':
   name=>'$protection_domain', fault_sets=>[$fault_set], storage_pools=>[$storage_pools],
-  zero_padding_policy=>'$zero_padding_policy' }"
+  zero_padding_policy=>$zero_padding_policy }"
+
+opts=", checksum_mode=>$checksum_mode"
+opts="$opts, rmcache_usage=>$rmcache_usage"
+opts="$opts, rmcache_write_handling_mode=>$rmcache_write_handling_mode"
+opts="$opts, scanner_mode=>$scanner_mode"
+opts="$opts, spare_percentage=>$spare_percentage"
+opts="$opts, zero_padding_policy=>$zero_padding_policy"
+for pool in `echo "$storage_pools" | tr "," " "` ; do
+  cluster-cmd "scaleio::storage_pool { 'storage pool $pool': name=>'$pool', protection_domain=>'$protection_domain', $opts }"
+done
 
 performance_profile=`config-get performance-profile`
 cluster-cmd "scaleio::sds { 'sds $remote_name':

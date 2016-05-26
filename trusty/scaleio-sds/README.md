@@ -82,6 +82,11 @@ Example:
 * storage-iface - Network interface for storage communication of SDS with SDC, by default internal-iface is used
 * scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
 * zero-padding-policy - Ensures that every read from an area previously not written to returns zeros
+* checksum-mode: This feature addresses errors that change the payload during the transit through the ScaleIO system.
+* rmcache-usage: Server RAM that is reserved for caching storage devices in a Storage Pool.
+* rmcache-write-handling-mode: The caching write-mode used by the system: passthrough mode (writes to storage only), or cached mode (by default, writes both to cache and to storage).
+* scanner-mode: The Background Device Scanner ("scanner") enhances the resilience of your ScaleIO system by constantly searching for, and fixing, device errors before they can affect your system.
+* spare-percentage: The number represents the percentage of total capacity set aside to ensure data integrity during server failures. The percentage is derived by 1/(number of SDS), which yields the recommended percentage for less than 10 balanced servers. For more information, see “Modifying spare policy” in the EMC ScaleIO User Guide.
 
 # Relations
 
