@@ -43,8 +43,7 @@ else
 fi
 
 cluster-cmd "scaleio::protection_domain { 'protection domain $protection_domain':
-  name=>'$protection_domain', fault_sets=>[$fault_set], storage_pools=>[$storage_pools],
-  zero_padding_policy=>$zero_padding_policy }"
+  name=>'$protection_domain', fault_sets=>[$fault_set], storage_pools=>[$storage_pools] }"
 
 opts="checksum_mode=>$checksum_mode"
 opts="$opts, rmcache_usage=>$rmcache_usage"
