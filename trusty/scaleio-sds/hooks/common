@@ -43,6 +43,7 @@ function relation-set-all {
   relation-set -r $rid fault_set=$(config-get fault-set)
   relation-set -r $rid storage_pools=$(config-get storage-pools)
   relation-set -r $rid device_paths=$(config-get device-paths)
+  relation-set -r $rid rfcache_device_paths=$(config-get rfcache-device-paths)
   relation-set -r $rid zero_padding_policy=$(config-get zero-padding-policy)
   relation-set -r $rid checksum_mode=$(config-get checksum-mode)
   relation-set -r $rid rmcache_usage=$(config-get rmcache-usage)

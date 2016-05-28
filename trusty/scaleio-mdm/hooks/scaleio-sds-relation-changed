@@ -15,6 +15,7 @@ remote_storage_ip=`relation-get sds_storage_ip_$remote_name`
 fault_set=`relation-get fault_set`
 storage_pools=`relation-get storage_pools`
 device_paths=`relation-get device_paths`
+rfcache_device_paths=`relation-get rfcache_device_paths`
 
 function get_value_or_undef() {
   val=`relation-get $1`
@@ -55,10 +56,12 @@ for pool in `echo "$storage_pools" | tr "," " "` ; do
   cluster-cmd "scaleio::storage_pool { 'storage pool $pool': name=>'$pool', protection_domain=>'$protection_domain', $opts }"
 done
 
+# TODO: store devices and rfcache_device in leader-store and support remove by this
+
 performance_profile=`config-get performance-profile`
 cluster-cmd "scaleio::sds { 'sds $remote_name':
   name=>'$remote_name', ips=>'$ips', ip_roles=>'$ip_roles', protection_domain=>'$protection_domain', \
   fault_set=>'$fault_set', storage_pools=>'$storage_pools', device_paths=>'$device_paths',
-  performance_profile=>'$performance_profile' }"
+  performance_profile=>'$performance_profile', rfcache_devices=>'$rfcache_device_paths' }"
 
 log-relation "ScaleIO SDS relation changed"

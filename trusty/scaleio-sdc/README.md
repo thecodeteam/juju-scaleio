@@ -17,7 +17,7 @@ Example:
 
   Deploy an SDC
   ```
-	juju deploy scaleio-sdc
+    juju deploy scaleio-sdc
   ```
   
   Connect SDC to MDM
@@ -27,7 +27,7 @@ Example:
   
   Add two more SDCs
   ```
-	juju add-unit scaleio-sdc -n 2
+    juju add-unit scaleio-sdc -n 2
   ```
   
 # Configuration
