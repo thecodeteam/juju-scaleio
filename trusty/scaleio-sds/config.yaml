@@ -49,7 +49,7 @@ options:
     description: |
       The Background Device Scanner ("scanner") enhances the resilience of your ScaleIO system
       by constantly searching for, and fixing, device errors before they can affect your system.
-      'device_only' (default) or 'data_comparison' or 'disable'
+      Can be 'enable' that means 'device_only' mode or 'disable'.
   spare-percentage:
     type: int
     default:
