@@ -42,11 +42,15 @@ function get-port() {
   echo $port
 }
 
+function get-address() {
+  python -c "import socket; print(sorted(socket.gethostbyname_ex('$1')[2])[0])"
+}
+
 function get-ip() {
   ip=$(config-get vip)
   if [ -z "$ip" ] ; then
     local my_ip=$(unit-get public-address)
-    ip=`python -c "import socket; print(socket.gethostbyname('$my_ip'))"`
+    ip=`get-address "$my_ip"`
   fi
   echo $ip
 }
@@ -63,7 +67,7 @@ function update-haproxy() {
   local api_port=$(get-port)
   local haproxy_port=$(config-get port)
   local my_ip=$(unit-get private-address)
-  my_ip=`python -c "import socket; print(socket.gethostbyname('$my_ip'))"`
+  my_ip=`get-address "$my_ip"`
   local my_name=$(convert-name $JUJU_UNIT_NAME)
 
   iface_addr=`ip route get $my_ip | grep 'dev' | awk '{print $NF}'`
@@ -100,6 +104,7 @@ function update-haproxy() {
   for rid in $(relation-ids 'scaleio-gw-cluster') ; do
     for unit in $(relation-list -r $rid) ; do
       remote_ip=`relation-get -r $rid private-address $unit`
+      remote_ip=`get-address "$remote_ip"`
       if [ -n "$remote_ip" ] ; then
         cname=$(convert-name $unit)
         echo "    server $cname $remote_ip:$api_port check" >> $tmp_cfg
