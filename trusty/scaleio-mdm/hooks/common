@@ -6,6 +6,10 @@ function convert-name {
   echo ${1//[-\/]/_}
 }
 
+function resolve-address() {
+  python -c "import socket; print(sorted(socket.gethostbyname_ex('$1')[2])[0])"
+}
+
 INTERNAL_IFACE=`config-get internal-iface`
 if [ -n "$INTERNAL_IFACE" ] ; then
     MY_INTERNAL_IP=`ip addr show dev $INTERNAL_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`

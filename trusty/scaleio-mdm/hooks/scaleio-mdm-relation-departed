@@ -20,7 +20,7 @@ if [[ $remote_name == "scaleio_sdc"* ]]; then
   # Workaround is used:
   set +e
   FACTER_mdm_ips=$MY_MDMS puppet apply -e "scaleio::login {'login': password=>$MY_PASSWORD} -> \
-    scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip', ensure=>'absent'}"
+    scaleio::sdc { 'sdc $remote_name': ip=>'$(resolve-address $remote_ip)', ensure=>'absent'}"
   set -e
 
   # remove sdc from sdcs_ready list and propagate the list to gateways
