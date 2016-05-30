@@ -4,6 +4,6 @@ my_dir="$(dirname "$0")"
 
 juju-log "ScaleIO SDS removing"	
 
-server-cmd "class { 'scaleio::sds_server': ensure=>absent }"
+server-cmd "class { 'scaleio::sds_server': ensure=>absent, xcache=>absent }"
 
 juju-log "ScaleIO SDS removing"

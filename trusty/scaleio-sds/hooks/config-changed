@@ -5,9 +5,8 @@ my_dir="$(dirname "$0")"
 juju-log "ScaleIO SDS config changed"
 
 ftp=`config-get scaleio-driver-ftp`
-rfcache_device_paths=`config-get rfcache-device-paths`
-if [[ -n "$ftp" && -n "$rfcache_device_paths" ]] ; then
-  server-cmd "class { 'scaleio::xcache_server': ftp=>'$ftp' }"
+if [ -n "$ftp" ] ; then
+  server-cmd "class { 'scaleio::sds_server': ftp=>'$ftp' }"
 fi
 
 relation-set-all

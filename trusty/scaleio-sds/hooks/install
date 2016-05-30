@@ -8,7 +8,11 @@ $my_dir/common-temp
 
 juju-log "ScaleIO SDS installing"
 
-server-cmd "class { 'scaleio::sds_server': }"
+ftp=`config-get scaleio-driver-ftp`
+if [ -n "$ftp" ] ; then
+  ftp_opt="ftp=>'$ftp'"
+fi
+server-cmd "class { 'scaleio::sds_server': $ftp_opt }"
 
 juju-log "ScaleIO SDS installed"
 
