@@ -28,6 +28,7 @@ function get_value_or_undef() {
 }
 
 checksum_mode=`get_value_or_undef checksum_mode`
+rfcache_usage=`get_value_or_undef rfcache_usage`
 rmcache_usage=`get_value_or_undef rmcache_usage`
 rmcache_write_handling_mode=`get_value_or_undef rmcache_write_handling_mode`
 scanner_mode=`get_value_or_undef scanner_mode`
@@ -46,6 +47,7 @@ cluster-cmd "scaleio::protection_domain { 'protection domain $protection_domain'
   name=>'$protection_domain', fault_sets=>[$fault_set], storage_pools=>[$storage_pools] }"
 
 opts="checksum_mode=>$checksum_mode"
+opts="$opts, rfcache_usage=>$rfcache_usage"
 opts="$opts, rmcache_usage=>$rmcache_usage"
 opts="$opts, rmcache_write_handling_mode=>$rmcache_write_handling_mode"
 opts="$opts, scanner_mode=>$scanner_mode"

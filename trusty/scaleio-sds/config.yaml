@@ -34,6 +34,12 @@ options:
     description: |
       This feature addresses errors that change the payload during the transit through the ScaleIO system.
       'enable' or 'disable'
+  rfcache-usage:
+    type: string
+    default:
+    description: |
+      Server flash disks that is reserved for caching in a Storage Pool.
+      'use' or 'dont_use'
   rmcache-usage:
     type: string
     default:

@@ -80,6 +80,7 @@ Example:
 * device-paths - Comma-separated list of Device Paths for the group of SDSs
 * zero-padding-policy - Ensures that every read from an area previously not written to returns zeros
 * checksum-mode: This feature addresses errors that change the payload during the transit through the ScaleIO system.
+* rfcache-usage: Server flash disks that is reserved for caching in a Storage Pool.
 * rmcache-usage: Server RAM that is reserved for caching storage devices in a Storage Pool.
 * rmcache-write-handling-mode: The caching write-mode used by the system: passthrough mode (writes to storage only), or cached mode (by default, writes both to cache and to storage).
 * scanner-mode: The Background Device Scanner ("scanner") enhances the resilience of your ScaleIO system by constantly searching for, and fixing, device errors before they can affect your system. Can be 'enable' that means 'device_only' mode or 'disable'.
