@@ -7,7 +7,7 @@ function convert-name {
 }
 
 function resolve-addresses() {
-  python -c "import socket; print(','.join(sorted(socket.gethostbyname_ex('www.yandex.ru')[2])))"
+  python -c "import socket; print(','.join(sorted(socket.gethostbyname_ex('$1')[2])))"
 }
 
 INTERNAL_IFACE=`config-get internal-iface`
