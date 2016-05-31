@@ -5,9 +5,15 @@ set -eu
 function convert-name {
   echo ${1//[-\/]/_}
 }
+
+function resolve-addresses() {
+  python -c "import socket; print(','.join(sorted(socket.gethostbyname_ex('www.yandex.ru')[2])))"
+}
+
 INTERNAL_IFACE=`config-get internal-iface`
 if [ -z "$INTERNAL_IFACE" ]; then
   INTERNAL_IP=`unit-get private-address`
+  INTERNAL_IP=`resolve-addresses "$INTERNAL_IP"`
 else
   INTERNAL_IP=`ip addr show dev $INTERNAL_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`
 fi

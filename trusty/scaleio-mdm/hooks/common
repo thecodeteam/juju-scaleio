@@ -3,11 +3,15 @@ if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
 set -eu
 
 function convert-name {
-  echo ${1//[-\/]/_}
+    echo ${1//[-\/]/_}
 }
 
 function resolve-address() {
-  python -c "import socket; print(sorted(socket.gethostbyname_ex('$1')[2])[0])"
+    python -c "import socket; print(sorted(socket.gethostbyname_ex('$1')[2])[0])"
+}
+
+function resolve-addresses() {
+    python -c "import socket; print(','.join(sorted(socket.gethostbyname_ex('www.yandex.ru')[2])))"
 }
 
 INTERNAL_IFACE=`config-get internal-iface`
@@ -15,6 +19,7 @@ if [ -n "$INTERNAL_IFACE" ] ; then
     MY_INTERNAL_IP=`ip addr show dev $INTERNAL_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`
 else
     MY_INTERNAL_IP=`unit-get private-address`
+    MY_INTERNAL_IP=`resolve-addresses "$MY_INTERNAL_IP"`
 fi
 MY_NAME=$(convert-name $JUJU_UNIT_NAME)
 MY_PASSWORD=`config-get password`
