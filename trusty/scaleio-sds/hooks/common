@@ -10,18 +10,29 @@ function resolve-addresses() {
   python -c "import socket; print(','.join(sorted(socket.gethostbyname_ex('$1')[2])))"
 }
 
+function get-ips-by-interfaces() {
+    local ifaces="$1"
+    local all_ips=''
+    for iface in $(echo $ifaces | tr ',' ' ') ; do
+        ips=`echo $(ip addr show dev $iface | awk '/inet /{split($2,a,"/"); print a[1]}')`
+        all_ips="$all_ips $ips"
+    done
+    all_ips=($all_ips)
+    (IFS=,; echo "${all_ips[*]}")
+}
+
 INTERNAL_IFACE=`config-get internal-iface`
 if [ -z "$INTERNAL_IFACE" ]; then
   INTERNAL_IP=`unit-get private-address`
   INTERNAL_IP=`resolve-addresses "$INTERNAL_IP"`
 else
-  INTERNAL_IP=`ip addr show dev $INTERNAL_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`
+  INTERNAL_IP=`get-ips-by-interfaces $INTERNAL_IFACE`
 fi
 MY_NAME=$(convert-name $JUJU_UNIT_NAME)
 
 STORAGE_IFACE=`config-get storage-iface`
 if [ -n "$STORAGE_IFACE" ]; then
-  STORAGE_IP=`ip addr show dev $STORAGE_IFACE | awk '/inet /{split($2,a,"/"); print a[1]}'`
+  STORAGE_IP=`get-ips-by-interfaces $STORAGE_IFACE`
 else
   STORAGE_IP=''
 fi
