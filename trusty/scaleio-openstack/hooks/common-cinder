@@ -47,6 +47,7 @@ function update-cinder() {
     verify_server_certificate => '$verify_server_certificate',
     server_certificate_path => '$server_certificate_path',
     round_volume_capacity => '$round_volume_capacity',
+    provisioning_type => '$provisioning_type',
     cinder_config_file => '$tmp_cfg',
   }"
 
