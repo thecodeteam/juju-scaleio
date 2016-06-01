@@ -16,6 +16,7 @@ options:
       through the MDM. Must be on the same network as the data network.
       Must be externally accessible if no MDM Management interface is used.
       By default Juju will automatically determine internal IPs.
+      This parameter can not be changed. Only initial value is used.
   management-iface:
     type: string
     default:
@@ -24,6 +25,7 @@ options:
       Interface that can be used to provide access to ScaleIO
       management applications, such as CLI, GUI, REST API,
       OpenStack. IP address of this interface must be externally accessible.
+      This parameter can not be changed. Only initial value is used.
   scaleio-apt-repo:
     type: string
     default: "http://ec2-52-37-140-129.us-west-2.compute.amazonaws.com"

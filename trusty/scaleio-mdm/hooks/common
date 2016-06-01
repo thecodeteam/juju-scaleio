@@ -39,7 +39,7 @@ MY_MDMS=`leader-get mdm_management_ips`
 if [ -z "$MY_MDMS" ]; then MY_MDMS='127.0.0.1'; fi
 MANAGEMENT_IFACE=`config-get management-iface`
 if [ -n "$MANAGEMENT_IFACE" ] ; then
-    MY_MANAGEMENT_IP=`get-ips-by-interfaces $INTERNAL_IFACE`
+    MY_MANAGEMENT_IP=`get-ips-by-interfaces $MANAGEMENT_IFACE`
 else
     MY_MANAGEMENT_IP=$MY_INTERNAL_IP
 fi
