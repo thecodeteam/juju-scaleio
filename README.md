@@ -1,6 +1,6 @@
 # Overview
 
-Disclaimer: Current version is Beta 2.
+Disclaimer: Current version is RC1.
 
 The repository provides a set of charms for ScaleIO cluster deployment.
 
