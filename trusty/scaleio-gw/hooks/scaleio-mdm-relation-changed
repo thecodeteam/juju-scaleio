@@ -24,6 +24,7 @@ fi
 mdm_management_ips=`relation-get mdm_management_ips`
 if [ -z "$mdm_management_ips" ]; then exit; fi
 
+p_opts=""
 password=`relation-get password`
 if [ -n "$password" ] ; then
     p_opts="password=>'$password'"
