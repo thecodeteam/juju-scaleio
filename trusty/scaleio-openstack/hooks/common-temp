@@ -1,6 +1,4 @@
 #!/bin/bash
 
 apt-get install -y puppet
-puppet module install puppetlabs-stdlib
-puppet module install puppetlabs-inifile
-puppet module install --version "<0.5.0" cloudscaling-scaleio_openstack
+puppet module install --version "<0.5.0" cloudscaling-scaleio_openstack --module_repository https://forge.puppet.com/
