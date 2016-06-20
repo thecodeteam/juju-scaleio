@@ -5,6 +5,9 @@ description: |
   ScaleIO SDS service
 tags:
   - storage
+series:
+  - trusty
+  - precise
 provides:
   scaleio-sds:
     interface: scaleio-sds

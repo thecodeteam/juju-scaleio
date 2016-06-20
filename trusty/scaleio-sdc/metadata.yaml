@@ -5,6 +5,9 @@ description: |
   ScaleIO SDC service
 tags:
   - storage
+series:
+  - trusty
+  - precise
 requires:
   scaleio-mdm:
     interface: scaleio-mdm

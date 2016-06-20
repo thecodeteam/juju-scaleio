@@ -6,6 +6,9 @@ description: |
 tags:
   - storage
   - openstack
+series:
+  - trusty
+  - precise
 subordinate: true
 provides:
   storage-backend:
