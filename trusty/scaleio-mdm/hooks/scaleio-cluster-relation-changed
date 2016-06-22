@@ -5,8 +5,8 @@ if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
 log-relation "ScaleIO MDM Cluster relation changed"
 
 if [ `is-leader` == 'True' ] ; then
-	log-relation "ScaleIO cluster-relation-changed, leader-side"
-	
-	leader-set departing_nodes=
-	adjust-cluster
+    log-relation "ScaleIO cluster-relation-changed, leader-side"
+
+    leader-set departing_nodes=
+    adjust-cluster
 fi

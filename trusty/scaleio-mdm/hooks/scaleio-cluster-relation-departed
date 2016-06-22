@@ -7,17 +7,17 @@ if [[ $status == 'terminated' ]] ; then exit; fi
 
 # Let go a departing MDMs and adjust counters
 if [[ `is-leader` == 'True' ]] ; then
-	# New code
-	juju-log "ScaleIO MDM departing"
-	
-	# Invalidating current ordered tbs and managers if any
-	leader-set ordered_nodes=
-	# The following along with "else" is a workaround for JuJu's bug that departing leader can be
-	# called as leader in this hook
-	# The idea is to trigger leader-settings and some future leader get back relation-changed when
-	# other nodes unset departing_nodes.
-	leader-set departing_nodes=True
+    # New code
+    juju-log "ScaleIO MDM departing"
+
+    # Invalidating current ordered tbs and managers if any
+    leader-set ordered_nodes=
+    # The following along with "else" is a workaround for JuJu's bug that departing leader can be
+    # called as leader in this hook
+    # The idea is to trigger leader-settings and some future leader get back relation-changed when
+    # other nodes unset departing_nodes.
+    leader-set departing_nodes=True
 else
-	relation-set departing_nodes=True
+    relation-set departing_nodes=True
 fi
 

@@ -6,9 +6,9 @@ my_dir="$test_dir/../hooks"
 
 function test_retrieve_cluster_info_1_to_3 {
     . "$test_dir/set_1_to_3_changed"
-    
-    retrieve-cluster-info            
-    
+
+    retrieve-cluster-info
+
     assert_equal "`declare -p present_nodes`" "declare -A present_nodes='([scaleio-mdm/0]=\"manager\" [scaleio-mdm/1]=\"tb\" [scaleio-mdm/2]=\"manager\" )'"
     assert_equal "`declare -p present_count`" "declare -A present_count='([none]=\"0\" [manager]=\"2\" [tb]=\"1\" )'"
     assert_equal "`declare -p leaving_nodes`" "declare -A leaving_nodes='()'"
@@ -17,9 +17,9 @@ function test_retrieve_cluster_info_1_to_3 {
 
 function test_retrieve_cluster_info_3_to_1 {
     . "$test_dir/set_3_to_1_departed"
-    
-    retrieve-cluster-info            
-    
+
+    retrieve-cluster-info
+
     assert_equal "`declare -p present_nodes`" "declare -A present_nodes='([scaleio-mdm/0]=\"manager\" [scaleio-mdm/1]=\"tb\" )'"
     assert_equal "`declare -p present_count`" "declare -A present_count='([none]=\"0\" [manager]=\"1\" [tb]=\"1\" )'"
     assert_equal "`declare -p leaving_nodes`" "declare -A leaving_nodes='([scaleio-mdm/2]=\"manager\" )'"
@@ -28,7 +28,7 @@ function test_retrieve_cluster_info_3_to_1 {
 
 function test_adjust_cluster_1_to_3 {
     . "$test_dir/set_1_to_3_changed"
-    
+
     called=False
     function grow-cluster {
         called=True
@@ -39,13 +39,13 @@ function test_adjust_cluster_1_to_3 {
     }
 
     adjust-cluster
-    
+
     assert_true $called
-}    
-    
+}
+
 function test_adjust_cluster_3_to_1 {
     . "$test_dir/set_3_to_1_departed"
-    
+
     called=False
     function reduce-cluster {
         called=True
@@ -56,13 +56,13 @@ function test_adjust_cluster_3_to_1 {
     }
 
     adjust-cluster
-    
+
     assert_true $called
-}    
-    
+}
+
 function test_adjust_cluster_3_to_3 {
     . "$test_dir/set_3_to_3_departed"
-    
+
     called=False
     function restore-cluster {
         called=True
@@ -73,41 +73,45 @@ function test_adjust_cluster_3_to_3 {
     }
 
     adjust-cluster
-    
+
     assert_true $called
-}    
+}
 
 function test_order_status_1_to_3 {
     . "$test_dir/set_1_to_3_changed"
-    
+
     retrieve-cluster-info
     order-status 1 1
-    
-    assert_equal "`declare -p ready_nodes`" "declare -A ready_nodes='([scaleio-mdm/1]=\"tb\" [scaleio-mdm/2]=\"manager\" )'"    
+
+    assert_equal "`declare -p ready_nodes`" "declare -A ready_nodes='([scaleio-mdm/1]=\"tb\" [scaleio-mdm/2]=\"manager\" )'"
 }
-    
+
 function test_order_nodes_3_to_3 {
     . "$test_dir/set_3_to_3_departed"
-    
-    result=''
+
+    declare -a result
     function leader-set {
-        result="$*"
+        result+=("$*")
     }
-    
+
+    function relation-set-all {
+        :
+    }
+
     retrieve-cluster-info
     order-nodes 0 1
-    
-    assert_equal "$result" "ordered_nodes=declare -A ordered_nodes='([scaleio-mdm/3]=\"tb\" )'"    
+
+    assert_equal "${result[*]}" "ordered_nodes=declare -A ordered_nodes='([scaleio-mdm/3]=\"tb\" )' mdm_internal_ips=10.0.0.1, mdm_management_ips=10.0.0.1,"
 }
-    
+
 function test_order_nodes_3_to_3_insufficient {
     . "$test_dir/set_3_to_3_departed"
-    
+
     result=''
     function leader-set {
         result="$*"
     }
-    
+
     retrieve-cluster-info
     order-nodes 1 2
 
@@ -116,12 +120,12 @@ function test_order_nodes_3_to_3_insufficient {
 
 function test_update_cluster_ips_3_to_3 {
     . "$test_dir/set_3_to_3_departed"
-    
+
     result=''
     function leader-set {
         result="$*"
     }
-    
+
     function relation-set-all {
         :
     }
@@ -129,17 +133,17 @@ function test_update_cluster_ips_3_to_3 {
     retrieve-cluster-info
     update-cluster-ips
 
-    assert_equal "$result" "mdm_internal_ips=10.0.0.1,10.0.0.3, mdm_management_ips=10.0.0.1,10.0.0.3,"    
+    assert_equal "$result" "mdm_internal_ips=10.0.0.1, mdm_management_ips=10.0.0.1,"
 }
 
 function test_grow_cluster_1_to_3 {
     . "$test_dir/set_1_to_3_changed"
-    
+
     result=''
     function leader-set {
         result="$*"
     }
-    
+
     scli=()
     function cluster-cmd {
         scli+=("$*")
@@ -148,7 +152,7 @@ function test_grow_cluster_1_to_3 {
     function update-cluster-ips {
         :
     }
-    
+
     function status-set {
         :
     }
@@ -164,12 +168,12 @@ function test_grow_cluster_1_to_3 {
 
 function test_reduce_cluster_3_to_1 {
     . "$test_dir/set_3_to_1_departed"
-    
+
     result=''
     function leader-set {
         result="$*"
     }
-    
+
     scli=()
     function cluster-cmd {
         scli+=("$*")
@@ -178,7 +182,7 @@ function test_reduce_cluster_3_to_1 {
     function update-cluster-ips {
         :
     }
-    
+
     function status-set {
         :
     }
@@ -198,7 +202,7 @@ function test_restore_cluster_3_to_3 {
     function leader-set {
         result="$*"
     }
-    
+
     scli=()
     function cluster-cmd {
         scli+=("$*")
@@ -223,7 +227,7 @@ test test_adjust_cluster_1_to_3
 test test_adjust_cluster_3_to_1
 test test_adjust_cluster_3_to_3
 
-test test_order_status_1_to_3 
+test test_order_status_1_to_3
 test test_order_nodes_3_to_3
 test test_order_nodes_3_to_3_insufficient
 

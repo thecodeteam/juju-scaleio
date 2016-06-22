@@ -12,4 +12,4 @@ current_cluster_mode=3
 config_cluster_mode=3
 
 . "$my_dir/common-cluster"
-	
+

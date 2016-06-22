@@ -87,22 +87,26 @@ function order-status {
 }
 
 function check-and-set-role {
+    # Refresh ordered_nodes for the case when it is called from order-nodes for the leader
+    eval `leader-get ordered_nodes`
     # Check if this node is ordered to change role
     if [ -n "${ordered_nodes[*]+x}" ] && [ -n "${ordered_nodes[$JUJU_UNIT_NAME]+x}" ]; then
         # This node is ordered to change role
         ordered_role=${ordered_nodes["$JUJU_UNIT_NAME"]}
-        if [[ $ordered_role == manager ]]; then
-            is_manager=1
-            relation-set -r $scaleio_cluster_rid management_ip=$MY_MANAGEMENT_IP
-        else
-            is_manager=0
+        if [[ "${present_nodes[$JUJU_UNIT_NAME]+x}" != "$ordered_role" ]]; then
+            if [[ $ordered_role == manager ]]; then
+                is_manager=1
+                relation-set -r $scaleio_cluster_rid management_ip=$MY_MANAGEMENT_IP
+            else
+                is_manager=0
+            fi
+            # Remove it from list of standbies first, just in case error occurred in previous cluster adjustments
+            cluster-cmd "scaleio::mdm { 'remove from cluster': name=>'$MY_NAME', ensure=>'absent' }"
+            server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
+            relation-set -r $scaleio_cluster_rid role=$ordered_role
+            juju-log "ScaleIO MDM $MY_NAME changed role to $ordered_role"
         fi
-        # Remove it from list of standbies first, just in case error occurred in previous cluster adjustments
-        cluster-cmd "scaleio::mdm { 'remove from cluster': name=>'$MY_NAME', ensure=>'absent' }"
-        server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
-        relation-set -r $scaleio_cluster_rid role=$ordered_role
         status-set waiting "Waiting to become cluster member with a role ${ordered_role}"
-        juju-log "ScaleIO MDM $MY_NAME changed role to $ordered_role"
    fi
 }
 
@@ -135,6 +139,9 @@ function order-nodes {
     else
         leader-set ordered_nodes="`declare -p ordered_nodes`"
         check-and-set-role
+        # In case this is the leader which just acquired its role according to ordered_nodes in the call above
+        # we need to call adjust-cluster now because there won't be any other relation or leadership hooks called
+        adjust-cluster
     fi
 }
 
@@ -177,7 +184,7 @@ function reduce-cluster {
     if [ -n "${reducing_msg}" ]; then
         juju-log "Reducing cluster from ${current_mode} to ${required_mode} is not done - $reducing_msg"
         leader-set reducing_cluster="$reducing_msg"
-        if [ -n "${cluster_nodes[$JUJU_UNIT_NAME]+x}" ]; then 
+        if [ -n "${cluster_nodes[$JUJU_UNIT_NAME]+x}" ]; then
             status-set blocked "Cluster member with a role ${cluster_nodes[$JUJU_UNIT_NAME]} - $reducing_msg"
         fi
         return 0
@@ -234,7 +241,7 @@ function restore-cluster {
         cluster-cmd "scaleio::mdm { 'mdm $node': name=>'$name', ips=>'$internal_ip', role=>'$role', management_ips=>'$management_ip' }"
         add_str[$role]+="$name,"
         adding_count[$role]=$(( adding_count[$role]+1 ))
-        cluster_nodes[$node]=$role        
+        cluster_nodes[$node]=$role
     done
 
     # Prepare leaving nodes for removing, not exceeding the number of adding nodes
@@ -304,9 +311,14 @@ function grow-cluster {
 function update-cluster-ips {
     # The function should be called by leader only
 
+    nodes=($(relation-list -r $scaleio_cluster_rid))
+    # JUJU doesn't return this current unit in the list so we have to add it here explicitely
+    nodes+=($JUJU_UNIT_NAME)
+
     local internal_ips=''
     local management_ips=''
     for node in ${!cluster_nodes[*]}; do
+        if [[ "${nodes[*]}" != *$node* ]]; then continue; fi
         local role=${cluster_nodes[$node]}
         if [[ $role == tb ]]; then continue; fi
         local internal_ip=`relation-get -r $scaleio_cluster_rid internal_ip $node`

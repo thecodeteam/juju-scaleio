@@ -1,20 +1,21 @@
 #!/bin/bash
 
 function test {
-	$1
-	echo "Test $1 - OK"
+    echo "Test $1"
+    $1
+    echo "OK"
 }
 
 function assert_equal {
-	if [[ "$1" != "$2" ]]; then
-		echo "Error in ${FUNCNAME[1]}, got: $1 expected: $2"
-		exit 1
-	fi
+    if [[ "$1" != "$2" ]]; then
+        echo "Error in (${FUNCNAME[1]} ${BASH_SOURCE[1]}:${BASH_LINENO[0]}), got: $1 expected: $2"
+        exit 1
+    fi
 }
 
 function assert_true {
-	if [[ "$1" != True ]]; then
-		echo "Error in ${FUNCNAME[1]}, $1 is not True"
-		exit 1
-	fi
+    if [[ "$1" != True ]]; then
+        echo "Error in (${FUNCNAME[1]} ${BASH_SOURCE[1]}:${BASH_LINENO[0]}), $1 is not True"
+        exit 1
+    fi
 }

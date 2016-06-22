@@ -7,15 +7,15 @@ relation-set internal_ip=$MY_INTERNAL_IP
 role=`relation-get role $JUJU_UNIT_NAME`
 
 if [[ `is-leader` != 'True' ]]; then
-	if [ -z "$role" ]; then
-		# Newcomer status initialization
-		status-set blocked "ScaleIO MDM is waiting to join cluster"
-		relation-set role=none
-	fi
+    if [ -z "$role" ]; then
+        # Newcomer status initialization
+        status-set blocked "ScaleIO MDM is waiting to join cluster"
+        relation-set role=none
+    fi
 else
-	if [ -z "$role" ]; then
-		# Initial master first role  and ip initialization
-		relation-set role=manager
-		relation-set management_ip=$MY_MANAGEMENT_IP
-	fi	
+    if [ -z "$role" ]; then
+        # Initial master first role  and ip initialization
+        relation-set role=manager
+        relation-set management_ip=$MY_MANAGEMENT_IP
+    fi
 fi
