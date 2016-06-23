@@ -1,7 +1,5 @@
 # Overview
 
-Disclaimer: Current version is RC1.
-
 The repository provides a set of charms for ScaleIO cluster deployment.
 
 It includes:
@@ -20,4 +18,4 @@ IMPORTANT: ScaleIO MDM cluster is very sensitive to its reconfiguration. Please 
 
 # ScaleIO charms Contact Information
 
-- [Project Bug Tracker](https://github.com/cloudscaling/juju-scaleio/issues)
+- [Project Bug Tracker](https://github.com/emccode/juju-scaleio/issues)
