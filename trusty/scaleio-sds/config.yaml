@@ -82,7 +82,7 @@ options:
       This parameter can not be changed. Only initial value is used.
   scaleio-apt-repo:
     type: string
-    default: "http://ec2-52-37-140-129.us-west-2.compute.amazonaws.com"
+    default: "http://scaleio-packages.s3-website-us-east-1.amazonaws.com"
     description: |
       Optional. URL of apt repo where charm can find ScaleIO packages.
   scaleio-driver-ftp:
