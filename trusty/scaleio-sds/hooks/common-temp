@@ -6,7 +6,7 @@ puppet module install --version "<1.1.0" cloudscaling-scaleio --module_repositor
 # TODO: remove when packages will be in official repo
 apt_repo=`config-get scaleio-apt-repo`
 if [ -n "$apt_repo" ] ; then
-  if wget -q --output-document=/root/repo.key $apt_repo/repo.key ; then
+  if wget -t 2 -T 30 -q --output-document=/root/repo.key $apt_repo/repo.key ; then
     apt-key add /root/repo.key
   fi
 
