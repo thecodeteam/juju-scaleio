@@ -43,8 +43,9 @@ else
   ip_roles='all'
 fi
 
+uniq_pools=`echo $storage_pools | tr ',' '\n' | sort -u | tr '\n' ' ' | xargs | tr ' ' ','`
 cluster-cmd "scaleio::protection_domain { 'protection domain $protection_domain':
-  name=>'$protection_domain', fault_sets=>[$fault_set], storage_pools=>[$storage_pools] }"
+  name=>'$protection_domain', fault_sets=>[$fault_set], storage_pools=>[$uniq_pools] }"
 
 opts="checksum_mode=>$checksum_mode"
 opts="$opts, rfcache_usage=>$rfcache_usage"
@@ -53,7 +54,7 @@ opts="$opts, rmcache_write_handling_mode=>$rmcache_write_handling_mode"
 opts="$opts, scanner_mode=>$scanner_mode"
 opts="$opts, spare_percentage=>$spare_percentage"
 opts="$opts, zero_padding_policy=>$zero_padding_policy"
-for pool in `echo "$storage_pools" | tr "," " "` ; do
+for pool in `echo "$uniq_pools" | tr "," " "` ; do
   cluster-cmd "scaleio::storage_pool { 'storage pool $pool': name=>'$pool', protection_domain=>'$protection_domain', $opts }"
 done
 
