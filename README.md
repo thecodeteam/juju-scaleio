@@ -12,7 +12,7 @@ It brings the following ScaleIO components:
 And a connector of ScaleIO to OpenStack:
 * ScaleIO OpenStack
 
-All of these charms are present in the [JuJu Charm Store](https://jujucharms.com/q/cloudscaling)
+All of these charms are present in the [JuJu Charm Store](https://jujucharms.com/q/cloudscaling).
 
 # Structure
 
