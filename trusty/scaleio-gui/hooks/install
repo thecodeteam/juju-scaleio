@@ -9,7 +9,7 @@ my_dir="$(dirname "$0")"
 juju-log "ScaleIO GUI installing"
 
 apt-get install -qqfy puppet
-puppet module install --version "<1.1.0" cloudscaling-scaleio
+puppet module install --version "<1.1.0" --force cloudscaling-scaleio
 
 server-cmd "class { 'scaleio::gui_server': }"
 
