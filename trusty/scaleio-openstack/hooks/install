@@ -6,7 +6,7 @@ my_dir="$(dirname "$0")"
 juju-log "ScaleIO for OpenStack module installing"
 
 apt-get install -qqfy puppet
-puppet module install --version "<1.1.0" --force cloudscaling-scaleio_openstack
+puppet module install --version "<1.1.0" cloudscaling-scaleio_openstack || /bin/true
 
 juju-log "ScaleIO for OpenStack module installed"
 

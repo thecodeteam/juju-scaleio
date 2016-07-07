@@ -9,7 +9,7 @@ $my_dir/common-temp
 juju-log "ScaleIO GW installing"
 
 apt-get install -qqfy puppet
-puppet module install --version "<1.1.0" --force cloudscaling-scaleio
+puppet module install --version "<1.1.0" cloudscaling-scaleio || /bin/true
 
 api_port=$(get-port)
 server-cmd "class { 'scaleio::gateway_server': port=>'$api_port' }"
