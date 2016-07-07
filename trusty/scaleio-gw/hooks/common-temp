@@ -1,8 +1,5 @@
 #!/bin/bash
 
-apt-get install -y puppet
-puppet module install --version "<1.1.0" cloudscaling-scaleio --module_repository https://forge.puppet.com/
-
 # TODO: remove when packages will be in official repo
 apt_repo=`config-get scaleio-apt-repo`
 if [ -n "$apt_repo" ] ; then

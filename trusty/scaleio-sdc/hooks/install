@@ -8,6 +8,9 @@ $my_dir/common-temp
 
 juju-log "ScaleIO SDC installing"
 
+apt-get install -qqfy puppet
+puppet module install --version "<1.1.0" cloudscaling-scaleio
+
 ftp=`config-get scaleio-driver-ftp`
 server-cmd "class { 'scaleio::sdc_server': ftp=>'$ftp' }"
 

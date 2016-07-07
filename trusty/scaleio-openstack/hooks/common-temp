@@ -1,4 +1,0 @@
-#!/bin/bash
-
-apt-get install -y puppet
-puppet module install --version "<1.1.0" cloudscaling-scaleio_openstack --module_repository https://forge.puppet.com/

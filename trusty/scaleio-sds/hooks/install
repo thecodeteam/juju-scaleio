@@ -8,6 +8,9 @@ $my_dir/common-temp
 
 juju-log "ScaleIO SDS installing"
 
+apt-get install -qqfy puppet
+puppet module install --version "<1.1.0" cloudscaling-scaleio
+
 ftp=`config-get scaleio-driver-ftp`
 if [ -n "$ftp" ] ; then
   ftp_opt="ftp=>'$ftp'"
