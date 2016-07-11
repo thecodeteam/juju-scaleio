@@ -10,8 +10,8 @@ log-relation "ScaleIO SDS $remote_name departing"
 
 # TODO: Workaround for non-working cluster when 3 goes to 1. During MDM service removal the following will fail	
 set +e
-FACTER_mdm_ips=$MY_MDMS puppet apply -e "scaleio::login {'login': password=>$MY_PASSWORD} -> \
-  scaleio::sds { 'sds $remote_name': name=>'$remote_name', ensure=>'absent' }"
+FACTER_mdm_ips=$MY_MDMS puppet apply -e "scaleio::login {'login': password=>'$MY_PASSWORD'} -> \
+  scaleio::sds { 'sds $remote_name': sio_name=>'$remote_name', ensure=>'absent' }"
 set -e
 
 log-relation "ScaleIO SDS $remote_name departed"

@@ -14,8 +14,6 @@ remote_internal_ip=`relation-get sds_internal_ip_$remote_name`
 remote_storage_ip=`relation-get sds_storage_ip_$remote_name`
 fault_set=`relation-get fault_set`
 storage_pools=`relation-get storage_pools`
-device_paths=`relation-get device_paths`
-rfcache_device_paths=`relation-get rfcache_device_paths`
 
 function get_value_or_undef() {
   val=`relation-get $1`
@@ -45,7 +43,7 @@ fi
 
 uniq_pools=`echo $storage_pools | tr ',' '\n' | sort -u | tr '\n' ' ' | xargs | tr ' ' ','`
 cluster-cmd "scaleio::protection_domain { 'protection domain $protection_domain':
-  name=>'$protection_domain', fault_sets=>[$fault_set], storage_pools=>[$uniq_pools] }"
+  sio_name=>'$protection_domain', fault_sets=>[$fault_set], storage_pools=>[$uniq_pools] }"
 
 opts="checksum_mode=>$checksum_mode"
 opts="$opts, rfcache_usage=>$rfcache_usage"
@@ -55,15 +53,19 @@ opts="$opts, scanner_mode=>$scanner_mode"
 opts="$opts, spare_percentage=>$spare_percentage"
 opts="$opts, zero_padding_policy=>$zero_padding_policy"
 for pool in `echo "$uniq_pools" | tr "," " "` ; do
-  cluster-cmd "scaleio::storage_pool { 'storage pool $pool': name=>'$pool', protection_domain=>'$protection_domain', $opts }"
+  cluster-cmd "scaleio::storage_pool { 'storage pool $pool': sio_name=>'$pool', protection_domain=>'$protection_domain', $opts }"
 done
 
 # TODO: store devices and rfcache_device in leader-store and support remove by this
 
-performance_profile=`config-get performance-profile`
+performance_profile=`get_value_or_undef performance-profile`
+# re-get fault set and check for emptyness
+fault_set=`get_value_or_undef fault_set`
+device_paths=`get_value_or_undef device_paths`
+rfcache_device_paths=`get_value_or_undef rfcache_device_paths`
 cluster-cmd "scaleio::sds { 'sds $remote_name':
-  name=>'$remote_name', ips=>'$ips', ip_roles=>'$ip_roles', protection_domain=>'$protection_domain', \
-  fault_set=>'$fault_set', storage_pools=>'$storage_pools', device_paths=>'$device_paths',
-  performance_profile=>'$performance_profile', rfcache_devices=>'$rfcache_device_paths' }"
+  sio_name=>'$remote_name', ips=>'$ips', ip_roles=>'$ip_roles', protection_domain=>'$protection_domain', \
+  fault_set=>$fault_set, storage_pools=>'$storage_pools', device_paths=>$device_paths,
+  performance_profile=>$performance_profile, rfcache_devices=>$rfcache_device_paths }"
 
 log-relation "ScaleIO SDS relation changed"

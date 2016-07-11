@@ -11,7 +11,7 @@ leader=`is-leader`
 if [[ "$leader" == 'True' ]]; then
     old_password=`leader-get password`
     if [ $MY_PASSWORD != $old_password ]; then
-        server-cmd "scaleio::login {'login': password=>$old_password} -> scaleio::cluster { 'cluster': password=>'$old_password', new_password=>'$MY_PASSWORD' }"
+        server-cmd "scaleio::login {'login': password=>'$old_password'} -> scaleio::cluster { 'cluster': password=>'$old_password', new_password=>'$MY_PASSWORD' }"
         leader-set password=$MY_PASSWORD
         for rid in `relation-ids scaleio-mdm` ; do
             relation-set -r $rid password=$password
@@ -20,7 +20,9 @@ if [[ "$leader" == 'True' ]]; then
     fi
 
     profile=`config-get performance-profile`
-    cluster-cmd "scaleio::cluster { 'cluster': performance_profile=>'$profile' }"
+    if [[ -n $profile ]] ; then
+        cluster-cmd "scaleio::cluster { 'cluster': performance_profile=>'$profile' }"
+    fi
 
     update-cluster-options
 

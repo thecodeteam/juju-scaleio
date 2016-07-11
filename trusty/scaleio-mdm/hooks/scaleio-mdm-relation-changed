@@ -12,7 +12,11 @@ ready=`relation-get ready` # it is a flag from sdc`s side
 if [[ "$ready" == 'true' ]]; then
   remote_ip=`relation-get private-address`
   performance_profile=`config-get performance-profile`
-  cluster-cmd "scaleio::sdc { 'sdc $remote_name': ip=>'$(resolve-address $remote_ip)', performance_profile=>'$performance_profile' }"
+  opts=''
+  if [[ -n "$performance_profile" ]] ; then
+    opts=", performance_profile=>'$performance_profile'"
+  fi
+  cluster-cmd "scaleio::sdc { 'sdc $remote_name': ip=>'$(resolve-address $remote_ip)'$opts }"
 
   # add sdc to sdcs_ready list and propagate the list to gateways
   sdcs_ready="$(leader-get sdcs_ready),$remote_ip"

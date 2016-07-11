@@ -19,7 +19,7 @@ if [[ $remote_name == "scaleio_sdc"* ]]; then
   # cluster-cmd "scaleio::sdc { 'sdc $remote_name': ip=>'$remote_ip', ensure=>'absent' }"
   # Workaround is used:
   set +e
-  FACTER_mdm_ips=$MY_MDMS puppet apply -e "scaleio::login {'login': password=>$MY_PASSWORD} -> \
+  FACTER_mdm_ips=$MY_MDMS puppet apply -e "scaleio::login {'login': password=>'$MY_PASSWORD'} -> \
     scaleio::sdc { 'sdc $remote_name': ip=>'$(resolve-address $remote_ip)', ensure=>'absent'}"
   set -e
 

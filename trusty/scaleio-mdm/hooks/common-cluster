@@ -101,7 +101,7 @@ function check-and-set-role {
                 is_manager=0
             fi
             # Remove it from list of standbies first, just in case error occurred in previous cluster adjustments
-            cluster-cmd "scaleio::mdm { 'remove from cluster': name=>'$MY_NAME', ensure=>'absent' }"
+            cluster-cmd "scaleio::mdm { 'remove from cluster': sio_name=>'$MY_NAME', ensure=>'absent' }"
             server-cmd "class { 'scaleio::mdm_server': is_manager=>$is_manager }"
             relation-set -r $scaleio_cluster_rid role=$ordered_role
             juju-log "ScaleIO MDM $MY_NAME changed role to $ordered_role"
@@ -209,7 +209,7 @@ function reduce-cluster {
     cluster-cmd "scaleio::cluster {'cluster': cluster_mode=>'$required_mode', slave_names=>'${remove_str[manager]}', tb_names=>'${remove_str[tb]}', ensure=>'absent' }"
     for node in ${to_remove[*]}; do
         local name=`convert-name $node`
-        cluster-cmd "scaleio::mdm { 'mdm $node': name=>'$name', ensure=>'absent' }"
+        cluster-cmd "scaleio::mdm { 'mdm $node': sio_name=>'$name', ensure=>'absent' }"
         unset cluster_nodes[$node]
     done
     juju-log "ScaleIO cluster is successfully reduced to $required_mode"
@@ -237,8 +237,13 @@ function restore-cluster {
         local name=`convert-name $node`
         local internal_ip=`relation-get -r $scaleio_cluster_rid internal_ip $node`
         local management_ip=`relation-get -r $scaleio_cluster_rid management_ip $node`
+        if [[ -z "$management_ip" ]] ; then
+            management_ip="undef"
+        else
+            management_ip="'$management_ip'"
+        fi
         local role=${ready_nodes[$node]}
-        cluster-cmd "scaleio::mdm { 'mdm $node': name=>'$name', ips=>'$internal_ip', role=>'$role', management_ips=>'$management_ip' }"
+        cluster-cmd "scaleio::mdm { 'mdm $node': sio_name=>'$name', ips=>'$internal_ip', role=>'$role', management_ips=>$management_ip }"
         add_str[$role]+="$name,"
         adding_count[$role]=$(( adding_count[$role]+1 ))
         cluster_nodes[$node]=$role
@@ -262,7 +267,7 @@ function restore-cluster {
     cluster-cmd "scaleio::cluster {'cluster': slave_names=>'${add_str[manager]}', tb_names=>'${add_str[tb]}', slave_names_to_replace=>'${remove_str[manager]}', tb_names_to_replace=>'${remove_str[tb]}' }"
     for node in ${to_remove[*]}; do
         local name=`convert-name $node`
-        cluster-cmd "scaleio::mdm { 'mdm $node': name=>'$name', ensure=>'absent' }"
+        cluster-cmd "scaleio::mdm { 'mdm $node': sio_name=>'$name', ensure=>'absent' }"
         unset cluster_nodes[$node]
     done
     juju-log "ScaleIO cluster is successfully restored to $required_mode"
@@ -289,8 +294,13 @@ function grow-cluster {
         local name=`convert-name $node`
         local internal_ip=`relation-get -r $scaleio_cluster_rid internal_ip $node`
         local management_ip=`relation-get -r $scaleio_cluster_rid management_ip $node`
+        if [[ -z "$management_ip" ]] ; then
+            management_ip="undef"
+        else
+            management_ip="'$management_ip'"
+        fi
         local role=${ready_nodes[$node]}
-        cluster-cmd "scaleio::mdm { 'mdm $node': name=>'$name', ips=>'$internal_ip', role=>'$role', management_ips=>'$management_ip' }"
+        cluster-cmd "scaleio::mdm { 'mdm $node': sio_name=>'$name', ips=>'$internal_ip', role=>'$role', management_ips=>$management_ip }"
         add_str[$role]+="$name,"
         cluster_nodes[$node]=$role
     done
