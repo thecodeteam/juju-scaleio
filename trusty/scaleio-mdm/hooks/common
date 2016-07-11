@@ -59,7 +59,7 @@ function server-cmd {
 }
 
 function cluster-cmd {
-    server-cmd "scaleio::login {'login': password=>$MY_PASSWORD} -> $1"
+    server-cmd "scaleio::login {'login': password=>'$MY_PASSWORD'} -> $1"
 }
 
 function log-relation {

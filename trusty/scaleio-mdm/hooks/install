@@ -8,7 +8,9 @@ $my_dir/common-temp
 
 juju-log "ScaleIO MDM installing: $MY_NAME, $MY_INTERNAL_IP"
 
-apt-get install -qqfy puppet
+if ! puppet --version ; then
+  apt-get install -qqfy puppet
+fi
 puppet module install --version "<1.1.0" cloudscaling-scaleio || /bin/true
 
 server-cmd "class { 'scaleio::mdm_server': }"
