@@ -42,4 +42,3 @@ Example:
 
 Should be related to scaleio-mdm.
 Can be related to scaleio-openstack or other client-side charms.
-

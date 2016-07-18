@@ -11,7 +11,7 @@ if [ $(is-leader) == 'True' ] ; then
         leader-set sdcs_ready="$sdcs_ready"
         juju-log "sdcs_ready: $sdcs_ready"
     fi
-    leader-set password=$(relation-get password) port=$(relation-get port) ip=$(relation-get ip)
+    leader-set client_password=$(relation-get client_password) port=$(relation-get port) ip=$(relation-get ip)
 fi
 
 my_ip=`unit-get private-address`

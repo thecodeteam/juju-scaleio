@@ -13,43 +13,43 @@ Example:
 
   Deploy single node cluster
   ```
-	juju deploy scaleio-mdm
+    juju deploy scaleio-mdm
   ```
-  
+
   Add two more MDMs
   ```
     juju add-unit scaleio-mdm -n 2
   ```
-  
+
   Set up 3 node cluster
   ```
-	juju set scaleio-mdm cluster-mode=3
+    juju set scaleio-mdm cluster-mode=3
   ```
-  
+
   Add another couple of MDMs
   ```
     juju add-unit scaleio-mdm -n 2
   ```
-  
+
   Set up 5 node cluster
   ```
-	juju set scaleio-mdm cluster-mode=5
+    juju set scaleio-mdm cluster-mode=5
   ```
-  
+
   Remove two MDMs (change to particular units)
   ```
-	juju remove-unit scaleio-mdm/1
-	juju remove-unit scaleio-mdm/2
+    juju remove-unit scaleio-mdm/1
+    juju remove-unit scaleio-mdm/2
   ```
 
   Set up 3 node cluster
   ```
-	juju set scaleio-mdm cluster-mode=3
+    juju set scaleio-mdm cluster-mode=3
   ```
 
   Change password
   ```
-    juju set scaleio-mdm password="Non_default_password"  
+    juju set scaleio-mdm password="Non_default_password"
   ```
 # Cluster reconfiguration
 
@@ -114,4 +114,3 @@ IMPORTANT: Any changes in cluster and in JuJu can take time in each step, usuall
 # Relations
 
 To build complete ScaleIO cluster it should be related to scaleio-sds, scaleio-sdc and scaleio-gw charms.
-

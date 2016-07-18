@@ -17,7 +17,7 @@ function propogate_value() {
 }
 
 if [ $(is-leader) == 'True' ] ; then
-    propogate_value "password"
+    propogate_value "client_password"
     propogate_value "sdcs_ready"
 fi
 

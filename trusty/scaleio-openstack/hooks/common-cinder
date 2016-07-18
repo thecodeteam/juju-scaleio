@@ -18,7 +18,7 @@ function update-cinder() {
   fi
 
   local remote_ip=`leader-get ip`
-  local password=`leader-get password`
+  local password=`leader-get client_password`
   local port=`leader-get port`
   local sdcs_ready=`leader-get sdcs_ready`
   local my_ip=`unit-get private-address`
@@ -41,7 +41,7 @@ function update-cinder() {
   chmod 600 $tmp_cfg
 
   server-cmd "class { 'scaleio_openstack::cinder':
-    gateway_user => 'admin', gateway_password => '$password',
+    gateway_user => 'scaleio_client', gateway_password => '$password',
     gateway_ip => '$remote_ip', gateway_port => '$port',
     protection_domains => '$protection_domains', storage_pools => '$storage_pools',
     verify_server_certificate => '$verify_server_certificate',
