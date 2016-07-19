@@ -5,6 +5,7 @@ my_dir="$(dirname "$0")"
 log-relation "ScaleIO client joining"
 
 if [ $(is-leader) == 'True' ] ; then
+    relation-set client_user=$(leader-get client_user)
     relation-set client_password=$(leader-get client_password)
     relation-set port=$(config-get port)
     relation-set ip=$(get-ip)

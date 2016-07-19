@@ -22,6 +22,7 @@ if [ -z "$cluster_mode" ]; then
     juju-log "ScaleIO cluster password changed"
     leader-set password=$MY_PASSWORD
 
+    # it will create 'scaleio_client' with this password
     client_password="$(tr -dc A-Za-z0-9 < /dev/urandom | head -c${1:-8})_$(tr -dc A-Za-z0-9 < /dev/urandom | head -c${1:-8})"
     cluster-cmd "scaleio::cluster { 'cluster': client_password=>'$client_password' }"
     leader-set client_password=$client_password

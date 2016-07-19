@@ -19,6 +19,8 @@ relation-set sdcs_ready=$sdcs_ready
 # propogate admin password to GW
 password=`config-get password`
 relation-set password=$password
-# propogate client password to GW
+# propogate client user/password to GW
+client_user="scaleio_client"
+relation-set client_user=$client_user
 client_password=`leader-get client_password`
 relation-set client_password=$client_password
