@@ -20,5 +20,5 @@ relation-set sdcs_ready=$sdcs_ready
 password=`config-get password`
 relation-set password=$password
 # propogate client password to GW
-client_password=`config-get client_password`
+client_password=`leader-get client_password`
 relation-set client_password=$client_password
