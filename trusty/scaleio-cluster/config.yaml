@@ -1,0 +1,17 @@
+options:
+  gateway-ip:
+    type: string
+    default:
+    description: IP address where existing gateway is listening.
+  gateway-port:
+    type: int
+    default:
+    description: Port where existing gateway is listening.
+  gateway-user:
+    type: string
+    default:
+    description: Username for connecting to gateway
+  gateway-password:
+    type: string
+    default:
+    description: Password for connecting to gateway

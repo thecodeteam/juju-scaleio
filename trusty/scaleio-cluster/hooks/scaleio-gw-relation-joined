@@ -1,0 +1,13 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+log-relation "ScaleIO client joining"
+
+if [ $(is-leader) == 'True' ] ; then
+    relation-set client_user=$(config-get gateway-user)
+    relation-set client_password=$(config-get gateway-password)
+    relation-set port=$(config-get gateway-port)
+    relation-set ip=$(config-get gateway-ip)
+    relation-set sdcs_ready=$(leader-get sdcs_ready)
+fi

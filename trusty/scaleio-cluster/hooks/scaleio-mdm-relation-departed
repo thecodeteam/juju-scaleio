@@ -1,0 +1,17 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+remote_name=$(convert-name $JUJU_REMOTE_UNIT)
+remote_ip=`relation-get private-address`
+
+log-relation "ScaleIO SDC $remote_name departing"
+
+# remove sdc from sdcs_ready list and propagate the list to descendants
+sdcs_ready="`leader-get sdcs_ready | sed \"s/$remote_ip//\"`"
+leader-set sdcs_ready="$sdcs_ready"
+for rid in `relation-ids scaleio-gw` ; do
+  relation-set -r $rid sdcs_ready="$sdcs_ready"
+done
+
+log-relation "ScaleIO SDC $remote_name departed"

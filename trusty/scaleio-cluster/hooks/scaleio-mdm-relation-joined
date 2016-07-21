@@ -1,0 +1,12 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+log-relation "ScaleIO SDC joined"
+
+if ! ips=`get_mdm_ips` ; then
+  status-set blocked "Could not connect to ScaleIO cluster"
+  return
+fi
+
+relation-set mdm_internal_ips=$ips

@@ -1,0 +1,20 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+remote_name=$(convert-name $JUJU_REMOTE_UNIT)
+log-relation "ScaleIO Cluster relation changing for ScaleIO SDC ($remote_name)"
+
+ready=`relation-get ready` # it is a flag from sdc`s side
+if [[ "$ready" == 'true' ]]; then
+  remote_ip=`relation-get private-address`
+
+  # add sdc to sdcs_ready list and propagate the list to descendants
+  sdcs_ready="$(leader-get sdcs_ready),$remote_ip"
+  leader-set sdcs_ready="$sdcs_ready"
+  for rid in `relation-ids scaleio-gw` ; do
+    relation-set -r $rid sdcs_ready="$sdcs_ready"
+  done
+fi
+
+log-relation "ScaleIO Cluster relation changed for ScaleIO SDC"
