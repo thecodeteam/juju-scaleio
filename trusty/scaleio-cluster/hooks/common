@@ -15,8 +15,8 @@ function log-relation {
 function get_mdm_ips() {
   local ip=$(config-get gateway-ip)
   local port=$(config-get gateway-port)
-  local user=$(config-get client-user)
-  local password=$(config-get client-password)
+  local user=$(config-get gateway-user)
+  local password=$(config-get gateway-password)
 
   local gw_url="https://$ip:$port/api"
 

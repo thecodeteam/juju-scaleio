@@ -17,8 +17,8 @@ done
 
 ip=$(config-get gateway-ip)
 port=$(config-get gateway-port)
-user=$(config-get client-user)
-password=$(config-get client-password)
+user=$(config-get gateway-user)
+password=$(config-get gateway-password)
 
 rids=`relation-ids scaleio-gw`
 for rid in $rids ; do
