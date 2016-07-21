@@ -1,8 +1,8 @@
 # Overview
 
-This charm provides availability of using existing ScaleIO cluster.
+This charm allows using existing ScaleIO cluster.
 
-It should be related to client side charms, such as scaleio-openstack
+It should be related to client-side charms, such as scaleio-openstack
 and to scaleio-sdc charm.
 
 # Usage
