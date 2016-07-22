@@ -1,0 +1,12 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+log-relation "ScaleIO GW departing"
+
+status-set waiting "Awaiting relation to scaleio-gw"
+
+sdcs_ready=''
+if [ $(is-leader) == 'True' ] ; then
+    leader-set sdcs_ready= client_user= client_password= port= ip=
+fi

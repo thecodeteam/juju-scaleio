@@ -8,7 +8,7 @@ mdm_internal_ips=`relation-get mdm_internal_ips`
 
 if [ -z "$mdm_internal_ips" ]; then exit; fi
 
-server-cmd "class { 'scaleio::sdc_server': mdm_ip=>'$mdm_internal_ips', ftp=>undef }"
+server-cmd "class { 'scaleio::sdc_server': mdm_ip=>'$mdm_internal_ips', ftp=>'' }"
 
 status-set active
 
