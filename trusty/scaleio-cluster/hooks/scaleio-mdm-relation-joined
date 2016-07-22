@@ -6,7 +6,7 @@ log-relation "ScaleIO SDC joined"
 
 if ! ips=`get_mdm_ips` ; then
   status-set blocked "Could not connect to ScaleIO cluster"
-  return
+  exit
 fi
 
 relation-set mdm_internal_ips=$ips
