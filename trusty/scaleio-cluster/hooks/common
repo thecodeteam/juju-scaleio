@@ -18,6 +18,10 @@ function get_mdm_ips() {
   local user=$(config-get gateway-user)
   local password=$(config-get gateway-password)
 
+  if [[ -z "$ip" || -z "$port" || -z "$user" || -z "$password" ]] ; then
+    return 2
+  fi
+
   local gw_url="https://$ip:$port/api"
 
   token=`curl -k -u $user:$password $gw_url/login 2>/dev/null | xargs`
