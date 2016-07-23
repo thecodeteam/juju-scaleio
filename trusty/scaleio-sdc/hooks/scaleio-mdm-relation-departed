@@ -6,6 +6,6 @@ log-relation "ScaleIO MDM departed"
 
 status-set waiting "Awaiting relation to scaleio-mdm"
 
-server-cmd "class { 'scaleio::sdc_server': mdm_ip=>'', ftp=>'' }"
+server-cmd "class { 'scaleio::sdc_server': ensure_properties=>'absent', ftp=>'' }"
 
 relation-set ready='false'
