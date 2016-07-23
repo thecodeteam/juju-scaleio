@@ -1,0 +1,11 @@
+#!/bin/bash
+my_dir="$(dirname "$0")"
+. "$my_dir/common"
+
+if ! ips=`get_mdm_ips` ; then
+  status-set blocked "Could not connect to ScaleIO cluster"
+  relation-set mdm_internal_ips=
+  exit
+fi
+
+relation-set mdm_internal_ips=$ips

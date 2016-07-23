@@ -6,9 +6,10 @@ juju-log "ScaleIO Cluster config changed"
 
 if ! ips=`get_mdm_ips` ; then
   status-set blocked "Could not connect to ScaleIO cluster"
-  exit
+  ips=''
+else
+  status-set active
 fi
-status-set active
 
 rids=`relation-ids scaleio-mdm`
 for rid in $rids ; do

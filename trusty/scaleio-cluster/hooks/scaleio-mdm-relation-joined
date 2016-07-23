@@ -4,9 +4,4 @@ my_dir="$(dirname "$0")"
 
 log-relation "ScaleIO SDC joined"
 
-if ! ips=`get_mdm_ips` ; then
-  status-set blocked "Could not connect to ScaleIO cluster"
-  exit
-fi
-
-relation-set mdm_internal_ips=$ips
+$my_dir/update-status
