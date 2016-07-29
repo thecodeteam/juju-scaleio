@@ -7,7 +7,7 @@
 series: trusty
 services:
   cinder:
-    charm: "local:trusty/cinder"
+    charm: "cs:trusty/cinder"
     num_units: 1
     options:
       "block-device": None
@@ -29,7 +29,7 @@ services:
     to:
       - "io-3"
   "nova-compute":
-    charm: "local:trusty/nova-compute"
+    charm: "cs:trusty/nova-compute"
     num_units: 2
     options:
       debug: true
@@ -52,7 +52,7 @@ services:
     to:
       - "io-1"
   keystone:
-    charm: "local:trusty/keystone"
+    charm: "cs:trusty/keystone"
     num_units: 1
     options:
       "admin-password": password
@@ -74,23 +74,23 @@ services:
     to:
       - "io-2"
   "scaleio-sdc":
-    charm: "local:trusty/scaleio-sdc"
+    charm: "cs:~cloudscaling/scaleio-sdc"
     num_units: 2
     to:
       - "compute-1"
       - "compute-2"
   "scaleio-openstack":
-    charm: "local:trusty/scaleio-openstack"
+    charm: "cs:~cloudscaling/scaleio-openstack"
     options:
       "provisioning-type": thin
   "scaleio-gw":
-    charm: "local:trusty/scaleio-gw"
+    charm: "cs:~cloudscaling/scaleio-gw"
     num_units: 1
     expose: true
     to:
       - "io-2"
   "scaleio-mdm":
-    charm: "local:trusty/scaleio-mdm"
+    charm: "cs:~cloudscaling/scaleio-mdm"
     num_units: 3
     options:
       cluster-mode: 3
@@ -99,7 +99,7 @@ services:
       - "io-2"
       - "io-3"
   "scaleio-sds":
-    charm: "local:trusty/scaleio-sds"
+    charm: "cs:~cloudscaling/scaleio-sds"
     num_units: 3
     options:
       "device-paths": /dev/xvdb
