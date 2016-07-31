@@ -11,6 +11,4 @@ if [ -n "$apt_repo" ] ; then
 deb $apt_repo/ubuntu trusty main
 deb-src $apt_repo/ubuntu trusty main
 EOF
-
-  apt-get -qq update
 fi
