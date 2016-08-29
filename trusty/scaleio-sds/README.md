@@ -79,7 +79,7 @@ Example:
 * protection-domain - Protection Domain for the group of SDSs
 * fault-set - Fault Set for the group of SDSs
 * storage-pools - Comma-separated list of Storage Pools for the group of SDSs
-* device-paths - Comma-separated list of Device Paths for the group of SDSs
+* device-paths - Comma-separated list of Device Paths for the group of SDSs in the same order as list of storage-pools above
 * rfcache-device-paths - Comma-separated list of device paths for RF Cache
 * zero-padding-policy - Ensures that every read from an area previously not written to returns zeros
 * checksum-mode: This feature addresses errors that change the payload during the transit through the ScaleIO system
@@ -88,8 +88,8 @@ Example:
 * rmcache-write-handling-mode: The caching write-mode used by the system: passthrough mode (writes to storage only), or cached mode (by default, writes both to cache and to storage).
 * scanner-mode: The Background Device Scanner ("scanner") enhances the resilience of your ScaleIO system by constantly searching for, and fixing, device errors before they can affect your system. Can be 'enable' that means 'device_only' mode or 'disable'.
 * spare-percentage: The number represents the percentage of total capacity set aside to ensure data integrity during server failures. The percentage is derived by 1/(number of SDS), which yields the recommended percentage for less than 10 balanced servers. For more information, see “Modifying spare policy” in the EMC ScaleIO User Guide.
-* internal-iface - Network interface for internal cluster communications, by default internal JuJu-provided IP is used
-* storage-iface - Network interface for storage communication of SDS with SDC, by default internal-iface is used
+* internal-iface - Comma-separated list of network interfaces for internal cluster communications, by default internal JuJu-provided IP is used
+* storage-iface - Comma-separated list of network interfaces for storage communication of SDS with SDC, by default internal-iface is used
 * scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
 * scaleio-driver-ftp - FTP to fetch ScaleIO SDC drivers from
 
