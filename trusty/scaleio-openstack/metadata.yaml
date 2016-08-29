@@ -17,6 +17,9 @@ provides:
   ephemeral-backend:
     interface: ephemeral-backend
     scope: container
+  image-backend:
+    interface: glance-backend
+    scope: container
 requires:
   scaleio-gw:
     interface: scaleio-gw

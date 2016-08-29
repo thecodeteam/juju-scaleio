@@ -4,6 +4,7 @@ set -eu
 
 . "$my_dir/common-cinder"
 . "$my_dir/common-nova"
+. "$my_dir/common-glance"
 
 function convert-name {
   echo ${1//[-\/]/_}
@@ -42,6 +43,13 @@ function update-relations {
   for rid in $rids ; do
     if [ -n "`relation-list -r $rid`" ] ; then
       update-nova $rid
+    fi
+  done
+
+  rids=`relation-ids image-backend`
+  for rid in $rids ; do
+    if [ -n "`relation-list -r $rid`" ] ; then
+      update-glance $rid
     fi
   done
 }

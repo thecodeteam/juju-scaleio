@@ -1,0 +1,31 @@
+#!/bin/bash
+
+function update-glance() {
+  local rel_param=''
+  if [ -n "${1:-}" ] ; then
+    rel_param="-r $1"
+  fi
+
+  local rids=`relation-ids scaleio-gw`
+  rids_count=`echo $rids | wc -w`
+  if (( rids_count < 1 )) ; then
+    status-set waiting "Awaiting realtion to scaleio-gw"
+    return
+  fi
+  if (( rids_count > 1 )) ; then
+    status-set blocked "More that one realtion found to scaleio-gw"
+    return
+  fi
+
+  local sdcs_ready=`leader-get sdcs_ready`
+  local my_ip=`unit-get private-address`
+  if ! echo "$sdcs_ready" | grep "$my_ip" ; then
+    # this sdc is not ready. waiting.
+    status-set waiting "Awaiting local SDC to be connected"
+    return
+  fi
+
+  server-cmd "class { 'scaleio_openstack::glance': }"
+
+  relation-set $rel_param cinder-backend=True
+}
