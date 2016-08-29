@@ -105,8 +105,8 @@ IMPORTANT: Any changes in cluster and in JuJu can take time in each step, usuall
 
 * cluster-mode - mode of the cluster: 1, 3 or 5.
 * password - password for the cluster
-* internal-iface - Interface used for MDM control communications with SDSs and SDCs, by default JuJu-provided IPs are used
-* management-iface - Interface used to provide access to ScaleIO management applications, by default internal-iface is used
+* internal-iface - Comma-separated list of interfaces used for MDM control communications with SDSs and SDCs, by default JuJu-provided IPs are used
+* management-iface - Comma-separated list of interfaces used to provide access to ScaleIO management applications, by default internal-iface is used
 * scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
 * performance-profile - Performance profile for SDC/SDS. Can be default or high_performance.
 * license-file-path - Path to license file.
