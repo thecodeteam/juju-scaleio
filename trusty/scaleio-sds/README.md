@@ -8,7 +8,9 @@ Please read ScaleIO guides for requirements on hardware suitable for installatio
 
 # Usage
 
-Until the charm is in the Charm Store it can be used in the following manner:
+The charm can be fetched from the JuJu charm-store.
+
+Or it can be installed locally in the following manner:
 
 1. cd to directory where trusty/scaleio-sds resides
 2. use command ```juju deploy local:trusty/scaleio-sds```
