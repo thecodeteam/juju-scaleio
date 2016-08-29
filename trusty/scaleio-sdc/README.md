@@ -8,7 +8,9 @@ Before deployment you might want to make sure that kernel you have on the nodes 
 
 # Usage
 
-Until the charm is in the Charm Store it can be used in the following manner:
+The charm can be fetched from the JuJu charm-store.
+
+Or it can be installed locally in the following manner:
 
 1. cd to directory where trusty/scaleio-sdc resides
 2. use command ```juju deploy local:trusty/scaleio-sdc```
