@@ -8,7 +8,9 @@ At least 3gb RAM is required to be set in the machine for ScaleIO Gateway.
 
 # Usage
 
-Until the charm is in the Charm Store it can be used in the following manner:
+The charm can be fetched from the JuJu charm-store.
+
+Or it can be installed locally in the following manner:
 
 1. cd to directory where trusty/scaleio-gw resides
 2. use command ```juju deploy local:trusty/scaleio-gw```
