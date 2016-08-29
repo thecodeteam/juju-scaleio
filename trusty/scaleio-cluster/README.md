@@ -40,5 +40,5 @@ Example:
 
 # Relations
 
-Should be related to scaleio-mdm.
-Should be related to scaleio-openstack or other client-side charms.
+Should be related to scaleio-sdc.
+Should be related to scaleio-openstack.
