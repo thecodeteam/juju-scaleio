@@ -2,16 +2,18 @@
 
 This charm provides connection of ScaleIO cluster to OpenStack.
 
-Its units should be placed in the same machines as scaleio-sdc and nova-compute or cinder.
+Its units should be placed in the same machines as scaleio-sdc and nova-compute or cinder or glance.
 
 It should be connected to the ScaleIO Gateway and only service of this type should be present.
 
-It prepares (configures and patches if required) nova-compute and cinder to use ScaleIO as a block storage.
+It prepares (configures and patches if required) nova-compute, cinder and glance to use ScaleIO as a block storage.
 
 It supports both block storage volumes operations and nova ephemeral storage for instances including live migration.
 
 Important: ScaleIO supports only 8gb increases for storage allocation so special flavors for storage in multiples of 8
 should be created in OpenStack.
+
+Important: scaleio-sdc charm should be installed on the same machine (host) as scaleio-openstack to serve nova-compute, cinder or glance.
 
 # Usage
 
