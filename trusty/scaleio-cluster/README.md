@@ -16,7 +16,7 @@ Or it can be installed locally in the following manner:
 
 Example:
 
-  Deploy a Gateway
+  Deploy an existing Gateway wrapper
   ```
     juju deploy scaleio-cluster
   ```
@@ -26,7 +26,7 @@ Example:
     juju add-relation scaleio-cluster scaleio-sdc
   ```
 
-  Connect the charm to SDC
+  Connect the charm to scaleio-openstack
   ```
     juju add-relation scaleio-cluster scaleio-openstack
   ```
