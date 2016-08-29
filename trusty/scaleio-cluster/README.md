@@ -3,11 +3,13 @@
 This charm allows using existing ScaleIO cluster.
 
 It should be related to client-side charms, such as scaleio-openstack
-and to scaleio-sdc charm.
+and scaleio-sdc charm.
 
 # Usage
 
-Until the charm is in the Charm Store it can be used in the following manner:
+The charm can be fetched from the JuJu charm-store.
+
+Or it can be installed locally in the following manner:
 
 1. cd to directory where trusty/scaleio-cluster resides
 2. use command ```juju deploy local:trusty/scaleio-cluster```
