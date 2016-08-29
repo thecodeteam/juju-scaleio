@@ -7,6 +7,7 @@ It brings the following ScaleIO components:
 * ScaleIO SDS - Storage Data Server
 * ScaleIO SDC - Storage Data Client
 * ScaleIO Gateway - REST API client gateway
+* ScaleIO Cluster - Existing ScaleIO cluster gateway
 * ScaleIO GUI - The UI tool
 
 And a connector of ScaleIO to OpenStack:
@@ -26,6 +27,7 @@ The following charms are present:
 - [scaleio-sds - ScaleIO SDS] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-sds)
 - [scaleio-sdc - ScaleIO SDC] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-sdc)
 - [scaleio-gw  - ScaleIO Gateway] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-gw)
+- [scaleio-cluster  - ScaleIO Cluster] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-cluster)
 - [scaleio-gui - ScaleIO GUI] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-gui)
 - [scaleio-openstack - Connector to OpenStack] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-openstack)
 
