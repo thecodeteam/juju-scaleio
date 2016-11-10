@@ -6,7 +6,7 @@ juju-log "ScaleIO SDS config changed"
 
 ftp=`config-get scaleio-driver-ftp`
 if [ -n "$ftp" ] ; then
-  server-cmd "class { 'scaleio::sds_server': ftp=>'$ftp' }"
+  server-cmd "class { 'scaleio::sds_server': drv_src=>'$ftp' }"
 fi
 
 relation-set-all

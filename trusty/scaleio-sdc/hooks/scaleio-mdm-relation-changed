@@ -7,11 +7,11 @@ log-relation "ScaleIO MDM joining"
 mdm_internal_ips=`relation-get mdm_internal_ips`
 
 if [ -z "$mdm_internal_ips" ]; then
-  server-cmd "class { 'scaleio::sdc_server': ensure_properties=>'absent', ftp=>'' }"
+  server-cmd "class { 'scaleio::sdc_server': ensure_properties=>'absent', drv_src=>'' }"
   exit
 fi
 
-server-cmd "class { 'scaleio::sdc_server': mdm_ip=>'$mdm_internal_ips', ftp=>'' }"
+server-cmd "class { 'scaleio::sdc_server': mdm_ip=>'$mdm_internal_ips', drv_src=>'' }"
 
 status-set active
 

@@ -5,4 +5,4 @@ my_dir="$(dirname "$0")"
 juju-log "ScaleIO SDC config-changed"
 
 ftp=`config-get scaleio-driver-ftp`
-server-cmd "class { 'scaleio::sdc_server': ftp=>'$ftp' }"
+server-cmd "class { 'scaleio::sdc_server': drv_src=>'$ftp' }"

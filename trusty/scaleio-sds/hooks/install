@@ -16,7 +16,7 @@ puppet module install --version "<1.2.0" cloudscaling-scaleio || /bin/true
 
 ftp=`config-get scaleio-driver-ftp`
 if [ -n "$ftp" ] ; then
-  ftp_opt="ftp=>'$ftp'"
+  ftp_opt="drv_src=>'$ftp'"
 fi
 scaleio_packages_url=$(config-get scaleio-packages-url)
 if [[ -z "$scaleio_packages_url" ]] ; then
