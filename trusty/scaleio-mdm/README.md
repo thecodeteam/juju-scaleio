@@ -107,7 +107,7 @@ IMPORTANT: Any changes in cluster and in JuJu can take time in each step, usuall
 * password - password for the cluster
 * internal-iface - Comma-separated list of interfaces used for MDM control communications with SDSs and SDCs, by default JuJu-provided IPs are used
 * management-iface - Comma-separated list of interfaces used to provide access to ScaleIO management applications, by default internal-iface is used
-* scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
+* scaleio-packages-url - URL of ScaleIO 2.x packages where charm can find them in appropriate structure.
 * performance-profile - Performance profile for SDC/SDS. Can be default or high_performance.
 * license-file-path - Path to license file.
 * capacity-high-alert-threshold - Percent of consumed storage space for high priority alert, should be used toghether with capacity_critical_alert_threshold

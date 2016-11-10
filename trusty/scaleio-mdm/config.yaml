@@ -26,11 +26,11 @@ options:
       management applications, such as CLI, GUI, REST API,
       OpenStack. IP address of this interface must be externally accessible.
       This parameter can not be changed. Only initial value is used.
-  scaleio-apt-repo:
+  scaleio-packages-url:
     type: string
-    default: "http://scaleio-packages.s3-website-us-east-1.amazonaws.com"
+    default: "ftp://QNzgdxXix:Aw3wFAwAq3@ftp.emc.com/Ubuntu/2.0.10000.2072"
     description: |
-      Optional. URL of apt repo where charm can find ScaleIO packages.
+      URL of ScaleIO packages where charm can find them in appropriate structure.
   performance-profile:
     type: string
     default: high_performance

@@ -33,7 +33,7 @@ Example:
 
 * port - port where Gateway will listen
 * im-port - Port of Installation Manager web server.
-* scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
+* scaleio-packages-url - URL of ScaleIO 2.x packages where charm can find them in appropriate structure.
 * vip - Virtual IP to use to front API service in HA configuration.
 * haproxy-server-timeout - Server timeout configuration in ms for haproxy, used in HA configurations.
 * haproxy-client-timeout - Client timeout configuration in ms for haproxy, used in HA configurations.

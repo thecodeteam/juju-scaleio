@@ -17,17 +17,17 @@ Example:
 
   Deploy a Gateway
   ```
-	juju deploy scaleio-gui
+    juju deploy scaleio-gui
   ```
   
   Run the GUI
   ```
-	/opt/emc/scaleio/gui/run.sh
+    /opt/emc/scaleio/gui/run.sh
   ```
 
 # Configuration
 
-* scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
+* scaleio-packages-url - URL of ScaleIO 2.x packages where charm can find them in appropriate structure.
 
 # Relations
 

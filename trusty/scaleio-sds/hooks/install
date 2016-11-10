@@ -18,7 +18,12 @@ ftp=`config-get scaleio-driver-ftp`
 if [ -n "$ftp" ] ; then
   ftp_opt="ftp=>'$ftp'"
 fi
-server-cmd "class { 'scaleio::sds_server': $ftp_opt }"
+scaleio_packages_url=$(config-get scaleio-packages-url)
+if [[ -z "$scaleio_packages_url" ]] ; then
+  juju-log -l 'ERROR' "URL for packages absent. Can't install ScaleIO."
+  exit 1
+fi
+server-cmd "class { 'scaleio::sds_server': pkg_src=>'$scaleio_packages_url', $ftp_opt }"
 
 status-set waiting "Awaiting relation to scaleio-mdm"
 

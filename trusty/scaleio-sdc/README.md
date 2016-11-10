@@ -34,7 +34,7 @@ Example:
   
 # Configuration
 
-* scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
+* scaleio-packages-url - URL of ScaleIO 2.x packages where charm can find them in appropriate structure.
 * scaleio-driver-ftp - FTP to fetch ScaleIO SDC drivers from
 
 # Relations

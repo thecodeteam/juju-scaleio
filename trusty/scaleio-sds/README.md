@@ -90,7 +90,7 @@ Example:
 * spare-percentage: The number represents the percentage of total capacity set aside to ensure data integrity during server failures. The percentage is derived by 1/(number of SDS), which yields the recommended percentage for less than 10 balanced servers. For more information, see “Modifying spare policy” in the EMC ScaleIO User Guide.
 * internal-iface - Comma-separated list of network interfaces for internal cluster communications, by default internal JuJu-provided IP is used
 * storage-iface - Comma-separated list of network interfaces for storage communication of SDS with SDC, by default internal-iface is used
-* scaleio-apt-repo - Apt-repository where ScaleIO 2.0 packages can be fetched from
+* scaleio-packages-url - URL of ScaleIO 2.x packages where charm can find them in appropriate structure.
 * scaleio-driver-ftp - FTP to fetch ScaleIO SDC drivers from
 
 # Relations

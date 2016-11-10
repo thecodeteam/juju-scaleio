@@ -14,7 +14,12 @@ if ! puppet --version ; then
 fi
 puppet module install --version "<1.2.0" cloudscaling-scaleio || /bin/true
 
-server-cmd "class { 'scaleio::mdm_server': }"
+scaleio_packages_url=$(config-get scaleio-packages-url)
+if [[ -z "$scaleio_packages_url" ]] ; then
+  juju-log -l 'ERROR' "URL for packages absent. Can't install ScaleIO."
+  exit 1
+fi
+server-cmd "class { 'scaleio::mdm_server': pkg_src=>'$scaleio_packages_url' }"
 
 juju-log "ScaleIO MDM installed"
 
