@@ -1,9 +1,6 @@
 #!/bin/bash
 my_dir="$(dirname "$0")"
 
-# this will be removed in the future
-$my_dir/common-temp
-
 juju-log "ScaleIO SDC installing"
 apt-get -qq update
 

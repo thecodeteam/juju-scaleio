@@ -1,9 +1,6 @@
 #!/bin/bash
 if [ -z "$my_dir" ]; then my_dir="$(dirname "$0")"; fi
 
-# this will be removed in the future
-$my_dir/common-temp
-
 juju-log "ScaleIO MDM installing: $MY_NAME, $MY_INTERNAL_IP"
 apt-get -qq update
 
