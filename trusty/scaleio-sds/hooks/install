@@ -20,7 +20,7 @@ if [[ -z "$scaleio_packages_url" ]] ; then
   juju-log -l 'ERROR' "URL for packages absent. Can't install ScaleIO."
   exit 1
 fi
-server-cmd "class { 'scaleio::sds_server': pkg_src=>'$scaleio_packages_url', $ftp_opt }"
+server-cmd "class { 'scaleio::sds_server': pkg_ftp=>'$scaleio_packages_url', $ftp_opt }"
 
 status-set waiting "Awaiting relation to scaleio-mdm"
 
