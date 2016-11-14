@@ -6,6 +6,7 @@ description: |
 tags:
   - storage
 series:
+  - xenial
   - trusty
   - precise
 requires:
