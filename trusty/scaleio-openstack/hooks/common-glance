@@ -25,7 +25,7 @@ function update-glance() {
     return
   fi
 
-  server-cmd "class { 'scaleio_openstack::glance': }"
+  server-cmd "class { 'scaleio_openstack::glance': glance_config => '', glare_config => '' }"
 
   relation-set $rel_param cinder-backend=True
 }
