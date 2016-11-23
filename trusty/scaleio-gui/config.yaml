@@ -1,6 +1,6 @@
 options:
   scaleio-packages-url:
     type: string
-    default: "ftp://QNzgdxXix:Aw3wFAwAq3@ftp.emc.com/Ubuntu/2.0.10000.2072"
+    default: "ftp://QNzgdxXix:Aw3wFAwAq3@ftp.emc.com/Ubuntu/2.0.11000.174"
     description: |
       URL of ScaleIO packages where charm can find them in appropriate structure.
