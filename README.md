@@ -19,21 +19,19 @@ All of these charms are present in the [JuJu Charm Store](https://jujucharms.com
 
 Folders:
 * bundles - JuJu charm bundles allowing bundled orchestrated deployment of the ScaleIO
-* trusty - Ubuntu 14.04 set of JuJu charms for flexible, individual deployment of charms
+* trusty, xenial - Ubuntu 14.04/16.04 set of JuJu charms for flexible, individual deployment of charms
 
 The following charms are present:
 
-- [scaleio-mdm - ScaleIO MDM] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-mdm)
-- [scaleio-sds - ScaleIO SDS] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-sds)
-- [scaleio-sdc - ScaleIO SDC] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-sdc)
-- [scaleio-gw  - ScaleIO Gateway] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-gw)
-- [scaleio-cluster  - ScaleIO Cluster] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-cluster)
-- [scaleio-gui - ScaleIO GUI] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-gui)
-- [scaleio-openstack - Connector to OpenStack] (https://github.com/emccode/juju-scaleio/tree/master/trusty/scaleio-openstack)
+- [scaleio-mdm - ScaleIO MDM] (https://github.com/codedellemc/juju-scaleio/tree/master/trusty/scaleio-mdm)
+- [scaleio-sds - ScaleIO SDS] (https://github.com/codedellemc/juju-scaleio/tree/master/trusty/scaleio-sds)
+- [scaleio-sdc - ScaleIO SDC] (https://github.com/codedellemc/juju-scaleio/tree/master/trusty/scaleio-sdc)
+- [scaleio-gw  - ScaleIO Gateway] (https://github.com/codedellemc/juju-scaleio/tree/master/trusty/scaleio-gw)
+- [scaleio-cluster  - ScaleIO Cluster] (https://github.com/codedellemc/juju-scaleio/tree/master/trusty/scaleio-cluster)
+- [scaleio-gui - ScaleIO GUI] (https://github.com/codedellemc/juju-scaleio/tree/master/trusty/scaleio-gui)
+- [scaleio-openstack - Connector to OpenStack] (https://github.com/codedellemc/juju-scaleio/tree/master/trusty/scaleio-openstack)
 
-A patched nova-compute is required for ephemeral storage backend to work:
-
-- [nova-compute - Patched nova-compute which supports ephemeral-storage backend] (https://github.com/cloudscaling/juju-scaleio/tree/master/trusty/nova-compute)
+Links are to trusty version but xenial also present.
 
 IMPORTANT: ScaleIO MDM cluster is very sensitive to its reconfiguration. Please read carefully the scaleio-mdm README.
 
@@ -55,5 +53,5 @@ Please read particular charms' READMEs (you can find links in the Structure sect
 
 # ScaleIO charms Contact Information
 
-- [Project Bug Tracker](https://github.com/emccode/juju-scaleio/issues)
+- [Project Bug Tracker](https://github.com/codedellemc/juju-scaleio/issues)
 
