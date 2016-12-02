@@ -1,6 +1,6 @@
 # Overview
 
-The repository provides a set of charms for ScaleIO 2.0 cluster deployment.
+The repository provides a set of charms for ScaleIO 2.0+ cluster deployment.
 
 It brings the following ScaleIO components:
 * ScaleIO MDM - Meta Data Manager
@@ -48,6 +48,11 @@ In order for the ScaleIO cluster to be deployed you would need to deploy and con
 In order to make ScaleIO working with OpenStack you additionally need:
 * SDC clients and scaleio-openstack charms to be installed on nova-compute and cinder machines
 * 1 Gateway
+
+# Tested with
+
+* Juju 1.25.8, Juju 2.0
+* Amazon provider, MAAS provider
 
 Please read particular charms' READMEs (you can find links in the Structure section above) for details about installation, usage, relations and configuration.
 
