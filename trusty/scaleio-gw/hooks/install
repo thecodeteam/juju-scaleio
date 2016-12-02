@@ -9,7 +9,7 @@ apt-get -qq update
 if ! puppet --version ; then
   apt-get install -qqfy puppet
 fi
-puppet module install --version "<1.2.0" cloudscaling-scaleio || /bin/true
+puppet module install --version "<1.3.0" cloudscaling-scaleio || /bin/true
 
 api_port=$(get-port)
 scaleio_packages_url=$(config-get scaleio-packages-url)

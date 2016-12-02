@@ -9,7 +9,7 @@ apt-get -qq update
 if ! puppet --version ; then
   apt-get install -qqfy puppet
 fi
-puppet module install --version "<1.2.0" cloudscaling-scaleio_openstack || /bin/true
+puppet module install --version "<1.3.0" cloudscaling-scaleio_openstack || /bin/true
 
 status-set waiting "Awaiting relation to scaleio-gw"
 
